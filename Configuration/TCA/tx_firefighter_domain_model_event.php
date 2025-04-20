@@ -17,7 +17,7 @@ return [
             'endtime' => 'endtime',
         ],
         'searchFields' => 'title,description',
-        'iconfile' => 'EXT:firefighter/Resources/Public/Icons/tx_firefighter_domain_model_event.svg'
+        'iconfile' => 'EXT:firefighter/Resources/Public/Icons/tx_firefighter_domain_model_event.png'
     ],
     'types' => [
         '1' => ['showitem' => 'title, description, date, --div--;Access, hidden, starttime, endtime'],
@@ -98,15 +98,17 @@ return [
                 'rows' => 5
             ]
         ],
-        'date' => [
-            'label' => 'Date',
-            'config' => [
-                'type' => 'input',
-                'renderType' => 'inputDateTime',
-                'eval' => 'datetime', // oder 'date', je nach gewünschtem Verhalten
-                'default' => 0
-            ]
-        ],
+       'date' => [
+    'exclude' => 1,
+    'label' => 'LLL:EXT:firefighter/Resources/Private/Language/locallang_db.xlf:tx_firefighter_domain_model_event.date',
+    'config' => [
+        'type' => 'input',
+        'renderType' => 'inputDateTime',
+        'eval' => 'datetime,null',
+        'dbType' => 'datetime',
+        'default' => null,
+    ],
+],
 'cars' => [
     'label' => 'Fahrzeuge',
     'config' => [
@@ -159,6 +161,22 @@ return [
         'minitems' => 0,
         'maxitems' => 1,
     ]
-]
+],
+'deployments' => [
+   'label' => 'Eingesetzte Einheiten',
+   'config' => [
+     'type' => 'inline',
+     'foreign_table' => 'tx_firefighter_domain_model_deployment',
+     'foreign_field' => 'event',
+     'maxitems' => 9999,
+     'appearance' => [
+       'collapseAll' => true,
+       'levelLinksPosition' => 'top',
+       'showSynchronizationLink' => true,
+       'showPossibleLocalizationRecords' => true,
+       'showAllLocalizationLink' => true
+     ]
+   ]
+ ]
     ]
 ];

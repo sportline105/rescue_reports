@@ -19,7 +19,7 @@ return [
             'endtime' => 'endtime',
         ],
         'searchFields' => 'name,link',
-        'iconfile' => 'EXT:firefighter/Resources/Public/Icons/tx_firefighter_domain_model_car.svg'
+        'iconfile' => 'EXT:firefighter/Resources/Public/Icons/tx_firefighter_domain_model_car.png'
     ],
     'types' => [
         '1' => ['showitem' => 'name, link, image, --div--;Access, hidden, starttime, endtime'],

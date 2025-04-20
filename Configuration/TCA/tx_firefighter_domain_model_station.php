@@ -17,7 +17,7 @@ return [
             'endtime' => 'endtime',
         ],
         'searchFields' => 'name',
-        'iconfile' => 'EXT:firefighter/Resources/Public/Icons/tx_firefighter_domain_model_station.svg'
+        'iconfile' => 'EXT:firefighter/Resources/Public/Icons/tx_firefighter_domain_model_station.png'
     ],
     'types' => [
         '1' => ['showitem' => 'name, --div--;Access, hidden, starttime, endtime'],
@@ -29,6 +29,16 @@ return [
         'hidden' => ['label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden','config' => ['type' => 'check','items' => [['', 1]]]],
         'starttime' => ['exclude' => true,'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime','config' => ['type' => 'input','renderType' => 'inputDateTime','eval' => 'datetime','default' => 0]],
         'endtime' => ['exclude' => true,'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime','config' => ['type' => 'input','renderType' => 'inputDateTime','eval' => 'datetime','default' => 0,'range' => ['upper' => mktime(0, 0, 0, 1, 1, 2038)]]],
-        'name' => ['label' => 'Name','config' => ['type' => 'input','eval' => 'trim,required']]
-    ]
+        'name' => ['label' => 'Name','config' => ['type' => 'input','eval' => 'trim,required']],
+        'brigade' => [
+            'label' => 'Brigade',
+            'config' => [
+            'type' => 'select',
+            'renderType' => 'selectSingle',
+            'foreign_table' => 'tx_firefighter_domain_model_brigade',
+            'minitems' => 0,
+            'maxitems' => 1,
+            ],
+        ]
+    ],
 ];
