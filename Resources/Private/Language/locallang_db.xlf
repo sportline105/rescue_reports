@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+  <file source-language="en" datatype="plaintext" original="messages" date="2024-01-01T00:00:00Z">
+    <header/>
+    <body>
+      <trans-unit id="tx_firefighter_domain_model_event.title" xml:space="preserve">
+        <source>Titel</source>
+      </trans-unit>
+      <trans-unit id="tx_firefighter_domain_model_event.description" xml:space="preserve">
+        <source>Beschreibung</source>
+      </trans-unit>
+      <trans-unit id="tx_firefighter_domain_model_event.date" xml:space="preserve">
+        <source>Datum</source>
+      </trans-unit>
+      <trans-unit id="tx_firefighter_domain_model_event.cars" xml:space="preserve">
+        <source>Fahrzeuge</source>
+      </trans-unit>
+      <trans-unit id="tx_firefighter_domain_model_event.types" xml:space="preserve">
+        <source>Typen</source>
+      </trans-unit>
+      <trans-unit id="tx_firefighter_domain_model_event.stations" xml:space="preserve">
+        <source>Stationen</source>
+      </trans-unit>
+      <trans-unit id="tx_firefighter_domain_model_event.brigade" xml:space="preserve">
+        <source>Feuerwehr</source>
+      </trans-unit>
+      <trans-unit id="tx_firefighter_domain_model_brigade" xml:space="preserve">
+        <source>Ortsfeuerwehr</source>
+      </trans-unit>
+      <trans-unit id="tx_firefighter_domain_model_car" xml:space="preserve">
+        <source>Fahrzeug</source>
+      </trans-unit>
+      <trans-unit id="tx_firefighter_domain_model_event" xml:space="preserve">
+        <source>Einsatz</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
