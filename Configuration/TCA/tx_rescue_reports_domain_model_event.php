@@ -1,7 +1,7 @@
 <?php
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:firefighter/Resources/Private/Language/locallang_db.xlf:tx_firefighter_domain_model_event',
+        'title' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescue_reports_domain_model_event',
         'label' => 'title',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
@@ -17,7 +17,7 @@ return [
             'endtime' => 'endtime',
         ],
         'searchFields' => 'title,description',
-        'iconfile' => 'EXT:firefighter/Resources/Public/Icons/tx_firefighter_domain_model_event.png'
+        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescue_reports_domain_model_event.png'
     ],
     'types' => [
         '1' => ['showitem' => 'title, description, date, --div--;Access, hidden, starttime, endtime'],
@@ -39,8 +39,8 @@ return [
                 'items' => [
                     ['', 0],
                 ],
-                'foreign_table' => 'tx_firefighter_domain_model_event',
-                'foreign_table_where' => 'AND {#tx_firefighter_domain_model_event}.{#pid}=###CURRENT_PID### AND {#tx_firefighter_domain_model_event}.{#sys_language_uid} IN (-1,0)',
+                'foreign_table' => 'tx_rescue_reports_domain_model_event',
+                'foreign_table_where' => 'AND {#tx_rescue_reports_domain_model_event}.{#pid}=###CURRENT_PID### AND {#tx_rescue_reports_domain_model_event}.{#sys_language_uid} IN (-1,0)',
                 'default' => 0,
             ]
         ],
@@ -100,7 +100,7 @@ return [
         ],
        'date' => [
     'exclude' => 1,
-    'label' => 'LLL:EXT:firefighter/Resources/Private/Language/locallang_db.xlf:tx_firefighter_domain_model_event.date',
+    'label' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescue_reports_domain_model_event.date',
     'config' => [
         'type' => 'input',
         'renderType' => 'inputDateTime',
@@ -114,8 +114,8 @@ return [
     'config' => [
         'type' => 'select',
         'renderType' => 'selectMultipleSideBySide',
-        'foreign_table' => 'tx_firefighter_domain_model_car',
-        'MM' => 'tx_firefighter_event_car_mm',
+        'foreign_table' => 'tx_rescue_reports_domain_model_car',
+        'MM' => 'tx_rescue_reports_event_car_mm',
         'size' => 5,
         'maxitems' => 9999,
     ]
@@ -125,8 +125,8 @@ return [
     'config' => [
         'type' => 'select',
         'renderType' => 'selectMultipleSideBySide',
-        'foreign_table' => 'tx_firefighter_domain_model_type',
-        'MM' => 'tx_firefighter_event_type_mm',
+        'foreign_table' => 'tx_rescue_reports_domain_model_type',
+        'MM' => 'tx_rescue_reports_event_type_mm',
         'size' => 5,
         'maxitems' => 9999,
     ]
@@ -135,7 +135,7 @@ return [
     'label' => 'Bilder',
     'config' => [
         'type' => 'inline',
-        'foreign_table' => 'tx_firefighter_domain_model_image',
+        'foreign_table' => 'tx_rescue_reports_domain_model_image',
         'foreign_field' => 'event',
         'maxitems' => 99,
         'appearance' => ['collapseAll' => true]
@@ -146,8 +146,8 @@ return [
     'config' => [
         'type' => 'select',
         'renderType' => 'selectMultipleSideBySide',
-        'foreign_table' => 'tx_firefighter_domain_model_station',
-        'MM' => 'tx_firefighter_event_station_mm',
+        'foreign_table' => 'tx_rescue_reports_domain_model_station',
+        'MM' => 'tx_rescue_reports_event_station_mm',
         'size' => 5,
         'maxitems' => 9999,
     ]
@@ -157,7 +157,7 @@ return [
     'config' => [
         'type' => 'select',
         'renderType' => 'selectSingle',
-        'foreign_table' => 'tx_firefighter_domain_model_brigade',
+        'foreign_table' => 'tx_rescue_reports_domain_model_brigade',
         'minitems' => 0,
         'maxitems' => 1,
     ]
@@ -166,7 +166,7 @@ return [
    'label' => 'Eingesetzte Einheiten',
    'config' => [
      'type' => 'inline',
-     'foreign_table' => 'tx_firefighter_domain_model_deployment',
+     'foreign_table' => 'tx_rescue_reports_domain_model_deployment',
      'foreign_field' => 'event',
      'maxitems' => 9999,
      'appearance' => [

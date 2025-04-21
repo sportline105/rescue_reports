@@ -1,9 +1,9 @@
 <?php
 
-// === Configuration/TCA/tx_firefighter_domain_model_type.php ===
+// === Configuration/TCA/tx_rescue_reports_domain_model_type.php ===
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:firefighter/Resources/Private/Language/locallang_db.xlf:tx_firefighter_domain_model_type',
+        'title' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescue_reports_domain_model_type',
         'label' => 'title',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
@@ -19,7 +19,7 @@ return [
             'endtime' => 'endtime',
         ],
         'searchFields' => 'title',
-        'iconfile' => 'EXT:firefighter/Resources/Public/Icons/tx_firefighter_domain_model_type.svg'
+        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescue_reports_domain_model_type.svg'
     ],
     'types' => [
         '1' => ['showitem' => 'title, --div--;Access, hidden, starttime, endtime'],
@@ -37,8 +37,8 @@ return [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'items' => [['', 0]],
-                'foreign_table' => 'tx_firefighter_domain_model_type',
-                'foreign_table_where' => 'AND {#tx_firefighter_domain_model_type}.{#pid}=###CURRENT_PID### AND {#tx_firefighter_domain_model_type}.{#sys_language_uid} IN (-1,0)',
+                'foreign_table' => 'tx_rescue_reports_domain_model_type',
+                'foreign_table_where' => 'AND {#tx_rescue_reports_domain_model_type}.{#pid}=###CURRENT_PID### AND {#tx_rescue_reports_domain_model_type}.{#sys_language_uid} IN (-1,0)',
                 'default' => 0,
             ]
         ],
