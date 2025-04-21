@@ -1,9 +1,9 @@
 <?php
 
-// === Configuration/TCA/tx_firefighter_domain_model_car.php ===
+// === Configuration/TCA/tx_rescue_reports_domain_model_car.php ===
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:firefighter/Resources/Private/Language/locallang_db.xlf:tx_firefighter_domain_model_car',
+        'title' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescue_reports_domain_model_car',
         'label' => 'name',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
@@ -19,7 +19,7 @@ return [
             'endtime' => 'endtime',
         ],
         'searchFields' => 'name,link',
-        'iconfile' => 'EXT:firefighter/Resources/Public/Icons/tx_firefighter_domain_model_car.png'
+        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescue_reports_domain_model_car.png'
     ],
     'types' => [
         '1' => ['showitem' => 'name, link, image, --div--;Access, hidden, starttime, endtime'],
@@ -37,8 +37,8 @@ return [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'items' => [['', 0]],
-                'foreign_table' => 'tx_firefighter_domain_model_car',
-                'foreign_table_where' => 'AND {#tx_firefighter_domain_model_car}.{#pid}=###CURRENT_PID### AND {#tx_firefighter_domain_model_car}.{#sys_language_uid} IN (-1,0)',
+                'foreign_table' => 'tx_rescue_reports_domain_model_car',
+                'foreign_table_where' => 'AND {#tx_rescue_reports_domain_model_car}.{#pid}=###CURRENT_PID### AND {#tx_rescue_reports_domain_model_car}.{#sys_language_uid} IN (-1,0)',
                 'default' => 0,
             ]
         ],
@@ -48,6 +48,6 @@ return [
         'endtime' => ['exclude' => true,'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime','config' => ['type' => 'input','renderType' => 'inputDateTime','eval' => 'datetime','default' => 0,'range' => ['upper' => mktime(0, 0, 0, 1, 1, 2038)]]],
         'name' => ['label' => 'Name','config' => ['type' => 'input','eval' => 'trim,required']],
         'link' => ['label' => 'Link','config' => ['type' => 'input','eval' => 'trim']],
-        'image' => ['label' => 'Bild','config' => ['type' => 'file','appearance' => ['createNewRelationLinkTitle' => 'Add file'], 'maxitems' => 1, 'foreign_match_fields' => ['fieldname' => 'image', 'tablenames' => 'tx_firefighter_domain_model_car', 'table_local' => 'sys_file'], 'foreign_types' => ['0' => ['showitem' => '--palette--;;filePalette'], '2' => ['showitem' => '--palette--;;filePalette']]]]
+        'image' => ['label' => 'Bild','config' => ['type' => 'file','appearance' => ['createNewRelationLinkTitle' => 'Add file'], 'maxitems' => 1, 'foreign_match_fields' => ['fieldname' => 'image', 'tablenames' => 'tx_rescue_reports_domain_model_car', 'table_local' => 'sys_file'], 'foreign_types' => ['0' => ['showitem' => '--palette--;;filePalette'], '2' => ['showitem' => '--palette--;;filePalette']]]]
     ]
 ];

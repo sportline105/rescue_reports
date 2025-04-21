@@ -1,4 +1,4 @@
-CREATE TABLE tx_firefighter_domain_model_event (
+CREATE TABLE tx_rescue_reports_domain_model_event (
   uid int(11) NOT NULL auto_increment,
   pid int(11) DEFAULT '0' NOT NULL,
   title varchar(255) DEFAULT '' NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE tx_firefighter_domain_model_event (
   PRIMARY KEY (uid)
 );
 
-CREATE TABLE tx_firefighter_domain_model_car (
+CREATE TABLE tx_rescue_reports_domain_model_car (
   uid int(11) NOT NULL auto_increment,
   pid int(11) DEFAULT '0' NOT NULL,
   name varchar(255) DEFAULT '' NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE tx_firefighter_domain_model_car (
   PRIMARY KEY (uid)
 );
 
-CREATE TABLE tx_firefighter_domain_model_brigade (
+CREATE TABLE tx_rescue_reports_domain_model_brigade (
   uid int(11) NOT NULL auto_increment,
   pid int(11) DEFAULT '0' NOT NULL,
   name varchar(255) DEFAULT '' NOT NULL,
@@ -78,21 +78,21 @@ CREATE TABLE tx_firefighter_domain_model_brigade (
   PRIMARY KEY (uid)
 );
 
-CREATE TABLE tx_firefighter_event_car_mm (
+CREATE TABLE tx_rescue_reports_event_car_mm (
   uid_local int(11) DEFAULT '0' NOT NULL,
   uid_foreign int(11) DEFAULT '0' NOT NULL,
   tablenames varchar(255) DEFAULT '' NOT NULL,
   sorting int(11) DEFAULT '0' NOT NULL
 );
 
-CREATE TABLE tx_firefighter_event_type_mm (
+CREATE TABLE tx_rescue_reports_event_type_mm (
   uid_local int(11) DEFAULT '0' NOT NULL,
   uid_foreign int(11) DEFAULT '0' NOT NULL,
   tablenames varchar(255) DEFAULT '' NOT NULL,
   sorting int(11) DEFAULT '0' NOT NULL
 );
 
-CREATE TABLE tx_firefighter_event_station_mm (
+CREATE TABLE tx_rescue_reports_event_station_mm (
   uid_local int(11) DEFAULT '0' NOT NULL,
   uid_foreign int(11) DEFAULT '0' NOT NULL,
   tablenames varchar(255) DEFAULT '' NOT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE tx_firefighter_event_station_mm (
 
 
 
-CREATE TABLE tx_firefighter_domain_model_image (
+CREATE TABLE tx_rescue_reports_domain_model_image (
   uid int(11) NOT NULL auto_increment,
   pid int(11) DEFAULT '0' NOT NULL,
   name varchar(255) DEFAULT '' NOT NULL,
@@ -128,7 +128,7 @@ CREATE TABLE tx_firefighter_domain_model_image (
   PRIMARY KEY (uid)
 );
 
-CREATE TABLE tx_firefighter_domain_model_type (
+CREATE TABLE tx_rescue_reports_domain_model_type (
   uid int(11) NOT NULL auto_increment,
   pid int(11) DEFAULT '0' NOT NULL,
   name varchar(255) DEFAULT '' NOT NULL,
@@ -154,7 +154,7 @@ CREATE TABLE tx_firefighter_domain_model_type (
   PRIMARY KEY (uid)
 );
 
-ALTER TABLE tx_firefighter_domain_model_station
+ALTER TABLE tx_rescue_reports_domain_model_station
   ADD COLUMN name VARCHAR(255) NOT NULL DEFAULT '',
   ADD COLUMN sys_language_uid int(11) DEFAULT 0 NOT NULL,
   ADD COLUMN l18n_parent int(11) DEFAULT 0 NOT NULL,

@@ -1,9 +1,7 @@
 <?php
-
-// === ext_emconf.php ===
 $EM_CONF[$_EXTKEY] = [
-    'title' => 'Firefighter',
-    'description' => 'Darstellung von Feuerwehreinsätzen, Fahrzeugen, Typen und Stationen mit Extbase/Fluid.',
+    'title' => 'Rescue Reports',
+    'description' => 'Darstellung der Einsätze von Rettungsdiensten und Feuerwehren, Fahrzeugen, Typen und Stationen.',
     'category' => 'plugin',
     'author' => 'Dein Name',
     'author_email' => 'dein@example.com',
