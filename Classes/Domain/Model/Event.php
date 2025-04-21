@@ -1,6 +1,6 @@
 <?php
 
-namespace In2code\Firefighter\Domain\Model;
+namespace In2code\rescue_reports\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
