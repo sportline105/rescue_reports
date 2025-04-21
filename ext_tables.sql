@@ -170,5 +170,9 @@ ALTER TABLE tx_rescue_reports_domain_model_station
   ADD COLUMN starttime int(11) DEFAULT 0 NOT NULL,
   ADD COLUMN endtime int(11) DEFAULT 0 NOT NULL;
   ADD COLUMN t3_origuid int(11) DEFAULT 0 NOT NULL;
+  
+  ALTER TABLE tx_rescue_reports_domain_model_event 
+  ADD COLUMN deployments INT(11) DEFAULT 0 NOT NULL;
+
 
 
