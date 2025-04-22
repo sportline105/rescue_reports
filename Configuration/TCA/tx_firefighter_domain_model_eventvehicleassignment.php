@@ -21,7 +21,7 @@ return [
         'iconfile' => 'EXT:firefighter/Resources/Public/Icons/tx_firefighter_domain_model_eventvehicleassignment.svg'
     ],
     'types' => [
-        '1' => ['showitem' => 'event, station, cars, --div--;Access, hidden, starttime, endtime'],
+        '1' => ['showitem' => 'event, station, cars'],
     ],
     'columns' => [
         'sys_language_uid' => [
@@ -76,20 +76,19 @@ return [
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'foreign_table' => 'tx_firefighter_domain_model_station'            ]
-        ],
-        'cars' => [
-            'label' => 'Fahrzeuge',
-            'config' => [
-                'type' => 'select',
-                'renderType' => 'selectMultipleSideBySide',
-                'itemsProcFunc' => \In2code\Firefighter\Utility\VehicleAssignmentUtility::class . '->filterCarsByStation',
-                'foreign_table' => 'tx_firefighter_domain_model_car',
-                'MM' => 'tx_firefighter_eventvehicleassignment_car_mm',
-                'size' => 5,
-                'maxitems' => 9999,
-                'foreign_table_where' => 'AND tx_firefighter_domain_model_car.uid IN (SELECT uid_foreign FROM tx_firefighter_station_car_mm WHERE uid_local = ###REC_FIELD_station###)',
+                'foreign_table' => 'tx_firefighter_domain_model_station',
+                'default' => 0
             ]
-        ],
+        ],'cars' => [
+    'label' => 'Fahrzeuge',
+    'config' => [
+        'type' => 'select',
+        'renderType' => 'selectMultipleSideBySide',
+        'foreign_table' => 'tx_firefighter_domain_model_car',
+        'MM' => 'tx_firefighter_eventvehicleassignment_car_mm',
+        'size' => 5,
+        'maxitems' => 9999,
+    ]
+],
     ]
 ];

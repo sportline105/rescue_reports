@@ -13,6 +13,7 @@ CREATE TABLE tx_firefighter_domain_model_event (
   brigade INT(11) DEFAULT 0 NOT NULL,
   stations int(11) DEFAULT '0' NOT NULL,
   deployments int(11) DEFAULT '0' NOT NULL,
+  event_vehicle_assignments int(11) DEFAULT 0 NOT NULL,
   hidden tinyint(4) DEFAULT '0' NOT NULL,
   deleted tinyint(4) DEFAULT '0' NOT NULL,
   tstamp int(11) DEFAULT '0' NOT NULL,
