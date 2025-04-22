@@ -7,6 +7,12 @@ CREATE TABLE tx_firefighter_domain_model_event (
   start datetime DEFAULT NULL,
   end datetime DEFAULT NULL,
   location varchar(255) DEFAULT '' NOT NULL,
+  cars int(11) DEFAULT '0' NOT NULL,
+  types int(11) DEFAULT '0' NOT NULL,
+  images INT(11) DEFAULT 0 NOT NULL,
+  brigade INT(11) DEFAULT 0 NOT NULL,
+  stations int(11) DEFAULT '0' NOT NULL,
+  deployments int(11) DEFAULT '0' NOT NULL,
   hidden tinyint(4) DEFAULT '0' NOT NULL,
   deleted tinyint(4) DEFAULT '0' NOT NULL,
   tstamp int(11) DEFAULT '0' NOT NULL,
@@ -26,12 +32,6 @@ CREATE TABLE tx_firefighter_domain_model_event (
   t3ver_count int(11) DEFAULT '0' NOT NULL,
   t3ver_tstamp int(11) DEFAULT '0' NOT NULL,
   t3_origuid int(11) DEFAULT '0' NOT NULL,
-  cars int(11) DEFAULT '0' NOT NULL,
-  types int(11) DEFAULT '0' NOT NULL,
-  images INT(11) DEFAULT 0 NOT NULL,
-  brigade INT(11) DEFAULT 0 NOT NULL,
-  stations int(11) DEFAULT '0' NOT NULL,
-  deployments int(11) DEFAULT '0' NOT NULL,
   PRIMARY KEY (uid)
 );
 
@@ -88,6 +88,14 @@ CREATE TABLE tx_firefighter_domain_model_brigade (
   t3ver_tstamp int(11) DEFAULT '0' NOT NULL,
   t3_origuid int(11) DEFAULT '0' NOT NULL,
   PRIMARY KEY (uid)
+);
+
+CREATE TABLE tx_firefighter_brigade_station_mm (
+    uid_local INT(11) DEFAULT 0 NOT NULL,
+    uid_foreign INT(11) DEFAULT 0 NOT NULL,
+    sorting INT(11) DEFAULT 0 NOT NULL,
+    KEY uid_local (uid_local),
+    KEY uid_foreign (uid_foreign)
 );
 
 CREATE TABLE tx_firefighter_domain_model_station (
@@ -198,12 +206,4 @@ CREATE TABLE tx_firefighter_domain_model_deployment (
     t3ver_tstamp INT(11) DEFAULT '0' NOT NULL,
     t3_origuid INT(11) DEFAULT '0' NOT NULL,
     PRIMARY KEY (uid)
-);
-
-CREATE TABLE tx_firefighter_brigade_station_mm (
-    uid_local INT(11) DEFAULT 0 NOT NULL,
-    uid_foreign INT(11) DEFAULT 0 NOT NULL,
-    sorting INT(11) DEFAULT 0 NOT NULL,
-    KEY uid_local (uid_local),
-    KEY uid_foreign (uid_foreign)
 );
