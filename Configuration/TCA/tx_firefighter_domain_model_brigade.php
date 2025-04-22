@@ -35,12 +35,19 @@ return [
         'stations' => [
             'label' => 'Ortsfeuerwehren',
             'config' => [
-                'type' => 'select',
-                'renderType' => 'selectMultipleSideBySide',
-                'foreign_table' => 'tx_firefighter_domain_model_station',
-                'MM' => 'tx_firefighter_brigade_station_mm',  // MM-Tabelle
-                'size' => 10,
-                'maxitems' => 9999,
+                'type' => 'inline',
+                    'foreign_table' => 'tx_firefighter_domain_model_station',
+                    'foreign_field' => 'brigade',
+                    'foreign_sortby' => 'sorting', // Wichtig für die Sortierung!
+                    'maxitems' => 9999,
+                    'appearance' => [
+                        'collapseAll' => true,
+                        'levelLinksPosition' => 'top',
+                        'showSynchronizationLink' => true,
+                        'showPossibleLocalizationRecords' => true,
+                        'showAllLocalizationLink' => true,
+                        'useSortable' => 1, 
+                    ]
                 ],
         ],
         'priority' => [

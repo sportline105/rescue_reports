@@ -22,7 +22,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'hidden, title, --palette--;;times, location, description, cars, types, stations, --div--;Bilder, images'
+            'showitem' => 'hidden, title, --palette--;;times, description, cars, types, stations, brigade, --div--;Bilder, images'
         ],
     ],
     'palettes' => [
@@ -62,7 +62,7 @@ return [
             'config' => [
                 'type' => 'input',
                 'renderType' => 'inputDateTime',
-                'eval' => 'datetime',
+                'eval' => 'datetime,null',
                 'dbType' => 'datetime',
                 'default' => null,
             ],
@@ -72,7 +72,7 @@ return [
             'config' => [
                 'type' => 'input',
                 'renderType' => 'inputDateTime',
-                'eval' => 'datetime',
+                'eval' => 'datetime,null',
                 'dbType' => 'datetime',
                 'default' => null,
             ],
@@ -108,8 +108,8 @@ return [
                 'renderType' => 'selectSingle',
                 'foreign_table' => 'tx_firefighter_domain_model_type',
                 'MM' => 'tx_firefighter_event_type_mm',
-                'size' => 1,
-                'maxitems' => 9999,
+                'minitems' => 0,
+                'maxitems' => 1,
             ]
         ],
         'images' => [
@@ -126,7 +126,7 @@ return [
             ),
         ],
         'stations' => [
-            'label' => 'LLL:EXT:firefighter/Resources/Private/Language/locallang_db.xlf:tx_firefighter_domain_model_event.stations',
+            'label' => 'Stationen',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectCheckBox',
@@ -146,27 +146,5 @@ return [
                 'maxitems' => 1,
             ]
         ],
-        'deployments' => [
-            'label' => 'Einsätze',
-            'config' => [
-                'type' => 'select',
-                'renderType' => 'selectMultipleSideBySide',
-                'foreign_table' => 'tx_firefighter_domain_model_deployment',
-                'MM' => 'tx_firefighter_event_deployment_mm',
-                'size' => 10,
-                'minitems' => 0,
-                'maxitems' => 9999,
-            ]
-        ],
-        'location' => [
-    'label' => 'LLL:EXT:firefighter/Resources/Private/Language/locallang_db.xlf:tx_firefighter_domain_model_event.location',
-    'config' => [
-        'type' => 'input',
-        'eval' => 'trim',
-        'placeholder' => 'LLL:EXT:firefighter/Resources/Private/Language/locallang_db.xlf:tx_firefighter_domain_model_event.location.placeholder',
-        'size' => 30,
-        'max' => 255,
-    ],
-],
     ]
 ];

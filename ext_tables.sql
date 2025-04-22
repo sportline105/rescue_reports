@@ -68,6 +68,7 @@ CREATE TABLE tx_firefighter_domain_model_brigade (
   pid int(11) DEFAULT '0' NOT NULL,
   name varchar(255) DEFAULT '' NOT NULL,
   priority INT DEFAULT 0,
+  stations int(11) DEFAULT '0' NOT NULL,
   hidden tinyint(4) DEFAULT '0' NOT NULL,
   deleted tinyint(4) DEFAULT '0' NOT NULL,
   tstamp int(11) DEFAULT '0' NOT NULL,
@@ -97,6 +98,37 @@ CREATE TABLE tx_firefighter_brigade_station_mm (
     KEY uid_local (uid_local),
     KEY uid_foreign (uid_foreign)
 );
+CREATE TABLE tx_firefighter_event_car_mm (
+    uid_local INT(11) DEFAULT 0 NOT NULL,
+    uid_foreign INT(11) DEFAULT 0 NOT NULL,
+    sorting INT(11) DEFAULT 0 NOT NULL,
+    KEY uid_local (uid_local),
+    KEY uid_foreign (uid_foreign)
+);
+
+CREATE TABLE tx_firefighter_event_type_mm (
+    uid_local INT(11) DEFAULT 0 NOT NULL,
+    uid_foreign INT(11) DEFAULT 0 NOT NULL,
+    sorting INT(11) DEFAULT 0 NOT NULL,
+    KEY uid_local (uid_local),
+    KEY uid_foreign (uid_foreign)
+);
+
+CREATE TABLE tx_firefighter_event_station_mm (
+    uid_local INT(11) DEFAULT 0 NOT NULL,
+    uid_foreign INT(11) DEFAULT 0 NOT NULL,
+    sorting INT(11) DEFAULT 0 NOT NULL,
+    KEY uid_local (uid_local),
+    KEY uid_foreign (uid_foreign)
+);
+
+CREATE TABLE tx_firefighter_event_deployment_mm (
+    uid_local INT(11) DEFAULT 0 NOT NULL,
+    uid_foreign INT(11) DEFAULT 0 NOT NULL,
+    sorting INT(11) DEFAULT 0 NOT NULL,
+    KEY uid_local (uid_local),
+    KEY uid_foreign (uid_foreign)
+);
 
 CREATE TABLE tx_firefighter_domain_model_station (
     uid INT(11) NOT NULL AUTO_INCREMENT,
@@ -104,6 +136,7 @@ CREATE TABLE tx_firefighter_domain_model_station (
     name VARCHAR(255) DEFAULT '' NOT NULL,
     sorting INT(11) DEFAULT 0 NOT NULL,
     brigade INT(11) DEFAULT 0 NOT NULL,
+    cars int(11) DEFAULT '0' NOT NULL,
     hidden tinyint(4) DEFAULT '0' NOT NULL,
   deleted tinyint(4) DEFAULT '0' NOT NULL,
   tstamp int(11) DEFAULT '0' NOT NULL,
@@ -185,6 +218,7 @@ CREATE TABLE tx_firefighter_domain_model_deployment (
     pid INT(11) DEFAULT '0' NOT NULL,
     title VARCHAR(255) DEFAULT '' NOT NULL,
     description TEXT,
+    brigade INT(11) DEFAULT '0' NOT NULL,
     date DATETIME DEFAULT NULL,
     hidden TINYINT(4) DEFAULT '0' NOT NULL,
     deleted TINYINT(4) DEFAULT '0' NOT NULL,
