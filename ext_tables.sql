@@ -260,6 +260,7 @@ CREATE TABLE tx_firefighter_domain_model_eventvehicleassignment (
     event INT(11) DEFAULT 0 NOT NULL,
     station INT(11) DEFAULT 0 NOT NULL,
     car INT(11) DEFAULT 0 NOT NULL,
+    cars int(11) DEFAULT '0' NOT NULL,
     hidden TINYINT(4) DEFAULT '0' NOT NULL,
     deleted TINYINT(4) DEFAULT '0' NOT NULL,
     tstamp INT(11) DEFAULT '0' NOT NULL,

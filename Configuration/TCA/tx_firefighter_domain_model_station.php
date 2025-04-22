@@ -71,7 +71,7 @@ return [
     'label' => 'Fahrzeuge',
     'config' => [
         'type' => 'select',
-        'renderType' => 'selectMultipleSideBySide',
+        'renderType' => 'selectCheckBox',
         'foreign_table' => 'tx_firefighter_domain_model_car',
         'MM' => 'tx_firefighter_station_car_mm',
         'size' => 10,

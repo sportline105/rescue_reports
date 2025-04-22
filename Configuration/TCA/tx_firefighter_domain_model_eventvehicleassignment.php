@@ -76,19 +76,18 @@ return [
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'foreign_table' => 'tx_firefighter_domain_model_station',
-                'default' => 0
+                'foreign_table' => 'tx_firefighter_domain_model_station'            ]
+        ],
+        'cars' => [
+            'label' => 'Fahrzeuge',
+            'config' => [
+                'type' => 'select',
+                'renderType' => 'selectMultipleSideBySide',
+                'foreign_table' => 'tx_firefighter_domain_model_car',
+                'MM' => 'tx_firefighter_eventvehicleassignment_car_mm',
+                'size' => 5,
+                'maxitems' => 9999,
             ]
-        ],'cars' => [
-    'label' => 'Fahrzeuge',
-    'config' => [
-        'type' => 'select',
-        'renderType' => 'selectMultipleSideBySide',
-        'foreign_table' => 'tx_firefighter_domain_model_car',
-        'MM' => 'tx_firefighter_eventvehicleassignment_car_mm',
-        'size' => 5,
-        'maxitems' => 9999,
-    ]
-],
+        ],
     ]
 ];
