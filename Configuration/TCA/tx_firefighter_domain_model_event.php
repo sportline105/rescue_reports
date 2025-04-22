@@ -22,7 +22,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'hidden, title, --palette--;;times, description, cars, types, stations, --div--;Bilder, images'
+            'showitem' => 'hidden, title, --palette--;;times, description, event_vehicle_assignments, types, stations, --div--;Bilder, images'
         ],
     ],
     'palettes' => [
@@ -146,5 +146,21 @@ return [
                 'maxitems' => 1,
             ]
         ],
-    ]
+        'event_vehicle_assignments' => [
+            'label' => 'Fahrzeug-Zuweisungen',
+            'config' => [
+                'type' => 'inline',
+                'foreign_table' => 'tx_firefighter_domain_model_eventvehicleassignment',
+                'foreign_field' => 'event',
+                'maxitems' => 999,
+                'appearance' => [
+                    'collapseAll' => true,
+                    'levelLinksPosition' => 'top',
+                    'showSynchronizationLink' => true,
+                    'useSortable' => true,
+                ],
+            ]
+        ],
+
+        ]
 ];
