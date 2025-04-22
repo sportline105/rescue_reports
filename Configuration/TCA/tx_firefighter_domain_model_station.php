@@ -79,5 +79,14 @@ return [
         'maxitems' => 9999,
     ],
 ],
+'brigade' => [
+    'label' => 'Feuerwehr',
+    'config' => [
+        'type' => 'select',
+        'renderType' => 'selectSingle',
+        'foreign_table' => 'tx_firefighter_domain_model_brigade',
+        'default' => 0,
+    ],
+],
     ]
 ];

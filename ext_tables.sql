@@ -201,3 +201,10 @@ CREATE TABLE tx_firefighter_domain_model_deployment (
     PRIMARY KEY (uid)
 );
 
+CREATE TABLE tx_firefighter_brigade_station_mm (
+    uid_local INT(11) DEFAULT 0 NOT NULL,
+    uid_foreign INT(11) DEFAULT 0 NOT NULL,
+    sorting INT(11) DEFAULT 0 NOT NULL,
+    KEY uid_local (uid_local),
+    KEY uid_foreign (uid_foreign)
+);

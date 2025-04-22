@@ -33,22 +33,17 @@ return [
         'endtime' => ['exclude' => true,'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime','config' => ['type' => 'input','renderType' => 'inputDateTime','eval' => 'datetime','default' => 0,'range' => ['upper' => mktime(0, 0, 0, 1, 1, 2038)]]],
         'name' => ['label' => 'Name','config' => ['type' => 'input','eval' => 'trim,required']],
         'stations' => [
-            'label' => 'Ortsfeuerwehren',
-                'config' => [
-                    'type' => 'inline',
-                    'foreign_table' => 'tx_firefighter_domain_model_station',
-                    'foreign_field' => 'brigade',
-                    'foreign_sortby' => 'sorting', // Wichtig für die Sortierung!
-                    'maxitems' => 9999,
-                    'appearance' => [
-                        'collapseAll' => true,
-                        'levelLinksPosition' => 'top',
-                        'showSynchronizationLink' => true,
-                        'showPossibleLocalizationRecords' => true,
-                        'showAllLocalizationLink' => true,
-                        'useSortable' => 1,                     ]
-            ]
-        ],
+    'label' => 'Ortsfeuerwehren',
+    'config' => [
+        'type' => 'select',
+        'renderType' => 'selectMultipleSideBySide',
+        'foreign_table' => 'tx_firefighter_domain_model_station',
+        'MM' => 'tx_firefighter_brigade_station_mm',
+        'size' => 10,
+        'maxitems' => 9999,
+    ],
+],
+
         'priority' => [
             'label' => 'Priorität',
             'config' => [
