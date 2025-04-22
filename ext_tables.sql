@@ -67,6 +67,7 @@ CREATE TABLE tx_firefighter_domain_model_brigade (
   uid int(11) NOT NULL auto_increment,
   pid int(11) DEFAULT '0' NOT NULL,
   name varchar(255) DEFAULT '' NOT NULL,
+  priority INT DEFAULT 0,
   hidden tinyint(4) DEFAULT '0' NOT NULL,
   deleted tinyint(4) DEFAULT '0' NOT NULL,
   tstamp int(11) DEFAULT '0' NOT NULL,
@@ -86,16 +87,16 @@ CREATE TABLE tx_firefighter_domain_model_brigade (
   t3ver_count int(11) DEFAULT '0' NOT NULL,
   t3ver_tstamp int(11) DEFAULT '0' NOT NULL,
   t3_origuid int(11) DEFAULT '0' NOT NULL,
-  priority INT DEFAULT 0,
   PRIMARY KEY (uid)
 );
 
--- Station-Tabelle (ursprüngliches ALTER TABLE entfernt, vollständiges CREATE TABLE hinzugefügt)
 CREATE TABLE tx_firefighter_domain_model_station (
-  uid int(11) NOT NULL auto_increment,
-  pid int(11) DEFAULT '0' NOT NULL,
-  name varchar(255) DEFAULT '' NOT NULL,
-  hidden tinyint(4) DEFAULT '0' NOT NULL,
+    uid INT(11) NOT NULL AUTO_INCREMENT,
+    pid INT(11) DEFAULT '0' NOT NULL,
+    name VARCHAR(255) DEFAULT '' NOT NULL,
+    sorting INT(11) DEFAULT 0 NOT NULL,
+    brigade INT(11) DEFAULT 0 NOT NULL,
+    hidden tinyint(4) DEFAULT '0' NOT NULL,
   deleted tinyint(4) DEFAULT '0' NOT NULL,
   tstamp int(11) DEFAULT '0' NOT NULL,
   crdate int(11) DEFAULT '0' NOT NULL,
@@ -114,8 +115,6 @@ CREATE TABLE tx_firefighter_domain_model_station (
   t3ver_count int(11) DEFAULT '0' NOT NULL,
   t3ver_tstamp int(11) DEFAULT '0' NOT NULL,
   t3_origuid int(11) DEFAULT '0' NOT NULL,
-  brigade INT(11) DEFAULT 0 NOT NULL,
-  sorting INT(11) DEFAULT 0 NOT NULL,
   PRIMARY KEY (uid)
 );
 
