@@ -22,7 +22,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'hidden, title, --palette--;;times, description, event_vehicle_assignments, types, stations, --div--;Bilder, images'
+            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;Feuerwehren, stations, --div--;Fahrzeuge, event_vehicle_assignments, --div--;Bilder, images'
         ],
     ],
     'palettes' => [
@@ -62,7 +62,7 @@ return [
             'config' => [
                 'type' => 'input',
                 'renderType' => 'inputDateTime',
-                'eval' => 'datetime,null',
+                'eval' => 'datetime',
                 'dbType' => 'datetime',
                 'default' => null,
             ],
@@ -72,7 +72,7 @@ return [
             'config' => [
                 'type' => 'input',
                 'renderType' => 'inputDateTime',
-                'eval' => 'datetime,null',
+                'eval' => 'datetime',
                 'dbType' => 'datetime',
                 'default' => null,
             ],
@@ -81,8 +81,20 @@ return [
             'label' => 'Title',
             'config' => ['type' => 'input', 'eval' => 'trim,required']
         ],
+         'location' => [
+            'label' => 'Einsatzort',
+            'config' => ['type' => 'input', 'eval' => 'trim']
+        ],
+        'number' => [
+            'label' => 'Einsatznummer',
+            'config' => [
+                'type' => 'input', 'eval' => 'trim',
+                'default' => 'Zö/',
+            ]
+        ],
+
         'description' => [
-            'label' => 'Description',
+            'label' => 'Einsatzbericht',
             'config' => [
                 'type' => 'text',
                 'enableRichtext' => true,
@@ -102,7 +114,7 @@ return [
             ]
         ],
         'types' => [
-            'label' => 'Einsatzarten',
+            'label' => 'Einsatzart',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
@@ -133,6 +145,8 @@ return [
                 'itemsProcFunc' => 'In2code\\Firefighter\\Utility\\StationLabelUtility->addGroupedStations',
                 'items' => [],
                 'MM' => 'tx_firefighter_event_station_mm',
+                'size' => 10,
+                'autoSizeMax' => 30,
                 'maxitems' => 9999,
             ]
         ],
@@ -152,15 +166,14 @@ return [
                 'type' => 'inline',
                 'foreign_table' => 'tx_firefighter_domain_model_eventvehicleassignment',
                 'foreign_field' => 'event',
-                'maxitems' => 999,
                 'appearance' => [
                     'collapseAll' => true,
                     'levelLinksPosition' => 'top',
-                    'showSynchronizationLink' => true,
                     'useSortable' => true,
+                    'showSynchronizationLink' => true,
+                    'showAllLocalizationLink' => true,
                 ],
-            ]
+            ],
         ],
-
         ]
 ];

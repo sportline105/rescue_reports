@@ -1,5 +1,7 @@
 <?php
 
+use In2code\Firefighter\Utility\EventVehicleAssignmentUtility;
+
 return [
     'ctrl' => [
         'title' => 'LLL:EXT:firefighter/Resources/Private/Language/locallang_db.xlf:tx_firefighter_domain_model_eventvehicleassignment',
@@ -21,7 +23,7 @@ return [
         'iconfile' => 'EXT:firefighter/Resources/Public/Icons/tx_firefighter_domain_model_eventvehicleassignment.svg'
     ],
     'types' => [
-        '1' => ['showitem' => 'event, station, cars'],
+        '1' => ['showitem' => 'event, station, cars, --div--;Access, hidden, starttime, endtime'],
     ],
     'columns' => [
         'sys_language_uid' => [
@@ -76,18 +78,20 @@ return [
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'foreign_table' => 'tx_firefighter_domain_model_station'            ]
+                'foreign_table' => 'tx_firefighter_domain_model_station',
+                'default' => 0,
+                'onChange' => 'reload'
+            ]
         ],
         'cars' => [
             'label' => 'Fahrzeuge',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectMultipleSideBySide',
-                'foreign_table' => 'tx_firefighter_domain_model_car',
-                'MM' => 'tx_firefighter_eventvehicleassignment_car_mm',
-                'size' => 5,
+                'itemsProcFunc' => In2code\Firefighter\Utility\EventVehicleAssignmentUtility::class . '->addStationCarsToAssignment',
+                'size' => 10,
                 'maxitems' => 9999,
-            ]
+            ],
         ],
     ]
 ];
