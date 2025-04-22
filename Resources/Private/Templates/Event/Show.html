@@ -1,0 +1,13 @@
+// === Fluid Template (Resources/Private/Templates/Event/Show.html) ===
+ <f:layout name="Default" />
+ <f:section name="main">
+   <h1>{event.title}</h1>
+   <f:if condition="{event.deployments}">
+     <ul>
+       <f:for each="{event.deployments}" as="deployment">
+         <f:render partial="Deployment/Item" arguments="{deployment: deployment}" />
+       </f:for>
+     </ul>
+   </f:if>
+   <f:link.action action="list">Zurück zur Übersicht</f:link.action>
+ </f:section>

@@ -1,26 +1,54 @@
-namespace In2code\rescue_reports\Domain\Model;
+<?php
+
+namespace In2code\Firefighter\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use TYPO3\CMS\Extbase\Annotation\ORM\Transient;
 
-class Brigade extends AbstractEntity {
+class Brigade extends AbstractEntity
+{
     protected string $name = '';
+    protected int $priority = 0;
+
     /**
-     * @var ObjectStorage<Station>
+     * @var ObjectStorage<\In2code\Firefighter\Domain\Model\Station>
+     * @Transient
      */
     protected ObjectStorage $stations;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->stations = new ObjectStorage();
     }
 
-    public function getName(): string { return $this->name; }
-    public function setName(string $name): void { $this->name = $name; }
+    public function getName(): string
+    {
+        return $this->name;
+    }
 
-    /** @return ObjectStorage<Station> */
-    public function getStations(): ObjectStorage { return $this->stations; }
-    public function setStations(ObjectStorage $stations): void { $this->stations = $stations; }
-    public function addStation(Station $station): void { $this->stations->attach($station); }
-    public function removeStation(Station $station): void { $this->stations->detach($station); }
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(int $priority): void
+    {
+        $this->priority = $priority;
+    }
+
+    public function getStations(): ObjectStorage
+    {
+        return $this->stations;
+    }
+
+    public function setStations(ObjectStorage $stations): void
+    {
+        $this->stations = $stations;
+    }
 }

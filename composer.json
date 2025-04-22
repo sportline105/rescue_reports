@@ -1,5 +1,5 @@
 {
-  "name": "vendor/RescueReports",
+  "name": "vendor/firefighter",
   "type": "typo3-cms-extension",
   "description": "Extbase-basierte Feuerwehr-Extension mit Einsatzverwaltung",
   "license": "GPL-2.0-or-later",
@@ -8,12 +8,12 @@
   },
   "autoload": {
     "psr-4": {
-      "In2code\\RescueReports\\": "Classes/"
+      "In2code\\Firefighter\\": "Classes/"
     }
   },
   "extra": {
     "typo3/cms": {
-      "extension-key": "rescue_reports"
+      "extension-key": "firefighter"
     }
   }
 }
