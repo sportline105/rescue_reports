@@ -22,7 +22,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'hidden, title, --palette--;;times, description, cars, types, stations, brigade, --div--;Bilder, images'
+            'showitem' => 'hidden, title, --palette--;;times, description, cars, types, stations, --div--;Bilder, images'
         ],
     ],
     'palettes' => [

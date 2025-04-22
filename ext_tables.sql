@@ -98,11 +98,14 @@ CREATE TABLE tx_firefighter_brigade_station_mm (
     KEY uid_local (uid_local),
     KEY uid_foreign (uid_foreign)
 );
-CREATE TABLE tx_firefighter_event_car_mm (
+
+CREATE TABLE tx_firefighter_event_station_car_mm (
     uid_local INT(11) DEFAULT 0 NOT NULL,
+    uid_station INT(11) DEFAULT 0 NOT NULL,
     uid_foreign INT(11) DEFAULT 0 NOT NULL,
     sorting INT(11) DEFAULT 0 NOT NULL,
     KEY uid_local (uid_local),
+    KEY uid_station (uid_station),
     KEY uid_foreign (uid_foreign)
 );
 
