@@ -1,98 +1,76 @@
 <?php
 
-use In2code\Firefighter\Utility\EventVehicleAssignmentUtility;
+namespace In2code\Firefighter\Utility;
 
-return [
-    'ctrl' => [
-        'title' => 'LLL:EXT:firefighter/Resources/Private/Language/locallang_db.xlf:tx_firefighter_domain_model_eventvehicleassignment',
-        'label' => 'uid',
-        'tstamp' => 'tstamp',
-        'crdate' => 'crdate',
-        'cruser_id' => 'cruser_id',
-        'versioningWS' => true,
-        'languageField' => 'sys_language_uid',
-        'transOrigPointerField' => 'l18n_parent',
-        'transOrigDiffSourceField' => 'l18n_diffsource',
-        'delete' => 'deleted',
-        'enablecolumns' => [
-            'disabled' => 'hidden',
-            'starttime' => 'starttime',
-            'endtime' => 'endtime',
-        ],
-        'searchFields' => '',
-        'iconfile' => 'EXT:firefighter/Resources/Public/Icons/tx_firefighter_domain_model_eventvehicleassignment.svg'
-    ],
-    'types' => [
-        '1' => ['showitem' => 'event, station, cars, --div--;Access, hidden, starttime, endtime'],
-    ],
-    'columns' => [
-        'sys_language_uid' => [
-            'exclude' => true,
-            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
-            'config' => ['type' => 'language']
-        ],
-        'l18n_parent' => [
-            'displayCond' => 'FIELD:sys_language_uid:>:0',
-            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
-            'config' => [
-                'type' => 'select',
-                'renderType' => 'selectSingle',
-                'items' => [['', 0]],
-                'foreign_table' => 'tx_firefighter_domain_model_eventvehicleassignment',
-                'foreign_table_where' => 'AND {#tx_firefighter_domain_model_eventvehicleassignment}.{#pid}=###CURRENT_PID### AND {#tx_firefighter_domain_model_eventvehicleassignment}.{#sys_language_uid} IN (-1,0)',
-                'default' => 0,
-            ]
-        ],
-        'l18n_diffsource' => ['config' => ['type' => 'passthrough']],
-        'hidden' => [
-            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden',
-            'config' => ['type' => 'check','items' => [['', 1]]]
-        ],
-        'starttime' => [
-            'exclude' => true,
-            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
-            'config' => ['type' => 'input','renderType' => 'inputDateTime','eval' => 'datetime','default' => 0]
-        ],
-        'endtime' => [
-            'exclude' => true,
-            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
-            'config' => [
-                'type' => 'input',
-                'renderType' => 'inputDateTime',
-                'eval' => 'datetime',
-                'default' => 0,
-                'range' => ['upper' => mktime(0, 0, 0, 1, 1, 2038)]
-            ]
-        ],
-        'event' => [
-            'label' => 'Einsatz',
-            'config' => [
-                'type' => 'select',
-                'renderType' => 'selectSingle',
-                'foreign_table' => 'tx_firefighter_domain_model_event',
-                'default' => 0
-            ]
-        ],
-        'station' => [
-            'label' => 'Station',
-            'config' => [
-                'type' => 'select',
-                'renderType' => 'selectSingle',
-                'foreign_table' => 'tx_firefighter_domain_model_station',
-                'default' => 0,
-                'onChange' => 'reload'
-            ]
-        ],
-        'cars' => [
-    'label' => 'Fahrzeuge',
-    'config' => [
-        'type' => 'select',
-        'renderType' => 'selectCheckBox',
-        'itemsProcFunc' => In2code\Firefighter\Utility\EventVehicleAssignmentUtility::class . '->getAssignmentOptions',
-        'size' => 10,
-        'maxitems' => 9999,
-    ],
-],
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 
-    ]
-];
+class EventVehicleAssignmentUtility
+{
+    /**
+     * itemsProcFunc for field "Fahrzeugeinsatz"
+     * Dynamisch Fahrzeuge basierend auf gewählten Stationen im Event-Datensatz laden.
+     *
+     * @param array \$config
+     */
+    public function getAssignmentOptions(array &\$config): void
+    {
+        // Holen der aktuellen Record UID aus dem Parent config
+        \$eventUid = (int)(\$config['row']['uid'] ?? 0);
+        if (\$eventUid === 0) {
+            return;
+        }
+
+        // Verbindung zur Event-Tabelle
+        \$eventConnection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('tx_firefighter_domain_model_event');
+
+        // UID der zugeordneten Station(en) laden (angenommen Feld heißt "station")
+        \$stationIdString = \$eventConnection->select([
+                'station'
+            ],
+            'tx_firefighter_domain_model_event',
+            ['uid' => \$eventUid]
+        )->fetchOne();
+
+        if (empty(\$stationIdString)) {
+            return;
+        }
+
+        \$stationIds = GeneralUtility::intExplode(',', \$stationIdString, true);
+
+        // Fahrzeuge über die MM-Tabelle laden
+        \$queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tx_firefighter_domain_model_car');
+
+        \$queryBuilder->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+
+        \$cars = \$queryBuilder
+            ->select('car.uid', 'car.norm')
+            ->from('tx_firefighter_domain_model_car', 'car')
+            ->leftJoin(
+                'car',
+                'tx_firefighter_domain_model_car_station_mm',
+                'mm',
+                'car.uid = mm.uid_local'
+            )
+            ->where(
+                \$queryBuilder->expr()->in(
+                    'mm.uid_foreign',
+                    \$queryBuilder->createNamedParameter(
+                        \$stationIds,
+                        Connection::PARAM_INT_ARRAY
+                    )
+                )
+            )
+            ->groupBy('car.uid')
+            ->executeQuery()
+            ->fetchAllAssociative();
+
+        foreach (\$cars as \$car) {
+            \$config['items'][] = [\$car['norm'], (int)\$car['uid']];
+        }
+    }
+}

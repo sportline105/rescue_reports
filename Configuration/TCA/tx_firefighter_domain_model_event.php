@@ -108,7 +108,8 @@ return [
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectMultipleSideBySide',
-                'foreign_table' => 'tx_firefighter_domain_model_car',
+                'itemsProcFunc' => \In2code\Firefighter\Utility\EventVehicleAssignmentUtility::class . '->getAssignmentOptions',
+                ##//'foreign_table' => 'tx_firefighter_domain_model_car',
                 'MM' => 'tx_firefighter_event_car_mm',
                 'size' => 5,
                 'maxitems' => 9999,
@@ -142,7 +143,7 @@ return [
             'label' => 'Stationen',
             'config' => [
                 'type' => 'select',
-                'renderType' => 'selectCheckBox',
+                'renderType' => 'selectMultipleSideBySide',
                 'itemsProcFunc' => 'In2code\\Firefighter\\Utility\\StationLabelUtility->addGroupedStations',
                 'items' => [],
                 'MM' => 'tx_firefighter_event_station_mm',
