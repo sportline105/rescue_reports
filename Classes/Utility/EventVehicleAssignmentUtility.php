@@ -1,106 +1,88 @@
 <?php
 
-namespace In2code\Firefighter\Domain\Model;
+namespace In2code\Firefighter\Utility;
 
-use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-use In2code\Firefighter\Domain\Model\Car;
-use In2code\Firefighter\Domain\Model\EventVehicleAssignment;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 
-class Event extends AbstractEntity
+class EventVehicleAssignmentUtility
 {
-    protected string \$title = '';
-    protected string \$description = '';
-
     /**
-     * @var \DateTime|null
+     * Diese Funktion wird per itemsProcFunc im Feld "event_vehicle_assignments" aufgerufen,
+     * um nur Fahrzeuge pro Station anzuzeigen.
+     *
+     * @param array $config
+     * @return void
      */
-    protected ?\DateTime \$start = null;
-
-    /**
-     * @var \DateTime|null
-     */
-    protected ?\DateTime \$end = null;
-
-    /**
-     * @var ObjectStorage<EventVehicleAssignment>
-     */
-    protected ObjectStorage \$eventVehicleAssignments;
-
-    public function __construct()
+    public function getAssignmentOptions(array &$config): void
     {
-        \$this->eventVehicleAssignments = new ObjectStorage();
-    }
+        $config['items'] = [];
 
-    public function getTitle(): string
-    {
-        return \$this->title;
-    }
+        // UID des aktuellen Event-Datensatzes
+        $eventRow = $config['row'] ?? [];
+        if (empty($eventRow['uid'])) {
+            return;
+        }
 
-    public function setTitle(string \$title): void
-    {
-        \$this->title = \$title;
-    }
+        $eventUid = (int)$eventRow['uid'];
 
-    /**
-     * @return string
-     */
-    public function getDescription(): string
-    {
-        return \$this->description;
-    }
+        // Lade Stations für das Event aus der MM-Tabelle
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('tx_firefighter_event_station_mm');
 
-    public function setDescription(string \$description): void
-    {
-        \$this->description = \$description;
-    }
+        $queryBuilder = $connection->createQueryBuilder();
+        $stationUids = $queryBuilder
+            ->select('uid_foreign')
+            ->from('tx_firefighter_event_station_mm')
+            ->where(
+                $queryBuilder->expr()->eq('uid_local', $queryBuilder->createNamedParameter($eventUid, \PDO::PARAM_INT))
+            )
+            ->executeQuery()
+            ->fetchFirstColumn();
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getStart(): ?\DateTime
-    {
-        return \$this->start;
-    }
+        if (empty($stationUids)) {
+            return;
+        }
 
-    public function setStart(?\DateTime \$start): void
-    {
-        \$this->start = \$start;
-    }
+        // Lade Fahrzeuge aus den verknüpften Stationen über die MM-Tabelle station_car_mm
+        $carConnection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('tx_firefighter_station_car_mm');
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getEnd(): ?\DateTime
-    {
-        return \$this->end;
-    }
+        $carQuery = $carConnection->createQueryBuilder();
+        $carQuery->getRestrictions()->removeAll();
 
-    public function setEnd(?\DateTime \$end): void
-    {
-        \$this->end = \$end;
-    }
+        $carUids = $carQuery
+            ->select('uid_foreign')
+            ->from('tx_firefighter_station_car_mm')
+            ->where(
+                $carQuery->expr()->in('uid_local', $carQuery->createNamedParameter($stationUids, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
+            )
+            ->executeQuery()
+            ->fetchFirstColumn();
 
-    /**
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<EventVehicleAssignment>
-     */
-    public function getEventVehicleAssignments(): \TYPO3\CMS\Extbase\Persistence\ObjectStorage
-    {
-        return \$this->eventVehicleAssignments;
-    }
+        if (empty($carUids)) {
+            return;
+        }
 
-    public function setEventVehicleAssignments(ObjectStorage \$assignments): void
-    {
-        \$this->eventVehicleAssignments = \$assignments;
-    }
+        // Fahrzeuge aus der Haupttabelle abrufen
+        $mainConnection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('tx_firefighter_domain_model_car');
 
-    public function addEventVehicleAssignment(EventVehicleAssignment \$assignment): void
-    {
-        \$this->eventVehicleAssignments->attach(\$assignment);
-    }
+        $mainQuery = $mainConnection->createQueryBuilder();
+        $mainQuery->getRestrictions()->removeAll();
 
-    public function removeEventVehicleAssignment(EventVehicleAssignment \$assignment): void
-    {
-        \$this->eventVehicleAssignments->detach(\$assignment);
+        $cars = $mainQuery
+            ->select('uid', 'name')
+            ->from('tx_firefighter_domain_model_car')
+            ->where(
+                $mainQuery->expr()->in('uid', $mainQuery->createNamedParameter($carUids, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
+            )
+            ->orderBy('name', 'ASC')
+            ->executeQuery()
+            ->fetchAllAssociative();
+
+        foreach ($cars as $car) {
+            $config['items'][] = [$car['name'], $car['uid']];
+        }
     }
 }

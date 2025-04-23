@@ -88,7 +88,7 @@ return [
     'config' => [
         'type' => 'select',
         'renderType' => 'selectCheckBox',
-        'itemsProcFunc' => 'In2code\\Firefighter\\Utility\\EventVehicleAssignmentUtility->getAssignmentOptions',
+        'itemsProcFunc' => In2code\Firefighter\Utility\EventVehicleAssignmentUtility::class . '->getAssignmentOptions',
         'size' => 10,
         'maxitems' => 9999,
     ],
