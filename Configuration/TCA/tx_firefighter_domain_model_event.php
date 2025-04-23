@@ -22,7 +22,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;Feuerwehren, stations, --div--;Fahrzeuge, event_vehicle_assignments, --div--;Bilder, images'
+            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, filtered_vehicle_assignments, --div--;Feuerwehren, stations, --div--;Fahrzeuge, event_vehicle_assignments, filtered_vehicle_assignments, cars, --div--;Bilder, images'
         ],
     ],
     'palettes' => [
@@ -140,18 +140,19 @@ return [
             ),
         ],
         'stations' => [
-            'label' => 'Stationen',
-            'config' => [
-                'type' => 'select',
-                'renderType' => 'selectMultipleSideBySide',
-                'itemsProcFunc' => 'In2code\\Firefighter\\Utility\\StationLabelUtility->addGroupedStations',
-                'items' => [],
-                'MM' => 'tx_firefighter_event_station_mm',
-                'size' => 10,
-                'autoSizeMax' => 30,
-                'maxitems' => 9999,
-            ]
-        ],
+    'label' => 'Stationen',
+    'config' => [
+        'type' => 'select',
+        'renderType' => 'selectCheckBox',
+        'itemsProcFunc' => 'In2code\\Firefighter\\Utility\\StationLabelUtility->addGroupedStations',
+        'foreign_table' => 'tx_firefighter_domain_model_station',
+        'foreign_table_where' => 'AND 1=0',
+        'MM' => 'tx_firefighter_event_station_mm',
+        'size' => 10,
+        'autoSizeMax' => 30,
+        'maxitems' => 9999,
+    ]
+],
         'brigade' => [
             'label' => 'Feuerwehr',
             'config' => [
@@ -167,11 +168,21 @@ return [
     'config' => [
         'type' => 'select',
         'renderType' => 'selectCheckBox',
-        'itemsProcFunc' => 'In2code\\Firefighter\\Utility\\EventVehicleAssignmentUtility->getAssignmentOptions',
+        'itemsProcFunc' => 'In2code\Firefighter\Utility\EventVehicleAssignmentUtility->getAssignmentOptions',
         'items' => [],
         'size' => 10,
         'maxitems' => 9999,
     ],
+],
+'filtered_vehicle_assignments' => [
+    'label' => 'Fahrzeugeinsatz (automatisch gefiltert)',
+    'config' => [
+        'type' => 'select',
+        'renderType' => 'selectCheckBox',
+        'itemsProcFunc' => \In2code\Firefighter\Utility\EventVehicleAssignmentUtility::class . '->debugAssignmentOptions',
+        'items' => [],
+        'multiple' => true,
+    ]
 ],
     ]
 ];

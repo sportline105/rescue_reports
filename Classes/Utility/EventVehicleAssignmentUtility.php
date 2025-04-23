@@ -4,73 +4,58 @@ namespace In2code\Firefighter\Utility;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 
-class EventVehicleAssignmentUtility
+namespace In2code\Firefighter\Utility;
+
+class EventVehicleAssignmentUtility {
+public function debugAssignmentOptions(array &$config): void
 {
-    /**
-     * itemsProcFunc for field "Fahrzeugeinsatz"
-     * Dynamisch Fahrzeuge basierend auf gewählten Stationen im Event-Datensatz laden.
-     *
-     * @param array \$config
-     */
-    public function getAssignmentOptions(array &\$config): void
+    $config['items'][] = ['Test-Fahrzeug A', 1];
+    $config['items'][] = ['Test-Fahrzeug B', 2];
+}
+
+
+    protected function getRelatedStationUids(int $eventUid): array
     {
-        // Holen der aktuellen Record UID aus dem Parent config
-        \$eventUid = (int)(\$config['row']['uid'] ?? 0);
-        if (\$eventUid === 0) {
-            return;
-        }
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('tx_firefighter_event_station_mm');
 
-        // Verbindung zur Event-Tabelle
-        \$eventConnection = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable('tx_firefighter_domain_model_event');
-
-        // UID der zugeordneten Station(en) laden (angenommen Feld heißt "station")
-        \$stationIdString = \$eventConnection->select([
-                'station'
-            ],
-            'tx_firefighter_domain_model_event',
-            ['uid' => \$eventUid]
-        )->fetchOne();
-
-        if (empty(\$stationIdString)) {
-            return;
-        }
-
-        \$stationIds = GeneralUtility::intExplode(',', \$stationIdString, true);
-
-        // Fahrzeuge über die MM-Tabelle laden
-        \$queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable('tx_firefighter_domain_model_car');
-
-        \$queryBuilder->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
-
-        \$cars = \$queryBuilder
-            ->select('car.uid', 'car.norm')
-            ->from('tx_firefighter_domain_model_car', 'car')
-            ->leftJoin(
-                'car',
-                'tx_firefighter_domain_model_car_station_mm',
-                'mm',
-                'car.uid = mm.uid_local'
-            )
+        $queryBuilder = $connection->createQueryBuilder();
+        $rows = $queryBuilder
+            ->select('uid_foreign')
+            ->from('tx_firefighter_event_station_mm')
             ->where(
-                \$queryBuilder->expr()->in(
-                    'mm.uid_foreign',
-                    \$queryBuilder->createNamedParameter(
-                        \$stationIds,
-                        Connection::PARAM_INT_ARRAY
-                    )
-                )
+                $queryBuilder->expr()->eq('uid_local', $queryBuilder->createNamedParameter($eventUid))
             )
-            ->groupBy('car.uid')
             ->executeQuery()
-            ->fetchAllAssociative();
+            ->fetchFirstColumn();
 
-        foreach (\$cars as \$car) {
-            \$config['items'][] = [\$car['norm'], (int)\$car['uid']];
+        return array_map('intval', $rows);
+    }
+
+    protected function getVehiclesByStations(array $stationUids): array
+    {
+        if (empty($stationUids)) {
+            return [];
         }
+
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('tx_firefighter_station_car_mm');
+
+        $queryBuilder = $connection->createQueryBuilder();
+        $queryBuilder
+            ->select(
+                'sc.uid_foreign AS car_uid',
+                's.name AS station_name',
+                'c.name AS car_name'
+            )
+            ->from('tx_firefighter_station_car_mm', 'sc')
+            ->innerJoin('sc', 'tx_firefighter_domain_model_station', 's', 's.uid = sc.uid_local')
+            ->innerJoin('sc', 'tx_firefighter_domain_model_car', 'c', 'c.uid = sc.uid_foreign')
+            ->where(
+                $queryBuilder->expr()->in('sc.uid_local', $queryBuilder->createNamedParameter($stationUids, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
+            );
+
+        return $queryBuilder->executeQuery()->fetchAllAssociative();
     }
 }

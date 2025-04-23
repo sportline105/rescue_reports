@@ -103,4 +103,5 @@ class Event extends AbstractEntity
     {
         \$this->eventVehicleAssignments->detach(\$assignment);
     }
+
 }

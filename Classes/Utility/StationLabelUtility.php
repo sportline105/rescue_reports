@@ -19,45 +19,49 @@ class StationLabelUtility
             ->executeQuery()
             ->fetchAllAssociative();
 
-        $brigadeNames = $this->getBrigadeNames();
+        $brigadeData = $this->getBrigadeData();
 
         $grouped = [];
 
         foreach ($stations as $station) {
-            $brigade = $brigadeNames[$station['brigade']] ?? 'Unbekannte Feuerwehr';
-            $grouped[$brigade][] = [$station['name'], $station['uid']];
+            $brigadeId = (int)($station['brigade'] ?? 0);
+            $brigadeName = $brigadeData[$brigadeId]['name'] ?? 'Unbekannt';
+            $priority = $brigadeData[$brigadeId]['priority'] ?? 999;
+
+            $key = str_pad($priority, 3, '0', STR_PAD_LEFT) . '_' . $brigadeName;
+            $grouped[$key][] = [$station['name'], $station['uid']];
         }
 
-        // 🔠 Sortiere Stationen alphabetisch innerhalb jeder Brigade
-        foreach ($grouped as &$items) {
+        ksort($grouped); // sort by priority+name
+
+        foreach ($grouped as $label => $items) {
             usort($items, fn($a, $b) => strcasecmp($a[0], $b[0]));
-        }
-        unset($items);
-
-        // 🔢 Optional: Brigade-Gruppen alphabetisch sortieren
-        ksort($grouped);
-
-        foreach ($grouped as $brigade => $items) {
-            $config['items'][] = [$brigade, '--div--'];
+            $config['items'][] = [explode('_', $label, 2)[1], '--div--'];
             foreach ($items as $item) {
                 $config['items'][] = $item;
             }
         }
     }
 
-    protected function getBrigadeNames(): array
+    protected function getBrigadeData(): array
     {
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable('tx_firefighter_domain_model_brigade');
 
         $queryBuilder = $connection->createQueryBuilder();
         $rows = $queryBuilder
-            ->select('uid', 'name')
+            ->select('uid', 'name', 'priority')
             ->from('tx_firefighter_domain_model_brigade')
-            ->orderBy('name') // Alternativ: ->orderBy('sorting')
             ->executeQuery()
             ->fetchAllAssociative();
 
-        return array_column($rows, 'name', 'uid');
+        $result = [];
+        foreach ($rows as $row) {
+            $result[(int)$row['uid']] = [
+                'name' => $row['name'],
+                'priority' => (int)$row['priority'],
+            ];
+        }
+        return $result;
     }
 }
