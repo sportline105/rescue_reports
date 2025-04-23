@@ -84,14 +84,15 @@ return [
             ]
         ],
         'cars' => [
-            'label' => 'Fahrzeuge',
-            'config' => [
-                'type' => 'select',
-                'renderType' => 'selectMultipleSideBySide',
-                'itemsProcFunc' => In2code\Firefighter\Utility\EventVehicleAssignmentUtility::class . '->addStationCarsToAssignment',
-                'size' => 10,
-                'maxitems' => 9999,
-            ],
-        ],
+    'label' => 'Fahrzeuge',
+    'config' => [
+        'type' => 'select',
+        'renderType' => 'selectCheckBox',
+        'itemsProcFunc' => 'In2code\\Firefighter\\Utility\\EventVehicleAssignmentUtility->getAssignmentOptions',
+        'size' => 10,
+        'maxitems' => 9999,
+    ],
+],
+
     ]
 ];

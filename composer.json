@@ -7,10 +7,10 @@
     "typo3/cms-core": "^11.5 || ^12.4"
   },
   "autoload": {
-    "psr-4": {
-      "In2code\\Firefighter\\": "Classes/"
-    }
-  },
+  "psr-4": {
+    "In2code\\Firefighter\\": "Classes/"
+  }
+},
   "extra": {
     "typo3/cms": {
       "extension-key": "firefighter"

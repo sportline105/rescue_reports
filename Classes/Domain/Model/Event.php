@@ -1,8 +1,10 @@
 <?php
+
 namespace In2code\Firefighter\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use In2code\Firefighter\Domain\Model\Car;
 
 class Event extends AbstractEntity
 {
@@ -12,14 +14,13 @@ class Event extends AbstractEntity
     protected ?\DateTime $end = null;
 
     /** @var ObjectStorage<Car> */
-    protected ObjectStorage $cars;
+    protected ObjectStorage $eventVehicleAssignments;
 
     public function __construct()
     {
-        $this->cars = new ObjectStorage();
+        $this->eventVehicleAssignments = new ObjectStorage();
     }
 
-    // Getter/Setter für title
     public function getTitle(): string
     {
         return $this->title;
@@ -30,7 +31,6 @@ class Event extends AbstractEntity
         $this->title = $title;
     }
 
-    // Getter/Setter für description
     public function getDescription(): string
     {
         return $this->description;
@@ -41,7 +41,6 @@ class Event extends AbstractEntity
         $this->description = $description;
     }
 
-    // Getter/Setter für start
     public function getStart(): ?\DateTime
     {
         return $this->start;
@@ -52,7 +51,6 @@ class Event extends AbstractEntity
         $this->start = $start;
     }
 
-    // Getter/Setter für end
     public function getEnd(): ?\DateTime
     {
         return $this->end;
@@ -63,24 +61,13 @@ class Event extends AbstractEntity
         $this->end = $end;
     }
 
-    // Getter/Setter für cars
-    public function getCars(): ObjectStorage
+    public function getEventVehicleAssignments(): ObjectStorage
     {
-        return $this->cars;
+        return $this->eventVehicleAssignments;
     }
 
-    public function setCars(ObjectStorage $cars): void
+    public function setEventVehicleAssignments(ObjectStorage $assignments): void
     {
-        $this->cars = $cars;
-    }
-
-    public function addCar(Car $car): void
-    {
-        $this->cars->attach($car);
-    }
-
-    public function removeCar(Car $car): void
-    {
-        $this->cars->detach($car);
+        $this->eventVehicleAssignments = $assignments;
     }
 }

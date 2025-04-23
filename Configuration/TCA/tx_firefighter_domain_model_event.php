@@ -54,7 +54,8 @@ return [
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden',
             'config' => [
                 'type' => 'check',
-                'items' => [['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.disable', 1]]
+                'items' => [['LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.disable', 1]],
+                'default' => true,
             ]
         ],
         'start' => [
@@ -89,7 +90,7 @@ return [
             'label' => 'Einsatznummer',
             'config' => [
                 'type' => 'input', 'eval' => 'trim',
-                'default' => 'Zö/',
+                'default' => 'ZÖ/',
             ]
         ],
 
@@ -161,19 +162,15 @@ return [
             ]
         ],
         'event_vehicle_assignments' => [
-            'label' => 'Fahrzeug-Zuweisungen',
-            'config' => [
-                'type' => 'inline',
-                'foreign_table' => 'tx_firefighter_domain_model_eventvehicleassignment',
-                'foreign_field' => 'event',
-                'appearance' => [
-                    'collapseAll' => true,
-                    'levelLinksPosition' => 'top',
-                    'useSortable' => true,
-                    'showSynchronizationLink' => true,
-                    'showAllLocalizationLink' => true,
-                ],
-            ],
-        ],
-        ]
+    'label' => 'Fahrzeugeinsatz',
+    'config' => [
+        'type' => 'select',
+        'renderType' => 'selectCheckBox',
+        'itemsProcFunc' => 'In2code\\Firefighter\\Utility\\EventVehicleAssignmentUtility->getAssignmentOptions',
+        'items' => [],
+        'size' => 10,
+        'maxitems' => 9999,
+    ],
+],
+    ]
 ];
