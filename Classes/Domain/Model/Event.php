@@ -4,104 +4,96 @@ namespace In2code\Firefighter\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-use In2code\Firefighter\Domain\Model\Car;
 use In2code\Firefighter\Domain\Model\EventVehicleAssignment;
 
 class Event extends AbstractEntity
 {
-    protected string \$title = '';
-    protected string \$description = '';
+    protected string $title = '';
+    protected string $description = '';
 
     /**
      * @var \DateTime|null
      */
-    protected ?\DateTime \$start = null;
+    protected ?\DateTime $start = null;
 
     /**
      * @var \DateTime|null
      */
-    protected ?\DateTime \$end = null;
+    protected ?\DateTime $end = null;
 
     /**
      * @var ObjectStorage<EventVehicleAssignment>
      */
-    protected ObjectStorage \$eventVehicleAssignments;
+    protected ObjectStorage $eventVehicleAssignments;
 
     public function __construct()
     {
-        \$this->eventVehicleAssignments = new ObjectStorage();
+        $this->eventVehicleAssignments = new ObjectStorage();
     }
 
     public function getTitle(): string
     {
-        return \$this->title;
+        return $this->title;
     }
 
-    public function setTitle(string \$title): void
+    public function setTitle(string $title): void
     {
-        \$this->title = \$title;
+        $this->title = $title;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
-        return \$this->description;
+        return $this->description;
     }
 
-    public function setDescription(string \$description): void
+    public function setDescription(string $description): void
     {
-        \$this->description = \$description;
+        $this->description = $description;
     }
 
-    /**
-     * @return \DateTime|null
-     */
     public function getStart(): ?\DateTime
     {
-        return \$this->start;
+        return $this->start;
     }
 
-    public function setStart(?\DateTime \$start): void
+    public function setStart(?\DateTime $start): void
     {
-        \$this->start = \$start;
+        $this->start = $start;
     }
 
-    /**
-     * @return \DateTime|null
-     */
     public function getEnd(): ?\DateTime
     {
-        return \$this->end;
+        return $this->end;
     }
 
-    public function setEnd(?\DateTime \$end): void
+    public function setEnd(?\DateTime $end): void
     {
-        \$this->end = \$end;
+        $this->end = $end;
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<EventVehicleAssignment>
+     * @return ObjectStorage<EventVehicleAssignment>
      */
-    public function getEventVehicleAssignments(): \TYPO3\CMS\Extbase\Persistence\ObjectStorage
+    public function getEventVehicleAssignments(): ObjectStorage
     {
-        return \$this->eventVehicleAssignments;
+        return $this->eventVehicleAssignments;
     }
 
-    public function setEventVehicleAssignments(ObjectStorage \$assignments): void
+    /**
+     * @param ObjectStorage<EventVehicleAssignment> $assignments
+     */
+    public function setEventVehicleAssignments(ObjectStorage $assignments): void
     {
-        \$this->eventVehicleAssignments = \$assignments;
+        $this->eventVehicleAssignments = $assignments;
     }
 
-    public function addEventVehicleAssignment(EventVehicleAssignment \$assignment): void
+    public function addEventVehicleAssignment(EventVehicleAssignment $assignment): void
     {
-        \$this->eventVehicleAssignments->attach(\$assignment);
+        $this->eventVehicleAssignments->attach($assignment);
     }
 
-    public function removeEventVehicleAssignment(EventVehicleAssignment \$assignment): void
+    public function removeEventVehicleAssignment(EventVehicleAssignment $assignment): void
     {
-        \$this->eventVehicleAssignments->detach(\$assignment);
+        $this->eventVehicleAssignments->detach($assignment);
     }
-
 }

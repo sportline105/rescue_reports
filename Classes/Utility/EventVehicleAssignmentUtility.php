@@ -1,61 +1,66 @@
 <?php
 
-namespace In2code\Firefighter\Utility;
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
 namespace In2code\Firefighter\Utility;
 
-class EventVehicleAssignmentUtility {
-public function debugAssignmentOptions(array &$config): void
+class EventVehicleAssignmentUtility
 {
-    $config['items'][] = ['Test-Fahrzeug A', 1];
-    $config['items'][] = ['Test-Fahrzeug B', 2];
-}
+    public static function getAssignmentOptions(array &$config): void
+    {
+        $eventUid = (int)($config['row']['uid'] ?? 0);
+        if ($eventUid <= 0) {
+            return;
+        }
 
+        $utility = new self();
+        $stationUids = $utility->getRelatedStationUids($eventUid);
+        if (empty($stationUids)) {
+            return;
+        }
 
-    protected function getRelatedStationUids(int $eventUid): array
+        $vehicles = $utility->getVehiclesWithStationName($stationUids);
+
+        foreach ($vehicles as $vehicle) {
+            $label = $vehicle['station_name'] . ' – ' . $vehicle['car_name'];
+            $config['items'][] = [$label, $vehicle['car_uid']];
+        }
+    }
+
+    public function getRelatedStationUids(int $eventUid): array
     {
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable('tx_firefighter_event_station_mm');
 
-        $queryBuilder = $connection->createQueryBuilder();
-        $rows = $queryBuilder
+        return $connection->createQueryBuilder()
             ->select('uid_foreign')
             ->from('tx_firefighter_event_station_mm')
-            ->where(
-                $queryBuilder->expr()->eq('uid_local', $queryBuilder->createNamedParameter($eventUid))
-            )
+            ->where('uid_local = :uid')
+            ->setParameter(':uid', $eventUid, \PDO::PARAM_INT)
             ->executeQuery()
             ->fetchFirstColumn();
-
-        return array_map('intval', $rows);
     }
 
-    protected function getVehiclesByStations(array $stationUids): array
+    public function getVehiclesWithStationName(array $stationUids): array
     {
-        if (empty($stationUids)) {
-            return [];
-        }
-
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable('tx_firefighter_station_car_mm');
 
         $queryBuilder = $connection->createQueryBuilder();
-        $queryBuilder
-            ->select(
-                'sc.uid_foreign AS car_uid',
-                's.name AS station_name',
-                'c.name AS car_name'
-            )
+        $rows = $queryBuilder
+            ->select('c.uid AS car_uid', 's.name AS station_name', 'c.name AS car_name')
             ->from('tx_firefighter_station_car_mm', 'sc')
             ->innerJoin('sc', 'tx_firefighter_domain_model_station', 's', 's.uid = sc.uid_local')
             ->innerJoin('sc', 'tx_firefighter_domain_model_car', 'c', 'c.uid = sc.uid_foreign')
             ->where(
                 $queryBuilder->expr()->in('sc.uid_local', $queryBuilder->createNamedParameter($stationUids, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
-            );
+            )
+            ->orderBy('s.name', 'ASC')
+            ->addOrderBy('c.name', 'ASC')
+            ->executeQuery()
+            ->fetchAllAssociative();
 
-        return $queryBuilder->executeQuery()->fetchAllAssociative();
+        return $rows;
     }
 }
