@@ -2,6 +2,7 @@
 namespace In2code\Firefighter\Form\Element;
 
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use In2code\Firefighter\Utility\EventVehicleAssignmentUtility;
 
 class EventVehicleAssignmentElement extends AbstractFormElement
@@ -14,7 +15,7 @@ class EventVehicleAssignmentElement extends AbstractFormElement
         $eventUid = (int)($this->data['databaseRow']['uid'] ?? 0);
 
         // Fahrzeuge holen (du kannst hier deine Utility-Klasse verwenden)
-        $utility = new EventVehicleAssignmentUtility();
+        $utility = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\Firefighter\Utility\EventVehicleAssignmentUtility::class);
         $vehicles = [];
         if ($eventUid) {
             $stationUids = $utility->getRelatedStationUids($eventUid);

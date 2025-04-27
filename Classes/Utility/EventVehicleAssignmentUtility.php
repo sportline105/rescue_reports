@@ -1,9 +1,8 @@
 <?php
+namespace In2code\Firefighter\Utility;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-
-namespace In2code\Firefighter\Utility;
 
 class EventVehicleAssignmentUtility
 {
