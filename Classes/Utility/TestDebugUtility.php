@@ -1,6 +1,6 @@
 <?php
 
-namespace In2code\Firefighter\Utility;
+namespace In2code\RescueReports\Utility;
 
 class TestDebugUtility
 {

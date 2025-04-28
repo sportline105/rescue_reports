@@ -1,5 +1,5 @@
-// === Classes/Controller/Backend/MigrationController.php ===
-namespace In2code\Firefighter\Controller\Backend;
+<?php
+namespace In2code\RescueReports\Controller\Backend;
 
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -12,14 +12,14 @@ class MigrationController extends ActionController
     public function runAction(): void
     {
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable('tx_firefighter_einsatz');
+            ->getConnectionForTable('tx_rescuereports_einsatz');
 
-        $rows = $connection->select(['uid', 'cars', 'type', 'station'], 'tx_firefighter_einsatz')->fetchAllAssociative();
+        $rows = $connection->select(['uid', 'cars', 'type', 'station'], 'tx_rescuereports_einsatz')->fetchAllAssociative();
 
         $mmTables = [
-            'cars' => 'tx_firefighter_event_car_mm',
-            'type' => 'tx_firefighter_event_type_mm',
-            'station' => 'tx_firefighter_event_station_mm',
+            'cars' => 'tx_rescuereports_event_car_mm',
+            'type' => 'tx_rescuereports_event_type_mm',
+            'station' => 'tx_rescuereports_event_station_mm',
         ];
 
         $relationCount = ['cars' => 0, 'type' => 0, 'station' => 0];
@@ -55,9 +55,9 @@ class MigrationController extends ActionController
     public function resetAction(): void
     {
         foreach ([
-            'tx_firefighter_event_car_mm',
-            'tx_firefighter_event_type_mm',
-            'tx_firefighter_event_station_mm'
+            'tx_rescuereports_event_car_mm',
+            'tx_rescuereports_event_type_mm',
+            'tx_rescuereports_event_station_mm'
         ] as $table) {
             GeneralUtility::makeInstance(ConnectionPool::class)
                 ->getConnectionForTable($table)

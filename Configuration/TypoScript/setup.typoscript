@@ -1,10 +1,10 @@
- plugin.tx_firefighter_eventlist {
+plugin.tx_rescuereports_eventlist {
    view {
-     templateRootPaths.0 = EXT:firefighter/Resources/Private/Templates/
-     layoutRootPaths.0 = EXT:firefighter/Resources/Private/Layouts/
-     partialRootPaths.0 = EXT:firefighter/Resources/Private/Partials/
+     templateRootPaths.0 = EXT:rescue_reports/Resources/Private/Templates/
+     layoutRootPaths.0 = EXT:rescue_reports/Resources/Private/Layouts/
+     partialRootPaths.0 = EXT:rescue_reports/Resources/Private/Partials/
    }
    persistence {
-     storagePid = {$plugin.tx_firefighter_eventlist.persistence.storagePid}
+     storagePid = {$plugin.tx_rescuereports_eventlist.persistence.storagePid}
    }
- }
+}

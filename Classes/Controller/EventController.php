@@ -1,8 +1,8 @@
 <?php
-namespace In2code\Firefighter\Controller;
+namespace In2code\RescueReports\Controller;
 
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use In2code\Firefighter\Domain\Repository\EventRepository;
+use RescueOrganization\RescueReports\Domain\Repository\EventRepository;
 use Psr\Http\Message\ResponseInterface;
 
 class EventController extends ActionController

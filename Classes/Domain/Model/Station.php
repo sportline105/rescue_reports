@@ -1,6 +1,6 @@
 <?php
 
-namespace In2code\Firefighter\Domain\Model;
+namespace In2code\RescueReports\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
@@ -10,12 +10,12 @@ class Station extends AbstractEntity
     protected string $name = '';
 
     /**
-     * @var \In2code\Firefighter\Domain\Model\Brigade|null
+     * @var \In2code\RescueReports\Domain\Model\Brigade|null
      */
     protected $brigade = null;
 
     /**
-     * @var ObjectStorage<\In2code\Firefighter\Domain\Model\Car>
+     * @var ObjectStorage<\In2code\RescueReports\Domain\Model\Car>
      */
     protected $cars;
 

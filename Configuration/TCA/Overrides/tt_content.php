@@ -2,20 +2,24 @@
 
 /// === Configuration/TCA/Overrides/tt_content.php ===
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
-    'In2code.Firefighter',
+    'RescueOrganization.RescueReports',
     'Eventlist',
-    'Firefighter: Einsätze'
+    'Rescue Reports: Einsätze'
 );
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
-    'firefighter',
+    'rescue_reports',
     'Configuration/TypoScript',
-    'Firefighter Setup'
+    'Rescue Reports Setup'
 );
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr(
-    'tx_firefighter_domain_model_event',
-    'EXT:firefighter/Resources/Private/Language/locallang_csh_tx_firefighter_domain_model_event.xlf'
+    'tx_rescuereports_domain_model_event',
+    'EXT:rescue_reports/Resources/Private/Language/locallang_csh_tx_rescuereports_domain_model_event.xlf'
 );
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_firefighter_domain_model_event');
+// In TYPO3 11 notwendig:
+$versionInformation = new \TYPO3\CMS\Core\Information\Typo3Version();
+if ($versionInformation->getMajorVersion() < 12) {
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_rescuereports_domain_model_event');
+}

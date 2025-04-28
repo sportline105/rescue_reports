@@ -1,6 +1,6 @@
 <?php
 
-namespace In2code\Firefighter\Domain\Repository;
+namespace In2code\RescueReports\Domain\Repository;
 
 use TYPO3\CMS\Extbase\Persistence\Repository;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;

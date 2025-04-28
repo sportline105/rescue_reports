@@ -1,10 +1,10 @@
 <?php
 
-namespace In2code\Firefighter\Domain\Model;
+namespace In2code\RescueReports\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-use In2code\Firefighter\Domain\Model\EventVehicleAssignment;
+use In2code\RescueReports\Domain\Model\EventVehicleAssignment;
 
 class Event extends AbstractEntity
 {

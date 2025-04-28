@@ -1,4 +1,4 @@
-namespace In2code\Firefighter\Domain\Model;
+namespace In2code\RescueReports\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;

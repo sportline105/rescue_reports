@@ -1,6 +1,6 @@
 <?php
 
-namespace In2code\Firefighter\Utility;
+namespace In2code\RescueReports\Utility;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -10,12 +10,12 @@ class StationLabelUtility
     public function addGroupedStations(array &$config): void
     {
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable('tx_firefighter_domain_model_station');
+            ->getConnectionForTable('tx_rescuereports_domain_model_station');
 
         $queryBuilder = $connection->createQueryBuilder();
         $stations = $queryBuilder
             ->select('uid', 'name', 'brigade')
-            ->from('tx_firefighter_domain_model_station')
+            ->from('tx_rescuereports_domain_model_station')
             ->executeQuery()
             ->fetchAllAssociative();
 
@@ -46,12 +46,12 @@ class StationLabelUtility
     protected function getBrigadeData(): array
     {
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable('tx_firefighter_domain_model_brigade');
+            ->getConnectionForTable('tx_rescuereports_domain_model_brigade');
 
         $queryBuilder = $connection->createQueryBuilder();
         $rows = $queryBuilder
             ->select('uid', 'name', 'priority')
-            ->from('tx_firefighter_domain_model_brigade')
+            ->from('tx_rescuereports_domain_model_brigade')
             ->executeQuery()
             ->fetchAllAssociative();
 
