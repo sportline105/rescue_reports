@@ -23,7 +23,7 @@ return [
 
     'types' => [
         '1' => [
-            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;Stationen, stations, --div--;Fahrzeuge, event_vehicle_assignment, cars, --div--;Bilder, images'
+            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;Stationen, stations, --div--;Fahrzeuge, cars, event_vehicle_assignment, --div--;Bilder, images'
         ],
     ],
 
@@ -125,20 +125,6 @@ return [
                 'maxitems' => 9999,
             ],
         ],
-
-        // Fahrzeuge (alle auswählbar)
-        'cars' => [
-            'label' => 'Fahrzeuge (manuelle Auswahl)',
-            'config' => [
-                'type' => 'select',
-                'renderType' => 'selectMultipleSideBySide',
-                'foreign_table' => 'tx_firefighter_domain_model_car',
-                'MM' => 'tx_firefighter_event_car_mm',
-                'size' => 5,
-                'maxitems' => 9999,
-            ],
-        ],
-
         // Bilder
         'images' => [
             'label' => 'Bilder',

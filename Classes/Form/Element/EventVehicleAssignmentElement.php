@@ -1,37 +1,73 @@
 <?php
+
 namespace In2code\Firefighter\Form\Element;
 
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use In2code\Firefighter\Utility\EventVehicleAssignmentUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 
 class EventVehicleAssignmentElement extends AbstractFormElement
 {
-    public function render()
+    public function render(): array
     {
         $resultArray = $this->initializeResultArray();
 
-        // Hole die aktuelle Event-UID
         $eventUid = (int)($this->data['databaseRow']['uid'] ?? 0);
 
-        // Fahrzeuge holen (du kannst hier deine Utility-Klasse verwenden)
-        $utility = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\Firefighter\Utility\EventVehicleAssignmentUtility::class);
         $vehicles = [];
-        if ($eventUid) {
-            $stationUids = $utility->getRelatedStationUids($eventUid);
-            $vehicles = $utility->getVehiclesWithStationName($stationUids);
+
+        if ($eventUid > 0) {
+            $stationUids = $this->getRelatedStationUids($eventUid);
+            if (!empty($stationUids)) {
+                $vehicles = $this->getVehiclesWithStationName($stationUids);
+            }
         }
 
-        // Selectbox bauen
-        $html = '<select name="' . htmlspecialchars($this->data['parameterArray']['itemFormElName']) . '">';
+        // baue die Feldoptionen
+        $options = [];
         foreach ($vehicles as $vehicle) {
             $label = $vehicle['station_name'] . ' – ' . $vehicle['car_name'];
-            $value = $vehicle['car_uid'];
-            $html .= '<option value="' . htmlspecialchars($value) . '">' . htmlspecialchars($label) . '</option>';
+            $options[] = [
+                'label' => $label,
+                'value' => $vehicle['car_uid'],
+            ];
         }
-        $html .= '</select>';
 
-        $resultArray['html'] = $html;
+        $resultArray['options'] = $options;
+
         return $resultArray;
+    }
+
+    protected function getRelatedStationUids(int $eventUid): array
+    {
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('tx_firefighter_event_station_mm');
+
+        return $connection->createQueryBuilder()
+            ->select('uid_foreign')
+            ->from('tx_firefighter_event_station_mm')
+            ->where('uid_local = :uid')
+            ->setParameter(':uid', $eventUid)
+            ->executeQuery()
+            ->fetchFirstColumn();
+    }
+
+    protected function getVehiclesWithStationName(array $stationUids): array
+    {
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('tx_firefighter_station_car_mm');
+
+        return $connection->createQueryBuilder()
+            ->select('c.uid AS car_uid', 's.name AS station_name', 'c.name AS car_name')
+            ->from('tx_firefighter_station_car_mm', 'sc')
+            ->innerJoin('sc', 'tx_firefighter_domain_model_station', 's', 's.uid = sc.uid_local')
+            ->innerJoin('sc', 'tx_firefighter_domain_model_car', 'c', 'c.uid = sc.uid_foreign')
+            ->where(
+                $connection->createQueryBuilder()->expr()->in('sc.uid_local', $stationUids)
+            )
+            ->orderBy('s.name', 'ASC')
+            ->addOrderBy('c.name', 'ASC')
+            ->executeQuery()
+            ->fetchAllAssociative();
     }
 }
