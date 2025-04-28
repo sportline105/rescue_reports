@@ -2,7 +2,7 @@
 
 /// === Configuration/TCA/Overrides/tt_content.php ===
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
-    'RescueOrganization.RescueReports',
+    'In2code.RescueReports',
     'Eventlist',
     'Rescue Reports: Einsätze'
 );

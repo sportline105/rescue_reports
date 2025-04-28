@@ -2,7 +2,7 @@
 namespace In2code\RescueReports\Controller;
 
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use RescueOrganization\RescueReports\Domain\Repository\EventRepository;
+use In2code\RescueReports\Domain\Repository\EventRepository;
 use Psr\Http\Message\ResponseInterface;
 
 class EventController extends ActionController
