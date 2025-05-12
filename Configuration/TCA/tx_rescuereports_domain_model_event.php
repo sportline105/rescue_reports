@@ -22,7 +22,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;Stationen, stations, --div--;Fahrzeuge, cars, event_vehicle_assignment, --div--;Bilder, images'
+            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;Stationen, stations, --div--;Fahrzeuge, cars, --div--;Bilder, images'
         ],
     ],
 
@@ -116,14 +116,24 @@ return [
         ],
 
         // Fahrzeugeinsatz (gefiltert)
-        'event_vehicle_assignment' => [
-            'label' => 'Fahrzeugeinsatz',
-            'config' => [
-                'type' => 'user',
-                'renderType' => 'eventVehicleAssignment',
-                'maxitems' => 9999,
+        'cars' => [
+        'label' => 'Eingesetzte Fahrzeuge',
+        'description' => 'Eingesetzte Feuerwehren auswählen und Datensatz zwischenspeichern. Die Liste der möglichen Fahrzeuge wird anschließend erzeugt.',
+        'config' => [
+            'type' => 'select',
+            'renderType' => 'selectCheckBox',
+            #'renderType' => 'selectMultipleSideBySide',
+            'foreign_table' => 'tx_rescuereports_domain_model_car',
+            'MM' => 'tx_rescuereports_event_car_mm', // oder leer, wenn nicht gespeichert werden soll
+            'itemsProcFunc' => 'In2code\\RescueReports\\Utility\\CarFilterUtility->filterBySelectedStations',
+            'foreign_table_where' => 'AND 1=0',
+            'size' => 10,
+            'maxitems' => 9999,
+            'appearance' => [
+            'expandAll' => true,
             ],
         ],
+    ],
         // Bilder
         'images' => [
             'label' => 'Bilder',
