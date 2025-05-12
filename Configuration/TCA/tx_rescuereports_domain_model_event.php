@@ -117,23 +117,19 @@ return [
 
         // Fahrzeugeinsatz (gefiltert)
         'cars' => [
-        'label' => 'Eingesetzte Fahrzeuge',
-        'description' => 'Eingesetzte Feuerwehren auswählen und Datensatz zwischenspeichern. Die Liste der möglichen Fahrzeuge wird anschließend erzeugt.',
-        'config' => [
-            'type' => 'select',
-            'renderType' => 'selectCheckBox',
-            #'renderType' => 'selectMultipleSideBySide',
-            'foreign_table' => 'tx_rescuereports_domain_model_car',
-            'MM' => 'tx_rescuereports_event_car_mm', // oder leer, wenn nicht gespeichert werden soll
-            'itemsProcFunc' => 'In2code\\RescueReports\\Utility\\CarFilterUtility->filterBySelectedStations',
-            'foreign_table_where' => 'AND 1=0',
-            'size' => 10,
-            'maxitems' => 9999,
-            'appearance' => [
-            'expandAll' => true,
+            'label' => 'Fahrzeuge',
+            'config' => [
+                'type' => 'select',
+                'renderType' => 'selectCheckBox',
+                'items' => [],
+                'itemsProcFunc' => 'In2code\\RescueReports\\Utility\\CarFilterUtility->filterBySelectedStations',
+                'minitems' => 0,
+                'maxitems' => 999,
+                'appearance' => [
+                    'expandAll' => true,
+                ],
             ],
         ],
-    ],
         // Bilder
         'images' => [
             'label' => 'Bilder',

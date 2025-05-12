@@ -2,23 +2,20 @@
 namespace In2code\RescueReports\Utility;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\DebugUtility;
+//use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
 class CarFilterUtility
 {
     public function filterBySelectedStations(array &$config)
     {
-        // Debug: Anfangs-Config
-        DebugUtility::debug($config, 'Eingehendes $config');
+        //DebugUtility::debug($config, 'Eingehendes $config');
 
         $selectedStationUids = $config['row']['stations'] ?? [];
-
         if (!is_array($selectedStationUids)) {
             $selectedStationUids = GeneralUtility::intExplode(',', $selectedStationUids, true);
         }
-
-        DebugUtility::debug($selectedStationUids, 'Station-UIDs');
+        //DebugUtility::debug($selectedStationUids, 'Station-UIDs');
 
         $config['items'] = [];
 
@@ -38,19 +35,17 @@ class CarFilterUtility
                 ->executeQuery()
                 ->fetchAllAssociative();
 
-            DebugUtility::debug($rows, 'Station-Car-Zuordnungen');
+            //DebugUtility::debug($rows, 'Station-Car-Zuordnungen');
 
-            // Fahrzeuge nach Brigade gruppieren
             $grouped = [];
             foreach ($rows as $row) {
                 $stationUid = (int)$row['uid_local'];
                 $carUid = (int)$row['uid_foreign'];
 
-                // Station holen
                 $stationQuery = GeneralUtility::makeInstance(ConnectionPool::class)
                     ->getQueryBuilderForTable('tx_rescuereports_domain_model_station');
                 $station = $stationQuery
-                    ->select('uid', 'name', 'brigade')
+                    ->select('uid', 'name', 'brigade', 'sorting')
                     ->from('tx_rescuereports_domain_model_station')
                     ->where(
                         $stationQuery->expr()->eq('uid', $stationQuery->createNamedParameter($stationUid, \PDO::PARAM_INT))
@@ -58,26 +53,28 @@ class CarFilterUtility
                     ->executeQuery()
                     ->fetchAssociative();
 
-                DebugUtility::debug($station, 'Station');
+                //DebugUtility::debug($station, 'Station');
 
-                // Brigade holen
                 $brigadeName = '';
+                $brigadePriority = 9999;
+                $brigadeUid = 0;
                 if (!empty($station['brigade'])) {
                     $brigadeQuery = GeneralUtility::makeInstance(ConnectionPool::class)
                         ->getQueryBuilderForTable('tx_rescuereports_domain_model_brigade');
                     $brigade = $brigadeQuery
-                        ->select('uid', 'name')
+                        ->select('uid', 'name', 'priority')
                         ->from('tx_rescuereports_domain_model_brigade')
                         ->where(
                             $brigadeQuery->expr()->eq('uid', $brigadeQuery->createNamedParameter($station['brigade'], \PDO::PARAM_INT))
                         )
                         ->executeQuery()
                         ->fetchAssociative();
-                    DebugUtility::debug($brigade, 'Brigade');
+                    //DebugUtility::debug($brigade, 'Brigade');
                     $brigadeName = $brigade['name'] ?? '';
+                    $brigadePriority = isset($brigade['priority']) ? (int)$brigade['priority'] : 9999;
+                    $brigadeUid = (int)($brigade['uid'] ?? 0);
                 }
 
-                // Fahrzeug holen
                 $carQuery = GeneralUtility::makeInstance(ConnectionPool::class)
                     ->getQueryBuilderForTable('tx_rescuereports_domain_model_car');
                 $car = $carQuery
@@ -89,31 +86,60 @@ class CarFilterUtility
                     ->executeQuery()
                     ->fetchAssociative();
 
-                DebugUtility::debug($car, 'Fahrzeug');
+                //DebugUtility::debug($car, 'Fahrzeug');
 
                 if ($car && $station && $brigadeName) {
-                    $label = $station['name'] . ' – ' . $car['name'];
-                    $grouped[$brigadeName][] = [$label, $car['uid'] . '__' . $station['uid']];
-                }
+    				$label = '     🚒 ' . $car['name'];
+    				$value = 'fz:' . $car['uid'] . ':' . $station['uid'];
+    				$grouped[$brigadeUid]['priority'] = $brigadePriority;
+    				$grouped[$brigadeUid]['name'] = $brigadeName;
+    				$grouped[$brigadeUid]['stations'][$stationUid]['name'] = $station['name'];
+    				$grouped[$brigadeUid]['stations'][$stationUid]['sorting'] = $station['sorting'];
+    				$grouped[$brigadeUid]['stations'][$stationUid]['cars'][] = [$label, $value];
+				}
+
             }
 
-            //DebugUtility::debug($grouped, 'Gruppierte Fahrzeuge nach Brigade');
+            //DebugUtility::debug($grouped, 'Gruppiert: Brigade > Station > Fahrzeuge');
 
-            // Sortierung nach Brigade-Name (optional)
-            ksort($grouped);
+            uasort($grouped, function($a, $b) {
+                return $a['priority'] <=> $b['priority'];
+            });
 
-            // Items-Array mit Dividern aufbauen
-            foreach ($grouped as $brigadeName => $items) {
-                if (trim($brigadeName) !== '') {
-                    $config['items'][] = ['--div--' => $brigadeName]; // Divider korrekt!
+            foreach ($grouped as $brigadeArr) {
+                if (trim($brigadeArr['name']) !== '') {
+                    $config['items'][] = [
+                        '🏘️ ' . $brigadeArr['name'],
+                        null,
+                        null,
+                        null,
+                        'divider'
+                    ];
                 }
-                foreach ($items as $item) {
-                    $config['items'][] = $item;
+                $stations = $brigadeArr['stations'];
+                uasort($stations, function($a, $b) {
+                    return ($a['sorting'] ?? 9999) <=> ($b['sorting'] ?? 9999);
+                });
+                foreach ($stations as $station) {
+                    if (!empty($station['name'])) {
+                        $config['items'][] = [
+                            '📍 ' . $station['name'],
+                            null,
+                            null,
+                            null,
+                            'divider'
+                        ];
+                    }
+                    usort($station['cars'], function($a, $b) {
+                        return strnatcasecmp($a[0], $b[0]);
+                    });
+                    foreach ($station['cars'] as $item) {
+                        $config['items'][] = [$item[0], $item[1]];
+                    }
                 }
             }
         }
 
-        // Debug: Ergebnis-Items
         //DebugUtility::debug($config['items'], 'Fertige Items für das Select-Feld');
     }
 }

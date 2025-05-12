@@ -1,4 +1,4 @@
-// === Configuration/Backend/Modules.php ===
+// === Configuration/Backend/Module.php ===
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 ExtensionUtility::registerModule(
@@ -15,3 +15,6 @@ ExtensionUtility::registerModule(
         'labels' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_mod.xlf',
     ]
 );
+
+// Eigene Backend-CSS einbinden
+$GLOBALS['TYPO3_CONF_VARS']['BE']['customCssFiles'][] = 'EXT:rescue_reports/Resources/Public/Css/backend.css';
