@@ -12,12 +12,12 @@ class Station extends AbstractEntity
     /**
      * @var \In2code\RescueReports\Domain\Model\Brigade|null
      */
-    protected $brigade = null;
+    protected ?Brigade $brigade = null;
 
     /**
      * @var ObjectStorage<\In2code\RescueReports\Domain\Model\Car>
      */
-    protected $cars;
+    protected ObjectStorage $cars;
 
     public function __construct()
     {
@@ -44,11 +44,17 @@ class Station extends AbstractEntity
         $this->brigade = $brigade;
     }
 
+    /**
+     * @return ObjectStorage<Car>
+     */
     public function getCars(): ObjectStorage
     {
         return $this->cars;
     }
 
+    /**
+     * @param ObjectStorage<Car> $cars
+     */
     public function setCars(ObjectStorage $cars): void
     {
         $this->cars = $cars;

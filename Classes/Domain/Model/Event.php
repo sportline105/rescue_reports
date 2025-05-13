@@ -5,63 +5,39 @@ namespace In2code\RescueReports\Domain\Model;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
-use In2code\RescueReports\Domain\Model\Type; // Wichtig für Type-Hinting
+use In2code\RescueReports\Domain\Model\Type;
+use In2code\RescueReports\Domain\Model\Car;
+use In2code\RescueReports\Domain\Model\Station;
 
 class Event extends AbstractEntity
 {
-    /**
-     * @var string
-     */
-    protected $title = '';
+    protected string $title = '';
+    protected string $description = '';
+    protected ?\DateTime $start = null;
+    protected ?\DateTime $end = null;
+    protected string $number = '';
+    protected string $location = '';
 
-    /**
-     * @var string
-     */
-    protected $description = '';
+    /** @var ObjectStorage<Car> */
+    protected ObjectStorage $cars;
 
-    /**
-     * @var \DateTime|null
-     */
-    protected $start = null;
+    /** @var ObjectStorage<Station> */
+    protected ObjectStorage $stations;
 
-    /**
-     * @var \DateTime|null
-     */
-    protected $end = null;
+    /** @var ObjectStorage<FileReference> */
+    protected ObjectStorage $images;
 
-    /**
-     * @var string
-     */
-    protected $number = '';
-
-    /**
-     * @var string
-     */
-    protected $location = '';
-
-    /**
-     * @var ObjectStorage<Car>
-     */
-    protected $cars;
-
-    /**
-     * @var ObjectStorage<FileReference>
-     */
-    protected $images;
-
-    /**
-     * @var ObjectStorage<Type>
-     */
-    protected $types;
+    /** @var ObjectStorage<Type> */
+    protected ObjectStorage $types;
 
     public function __construct()
     {
         $this->cars = new ObjectStorage();
+        $this->stations = new ObjectStorage();
         $this->images = new ObjectStorage();
         $this->types = new ObjectStorage();
     }
 
-    // --- Title ---
     public function getTitle(): string
     {
         return $this->title;
@@ -71,7 +47,6 @@ class Event extends AbstractEntity
         $this->title = $title;
     }
 
-    // --- Description ---
     public function getDescription(): string
     {
         return $this->description;
@@ -81,7 +56,6 @@ class Event extends AbstractEntity
         $this->description = $description;
     }
 
-    // --- Start ---
     public function getStart(): ?\DateTime
     {
         return $this->start;
@@ -91,7 +65,6 @@ class Event extends AbstractEntity
         $this->start = $start;
     }
 
-    // --- End ---
     public function getEnd(): ?\DateTime
     {
         return $this->end;
@@ -101,7 +74,6 @@ class Event extends AbstractEntity
         $this->end = $end;
     }
 
-    // --- Number ---
     public function getNumber(): string
     {
         return $this->number;
@@ -111,7 +83,6 @@ class Event extends AbstractEntity
         $this->number = $number;
     }
 
-    // --- Location ---
     public function getLocation(): string
     {
         return $this->location;
@@ -121,41 +92,50 @@ class Event extends AbstractEntity
         $this->location = $location;
     }
 
-    // --- Cars ---
-    /**
-     * @return ObjectStorage<Car>
-     */
-    public function getCars()
+    /** @return ObjectStorage<Car> */
+    public function getCars(): ObjectStorage
     {
         return $this->cars;
     }
-    /**
-     * @param ObjectStorage<Car> $cars
-     */
+    /** @param ObjectStorage<Car> $cars */
     public function setCars(ObjectStorage $cars): void
     {
         $this->cars = $cars;
     }
-    public function addCar($car): void
+    public function addCar(Car $car): void
     {
         $this->cars->attach($car);
     }
-    public function removeCar($car): void
+    public function removeCar(Car $car): void
     {
         $this->cars->detach($car);
     }
 
-    // --- Images ---
-    /**
-     * @return ObjectStorage<FileReference>
-     */
-    public function getImages()
+    /** @return ObjectStorage<Station> */
+    public function getStations(): ObjectStorage
+    {
+        return $this->stations;
+    }
+    /** @param ObjectStorage<Station> $stations */
+    public function setStations(ObjectStorage $stations): void
+    {
+        $this->stations = $stations;
+    }
+    public function addStation(Station $station): void
+    {
+        $this->stations->attach($station);
+    }
+    public function removeStation(Station $station): void
+    {
+        $this->stations->detach($station);
+    }
+
+    /** @return ObjectStorage<FileReference> */
+    public function getImages(): ObjectStorage
     {
         return $this->images;
     }
-    /**
-     * @param ObjectStorage<FileReference> $images
-     */
+    /** @param ObjectStorage<FileReference> $images */
     public function setImages(ObjectStorage $images): void
     {
         $this->images = $images;
@@ -169,17 +149,12 @@ class Event extends AbstractEntity
         $this->images->detach($image);
     }
 
-    // --- Types (Einsatzart) ---
-    /**
-     * @return ObjectStorage<Type>
-     */
-    public function getTypes()
+    /** @return ObjectStorage<Type> */
+    public function getTypes(): ObjectStorage
     {
         return $this->types;
     }
-    /**
-     * @param ObjectStorage<Type> $types
-     */
+    /** @param ObjectStorage<Type> $types */
     public function setTypes(ObjectStorage $types): void
     {
         $this->types = $types;

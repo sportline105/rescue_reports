@@ -30,15 +30,22 @@
         </ul>
     </f:if>
     <!-- Fahrzeuge -->
-    <f:if condition="{event.cars}">
-    <p>
-        <strong>Fahrzeuge:</strong>
-        <f:for each="{event.cars}" as="car" iteration="carIterator">
-            🚒 {car.name}<f:if condition="!{carIterator.isLast}">, </f:if>
+    <f:if condition="{stationsSorted}">
+    <f:variable name="lastBrigade" value="" />
+    <f:for each="{stationsSorted}" as="station">
+        <f:if condition="{station.brigade.name} != {lastBrigade}">
+            <f:variable name="lastBrigade" value="{station.brigade.name}" />
+                <h2>{station.brigade.name}</h2>
+            </f:if>
+            <h3>{station.name}</h3>
+            <ul>
+                <f:for each="{station.cars}" as="car">
+                    <li>{car.name}</li>
+                </f:for>
+            </ul>
         </f:for>
-    </p>
-</f:if>
-    
+    </f:if>
+
     <!-- Bilder -->
    <f:for each="{event.images}" as="image">
         <a href="{f:uri.image(image: image, maxWidth: 1600)}" class="lightbox-img" rel="lightbox[event-{event.uid}]">
@@ -46,5 +53,4 @@
         </a>
     </f:for>
     <p><f:link.action action="list">Zurück zur Übersicht</f:link.action></p>
-    <f:debug>{event.cars}</f:debug>
 </f:section>

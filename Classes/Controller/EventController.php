@@ -5,6 +5,7 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use In2code\RescueReports\Domain\Repository\EventRepository;
 use In2code\RescueReports\Domain\Model\Event;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 class EventController extends ActionController
 {
@@ -24,7 +25,17 @@ class EventController extends ActionController
 
     public function showAction(Event $event): ResponseInterface
     {
-        $this->view->assign('event', $event);
-        return $this->htmlResponse();
+    $stations = $event->getStations()->toArray();
+
+    usort($stations, function($a, $b) {
+        return strcmp($a->getBrigade()->getName(), $b->getBrigade()->getName());
+    });
+
+    $this->view->assignMultiple([
+        'event' => $event,
+        'stationsSorted' => $stations
+    ]);
+
+    return $this->htmlResponse();
     }
 }
