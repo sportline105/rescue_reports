@@ -115,21 +115,22 @@ return [
             ],
         ],
 
-        // Fahrzeugeinsatz (gefiltert)
-        'cars' => [
-            'label' => 'Fahrzeuge',
-            'config' => [
-                'type' => 'select',
-                'renderType' => 'selectCheckBox',
-                'items' => [],
-                'itemsProcFunc' => 'In2code\\RescueReports\\Utility\\CarFilterUtility->filterBySelectedStations',
-                'minitems' => 0,
-                'maxitems' => 999,
-                'appearance' => [
-                    'expandAll' => true,
-                ],
-            ],
+       'cars' => [
+    'label' => 'Fahrzeuge',
+    'config' => [
+        'type' => 'select',
+        'renderType' => 'selectCheckBox',
+        'foreign_table' => 'tx_rescuereports_domain_model_car',
+        'MM' => 'tx_rescuereports_event_car_mm',
+        'minitems' => 0,
+        'maxitems' => 999,
+        'itemsProcFunc' => 'In2code\\RescueReports\\Utility\\CarFilterUtility->filterBySelectedStations',
+        'appearance' => [
+            'expandAll' => true,
         ],
+    ],
+],
+
         // Bilder
         'images' => [
             'label' => 'Bilder',

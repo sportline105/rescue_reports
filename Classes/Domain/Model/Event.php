@@ -1,13 +1,9 @@
 <?php
-
 namespace In2code\RescueReports\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
-use In2code\RescueReports\Domain\Model\Type;
-use In2code\RescueReports\Domain\Model\Car;
-use In2code\RescueReports\Domain\Model\Station;
 
 class Event extends AbstractEntity
 {
@@ -42,6 +38,7 @@ class Event extends AbstractEntity
     {
         return $this->title;
     }
+
     public function setTitle(string $title): void
     {
         $this->title = $title;
@@ -51,6 +48,7 @@ class Event extends AbstractEntity
     {
         return $this->description;
     }
+
     public function setDescription(string $description): void
     {
         $this->description = $description;
@@ -60,6 +58,7 @@ class Event extends AbstractEntity
     {
         return $this->start;
     }
+
     public function setStart(?\DateTime $start): void
     {
         $this->start = $start;
@@ -69,6 +68,7 @@ class Event extends AbstractEntity
     {
         return $this->end;
     }
+
     public function setEnd(?\DateTime $end): void
     {
         $this->end = $end;
@@ -78,6 +78,7 @@ class Event extends AbstractEntity
     {
         return $this->number;
     }
+
     public function setNumber(string $number): void
     {
         $this->number = $number;
@@ -87,6 +88,7 @@ class Event extends AbstractEntity
     {
         return $this->location;
     }
+
     public function setLocation(string $location): void
     {
         $this->location = $location;
@@ -97,34 +99,40 @@ class Event extends AbstractEntity
     {
         return $this->cars;
     }
-    /** @param ObjectStorage<Car> $cars */
+
     public function setCars(ObjectStorage $cars): void
     {
         $this->cars = $cars;
     }
+
     public function addCar(Car $car): void
     {
         $this->cars->attach($car);
     }
+
     public function removeCar(Car $car): void
     {
         $this->cars->detach($car);
     }
 
-    /** @return ObjectStorage<Station> */
+    /**
+    * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\In2code\RescueReports\Domain\Model\Station>
+    */
     public function getStations(): ObjectStorage
     {
         return $this->stations;
     }
-    /** @param ObjectStorage<Station> $stations */
+
     public function setStations(ObjectStorage $stations): void
     {
         $this->stations = $stations;
     }
+
     public function addStation(Station $station): void
     {
         $this->stations->attach($station);
     }
+
     public function removeStation(Station $station): void
     {
         $this->stations->detach($station);
@@ -135,15 +143,17 @@ class Event extends AbstractEntity
     {
         return $this->images;
     }
-    /** @param ObjectStorage<FileReference> $images */
+
     public function setImages(ObjectStorage $images): void
     {
         $this->images = $images;
     }
+
     public function addImage(FileReference $image): void
     {
         $this->images->attach($image);
     }
+
     public function removeImage(FileReference $image): void
     {
         $this->images->detach($image);
@@ -154,15 +164,17 @@ class Event extends AbstractEntity
     {
         return $this->types;
     }
-    /** @param ObjectStorage<Type> $types */
+
     public function setTypes(ObjectStorage $types): void
     {
         $this->types = $types;
     }
+
     public function addType(Type $type): void
     {
         $this->types->attach($type);
     }
+
     public function removeType(Type $type): void
     {
         $this->types->detach($type);

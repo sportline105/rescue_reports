@@ -2,22 +2,20 @@
 namespace In2code\RescueReports\Utility;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-//use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
 class CarFilterUtility
 {
     public function filterBySelectedStations(array &$config)
     {
-        //DebugUtility::debug($config, 'Eingehendes $config');
-
         $selectedStationUids = $config['row']['stations'] ?? [];
         if (!is_array($selectedStationUids)) {
             $selectedStationUids = GeneralUtility::intExplode(',', $selectedStationUids, true);
         }
-        //DebugUtility::debug($selectedStationUids, 'Station-UIDs');
 
         $config['items'] = [];
+
+        $alreadyAddedCarUids = [];
 
         if (!empty($selectedStationUids)) {
             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
@@ -35,8 +33,6 @@ class CarFilterUtility
                 ->executeQuery()
                 ->fetchAllAssociative();
 
-            //DebugUtility::debug($rows, 'Station-Car-Zuordnungen');
-
             $grouped = [];
             foreach ($rows as $row) {
                 $stationUid = (int)$row['uid_local'];
@@ -53,8 +49,6 @@ class CarFilterUtility
                     ->executeQuery()
                     ->fetchAssociative();
 
-                //DebugUtility::debug($station, 'Station');
-
                 $brigadeName = '';
                 $brigadePriority = 9999;
                 $brigadeUid = 0;
@@ -69,7 +63,6 @@ class CarFilterUtility
                         )
                         ->executeQuery()
                         ->fetchAssociative();
-                    //DebugUtility::debug($brigade, 'Brigade');
                     $brigadeName = $brigade['name'] ?? '';
                     $brigadePriority = isset($brigade['priority']) ? (int)$brigade['priority'] : 9999;
                     $brigadeUid = (int)($brigade['uid'] ?? 0);
@@ -86,21 +79,17 @@ class CarFilterUtility
                     ->executeQuery()
                     ->fetchAssociative();
 
-                //DebugUtility::debug($car, 'Fahrzeug');
-
                 if ($car && $station && $brigadeName) {
-    				$label = '     🚒 ' . $car['name'];
-    				$value = 'fz:' . $car['uid'] . ':' . $station['uid'];
-    				$grouped[$brigadeUid]['priority'] = $brigadePriority;
-    				$grouped[$brigadeUid]['name'] = $brigadeName;
-    				$grouped[$brigadeUid]['stations'][$stationUid]['name'] = $station['name'];
-    				$grouped[$brigadeUid]['stations'][$stationUid]['sorting'] = $station['sorting'];
-    				$grouped[$brigadeUid]['stations'][$stationUid]['cars'][] = [$label, $value];
-				}
-
+                    $label = '  🚒 ' . $car['name'];
+                    $value = $car['uid'];
+                    $alreadyAddedCarUids[] = $car['uid'];
+                    $grouped[$brigadeUid]['priority'] = $brigadePriority;
+                    $grouped[$brigadeUid]['name'] = $brigadeName;
+                    $grouped[$brigadeUid]['stations'][$stationUid]['name'] = $station['name'];
+                    $grouped[$brigadeUid]['stations'][$stationUid]['sorting'] = $station['sorting'];
+                    $grouped[$brigadeUid]['stations'][$stationUid]['cars'][] = [$label, $value];
+                }
             }
-
-            //DebugUtility::debug($grouped, 'Gruppiert: Brigade > Station > Fahrzeuge');
 
             uasort($grouped, function($a, $b) {
                 return $a['priority'] <=> $b['priority'];
@@ -140,6 +129,40 @@ class CarFilterUtility
             }
         }
 
-        //DebugUtility::debug($config['items'], 'Fertige Items für das Select-Feld');
+        // --- Ergänzung: Bereits gespeicherte Fahrzeuge immer anzeigen ---
+        // Hole alle aktuell gespeicherten Fahrzeuge aus dem Datensatz
+        $selectedCarUids = [];
+        if (!empty($config['row']['cars'])) {
+            if (is_array($config['row']['cars'])) {
+                $selectedCarUids = $config['row']['cars'];
+            } else {
+                $selectedCarUids = GeneralUtility::intExplode(',', $config['row']['cars'], true);
+            }
+        }
+
+        // Füge alle gespeicherten Fahrzeuge hinzu, falls sie nicht schon in der Liste sind
+        foreach ($selectedCarUids as $carUid) {
+            if (!in_array($carUid, $alreadyAddedCarUids)) {
+                // Hole Fahrzeugdaten aus DB
+                $carQuery = GeneralUtility::makeInstance(ConnectionPool::class)
+                    ->getQueryBuilderForTable('tx_rescuereports_domain_model_car');
+                $car = $carQuery
+                    ->select('uid', 'name')
+                    ->from('tx_rescuereports_domain_model_car')
+                    ->where(
+                        $carQuery->expr()->eq('uid', $carQuery->createNamedParameter($carUid, \PDO::PARAM_INT))
+                    )
+                    ->executeQuery()
+                    ->fetchAssociative();
+                if ($car) {
+                    $label = '  🚒 ' . $car['name'] . ' (nicht mehr auswählbar)';
+                    $value = $car['uid'];
+                    $config['items'][] = [$label, $value];
+                }
+            }
+        }
+
+        // Optional: sortieren, falls nötig
+        // usort($config['items'], function($a, $b) { return strnatcasecmp($a[0], $b[0]); });
     }
 }
