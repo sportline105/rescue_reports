@@ -1,3 +1,5 @@
+<?php
+
 namespace In2code\RescueReports\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;

@@ -1,13 +1,50 @@
-// === Fluid Template (Resources/Private/Templates/Event/Show.html) ===
- <f:layout name="Default" />
- <f:section name="main">
-   <h1>{event.title}</h1>
-   <f:if condition="{event.deployments}">
-     <ul>
-       <f:for each="{event.deployments}" as="deployment">
-         <f:render partial="Deployment/Item" arguments="{deployment: deployment}" />
-       </f:for>
-     </ul>
-   </f:if>
-   <f:link.action action="list">Zurück zur Übersicht</f:link.action>
- </f:section>
+<f:layout name="Default" />
+<f:section name="main">
+    <h1>{event.title}</h1>
+    <p>
+        <strong>Nummer:</strong> {event.number}<br>
+        <strong>Ort:</strong> {event.location}<br>
+        <strong>Beginn:</strong> <f:format.date format="d.m.Y H:i">{event.start}</f:format.date><br>
+        <strong>Ende:</strong> <f:format.date format="d.m.Y H:i">{event.end}</f:format.date><br>
+        <strong>Einsatzart:</strong> <f:for each="{event.types}" as="type">{type.title}</f:for><br>
+    </p>
+    <f:if condition="{event.cars}">
+        <p>
+            <strong>Fahrzeuge:</strong>
+            <f:for each="{event.cars}" as="car" iteration="carIterator">
+                🚒 {car.name}<f:if condition="!{carIterator.isLast}">, </f:if>
+            </f:for>
+        </p>
+    </f:if>
+    <f:if condition="{event.description}">
+        <div>
+            <strong>Beschreibung:</strong>
+            <f:format.html>{event.description}</f:format.html>
+        </div>
+    </f:if>
+    <f:if condition="{event.deployments}">
+        <ul>
+            <f:for each="{event.deployments}" as="deployment">
+                <f:render partial="Deployment/Item" arguments="{deployment: deployment}" />
+            </f:for>
+        </ul>
+    </f:if>
+    <!-- Fahrzeuge -->
+    <f:if condition="{event.cars}">
+    <p>
+        <strong>Fahrzeuge:</strong>
+        <f:for each="{event.cars}" as="car" iteration="carIterator">
+            🚒 {car.name}<f:if condition="!{carIterator.isLast}">, </f:if>
+        </f:for>
+    </p>
+</f:if>
+    
+    <!-- Bilder -->
+   <f:for each="{event.images}" as="image">
+        <a href="{f:uri.image(image: image, maxWidth: 1600)}" class="lightbox-img" rel="lightbox[event-{event.uid}]">
+            <f:image image="{image}" maxWidth="400" alt="{event.title}" />
+        </a>
+    </f:for>
+    <p><f:link.action action="list">Zurück zur Übersicht</f:link.action></p>
+    <f:debug>{event.cars}</f:debug>
+</f:section>
