@@ -30,21 +30,20 @@
         </ul>
     </f:if>
     <!-- Fahrzeuge -->
-    <f:if condition="{stationsSorted}">
-    <f:variable name="lastBrigade" value="" />
-    <f:for each="{stationsSorted}" as="station">
-        <f:if condition="{station.brigade.name} != {lastBrigade}">
-            <f:variable name="lastBrigade" value="{station.brigade.name}" />
-                <h2>{station.brigade.name}</h2>
-            </f:if>
-            <h3>{station.name}</h3>
-            <ul>
-                <f:for each="{station.cars}" as="car">
-                    <li>{car.name}</li>
-                </f:for>
-            </ul>
+   <f:if condition="{groupedCarData}">
+  <f:for each="{groupedCarData}" as="brigadeGroup">
+    <h2>🏘️ {brigadeGroup.name}</h2>
+
+    <f:for each="{brigadeGroup.stations}" as="stationGroup">
+      <h3>📍 {stationGroup.name}</h3>
+      <ul>
+        <f:for each="{stationGroup.cars}" as="car">
+          <li>🚒 {car.name}</li>
         </f:for>
-    </f:if>
+      </ul>
+    </f:for>
+  </f:for>
+</f:if>
 
     <!-- Bilder -->
    <f:for each="{event.images}" as="image">
@@ -53,4 +52,5 @@
         </a>
     </f:for>
     <p><f:link.action action="list">Zurück zur Übersicht</f:link.action></p>
+    <f:debug>{groupedCarData}</f:debug>
 </f:section>
