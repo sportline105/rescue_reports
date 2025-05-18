@@ -1,9 +1,6 @@
-use TYPO3\CMS\Core\Information\Typo3Version;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+<?php
+defined('TYPO3_MODE') or die();
 
-defined('TYPO3') or die();
-
-$versionInformation = new Typo3Version();
-if ($versionInformation->getMajorVersion() < 12) {
-    ExtensionManagementUtility::allowTableOnStandardPages('tx_rescuereports_domain_model_event');
+if (class_exists(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::class)) {
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_rescuereports_domain_model_event');
 }
