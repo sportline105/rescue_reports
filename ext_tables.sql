@@ -8,7 +8,7 @@ CREATE TABLE tx_rescuereports_domain_model_event (
   end datetime DEFAULT NULL,
   location varchar(255) DEFAULT '' NOT NULL,
   cars varchar(255) DEFAULT '' NOT NULL,
-  --cars int(11) DEFAULT '0' NOT NULL,
+  vehicles TEXT NOT NULL,
   types int(11) DEFAULT '0' NOT NULL,
   images INT(11) DEFAULT 0 NOT NULL,
   brigade INT(11) DEFAULT 0 NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE tx_rescuereports_domain_model_car (
   uid int(11) NOT NULL auto_increment,
   pid int(11) DEFAULT '0' NOT NULL,
   name varchar(255) DEFAULT '' NOT NULL,
-  link varchar(255) DEFAULT '' NOT NULL,
+  organization INT(11) DEFAULT '0' NOT NULL,
   hidden tinyint(4) DEFAULT '0' NOT NULL,
   deleted tinyint(4) DEFAULT '0' NOT NULL,
   tstamp int(11) DEFAULT '0' NOT NULL,
@@ -53,7 +53,6 @@ CREATE TABLE tx_rescuereports_domain_model_car (
   l18n_diffsource mediumblob,
   starttime int(11) DEFAULT '0' NOT NULL,
   endtime int(11) DEFAULT '0' NOT NULL,
-  image INT(11) DEFAULT 0 NOT NULL,
   t3ver_oid int(11) DEFAULT '0' NOT NULL,
   t3ver_id int(11) DEFAULT '0' NOT NULL,
   t3ver_wsid int(11) DEFAULT '0' NOT NULL,
@@ -70,6 +69,7 @@ CREATE TABLE tx_rescuereports_domain_model_brigade (
   uid int(11) NOT NULL auto_increment,
   pid int(11) DEFAULT '0' NOT NULL,
   name varchar(255) DEFAULT '' NOT NULL,
+  organization INT(11) DEFAULT '0' NOT NULL,
   priority INT DEFAULT 0,
   stations int(11) DEFAULT '0' NOT NULL,
   hidden tinyint(4) DEFAULT '0' NOT NULL,
@@ -143,6 +143,7 @@ CREATE TABLE tx_rescuereports_domain_model_station (
     sorting INT(11) DEFAULT 0 NOT NULL,
     brigade INT(11) DEFAULT 0 NOT NULL,
     cars int(11) DEFAULT '0' NOT NULL,
+    vehicles INT(11) DEFAULT 0 NOT NULL,
     hidden tinyint(4) DEFAULT '0' NOT NULL,
   deleted tinyint(4) DEFAULT '0' NOT NULL,
   tstamp int(11) DEFAULT '0' NOT NULL,
@@ -249,6 +250,7 @@ CREATE TABLE tx_rescuereports_domain_model_deployment (
 );
 
 CREATE TABLE tx_rescuereports_event_car_mm (
+    uid INT(11) NOT NULL auto_increment,
     uid_local INT(11) DEFAULT 0 NOT NULL,
     uid_foreign INT(11) DEFAULT 0 NOT NULL,
     sorting INT(11) DEFAULT 0 NOT NULL,
@@ -294,3 +296,36 @@ CREATE TABLE tx_rescuereports_eventvehicleassignment_car_mm (
   KEY uid_foreign (uid_foreign)
 );
 
+CREATE TABLE tx_rescuereports_domain_model_vehicle (
+  uid INT(11) NOT NULL AUTO_INCREMENT,
+  pid INT(11) DEFAULT 0 NOT NULL,
+  name VARCHAR(255) DEFAULT '' NOT NULL,
+  car INT(11) DEFAULT 0 NOT NULL,
+  station INT(11) DEFAULT 0 NOT NULL,
+  link varchar(255) DEFAULT '' NOT NULL,
+  image INT(11) DEFAULT 0 NOT NULL,
+  sorting INT(11) DEFAULT 0 NOT NULL,
+  tstamp INT(11) DEFAULT 0 NOT NULL,
+  crdate INT(11) DEFAULT 0 NOT NULL,
+  cruser_id INT(11) DEFAULT 0 NOT NULL,
+  deleted TINYINT(4) DEFAULT 0 NOT NULL,
+  hidden TINYINT(4) DEFAULT 0 NOT NULL,
+  PRIMARY KEY (uid)
+);
+
+CREATE TABLE tx_rescuereports_domain_model_organisation (
+    uid INT(11) NOT NULL AUTO_INCREMENT,
+    pid INT(11) DEFAULT '0' NOT NULL,
+    tstamp INT(11) DEFAULT '0' NOT NULL,
+    crdate INT(11) DEFAULT '0' NOT NULL,
+    cruser_id INT(11) DEFAULT '0' NOT NULL,
+    deleted TINYINT(4) DEFAULT '0' NOT NULL,
+    hidden TINYINT(4) DEFAULT '0' NOT NULL,
+    sys_language_uid INT(11) DEFAULT '0' NOT NULL,
+    l10n_parent INT(11) DEFAULT '0' NOT NULL,
+    l10n_diffsource MEDIUMBLOB,
+    name VARCHAR(255) DEFAULT '' NOT NULL,
+    abbreviation VARCHAR(32) DEFAULT '' NOT NULL,
+    PRIMARY KEY (uid),
+    KEY parent (pid)
+);
