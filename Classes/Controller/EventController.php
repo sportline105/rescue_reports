@@ -4,7 +4,7 @@ namespace In2code\RescueReports\Controller;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use In2code\RescueReports\Domain\Repository\EventRepository;
 use In2code\RescueReports\Domain\Model\Event;
-use In2code\RescueReports\Domain\Model\Car;
+use In2code\RescueReports\Domain\Model\Vehicle;
 use In2code\RescueReports\Domain\Model\Station;
 use Psr\Http\Message\ResponseInterface;
 
@@ -26,18 +26,18 @@ class EventController extends ActionController
 
     public function showAction(Event $event): ResponseInterface
     {
-        $groupedCarData = $this->groupCarsByBrigadeAndStation($event);
+        $groupedVehicleData = $this->groupVehiclesByBrigadeAndStation($event);
         $this->view->assignMultiple([
             'event' => $event,
-            'groupedCarData' => $groupedCarData
+            'groupedVehicleData' => $groupedVehicleData
         ]);
         return $this->htmlResponse();
     }
 
-    protected function groupCarsByBrigadeAndStation(Event $event): array
+    protected function groupVehiclesByBrigadeAndStation(Event $event): array
     {
         $grouped = [];
-        $eventCars = $event->getCars()->toArray();
+        $eventVehicles = $event->getVehicles()->toArray();
 
         foreach ($event->getStations() as $station) {
             $brigade = $station->getBrigade();
@@ -46,11 +46,11 @@ class EventController extends ActionController
             $stationName = $station->getName();
             $stationSorting = method_exists($station, 'getSorting') ? $station->getSorting() : 9999;
 
-            foreach ($station->getCars() as $car) {
-                if (in_array($car, $eventCars, true)) {
+            foreach ($station->getVehicles() as $vehicle) {
+                if (in_array($vehicle, $eventVehicles, true)) {
                     $grouped[$brigadePriority]['name'] = $brigadeName;
                     $grouped[$brigadePriority]['stations'][$stationSorting]['name'] = $stationName;
-                    $grouped[$brigadePriority]['stations'][$stationSorting]['cars'][] = $car;
+                    $grouped[$brigadePriority]['stations'][$stationSorting]['vehicles'][] = $vehicle;
                 }
             }
         }

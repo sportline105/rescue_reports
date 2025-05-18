@@ -17,7 +17,8 @@ return [
             'starttime' => 'starttime',
             'endtime' => 'endtime',
         ],
-        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_deployment.svg'
+        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_deployment.svg',
+        'hideTable' => true, // ✅ das verhindert Anzeige im Seitenmodul
     ],
     'types' => [
         '1' => ['showitem' => 'event, brigade, stations, --div--;Access, hidden, starttime, endtime'],

@@ -22,7 +22,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;Stationen, stations, --div--;Fahrzeuge, cars, --div--;Bilder, images'
+            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;Stationen, stations, --div--;Fahrzeuge, vehicles, --div--;Bilder, images'
         ],
     ],
 
@@ -114,23 +114,21 @@ return [
                 'maxitems' => 9999,
             ],
         ],
-
-       'cars' => [
-    'label' => 'Fahrzeuge',
+       'vehicles' => [
+    'exclude' => true,
+    'label' => 'Eingesetzte Fahrzeuge',
     'config' => [
         'type' => 'select',
-        'renderType' => 'selectCheckBox',
-        'foreign_table' => 'tx_rescuereports_domain_model_car',
-        'MM' => 'tx_rescuereports_event_car_mm',
-        'minitems' => 0,
+        'renderType' => 'selectMultipleSideBySide',
+        //'foreign_table' => 'tx_rescuereports_domain_model_vehicle',
+        'itemsProcFunc' => \In2code\RescueReports\Utility\EventVehicleSelectionUtility::class . '->getAvailableVehicles',
+        //'foreign_table_where' => '', // ← wichtig, NICHT setzen!
+        'size' => 10,
         'maxitems' => 999,
-        'itemsProcFunc' => 'In2code\\RescueReports\\Utility\\CarFilterUtility->filterBySelectedStations',
-        'appearance' => [
-            'expandAll' => true,
-        ],
+        'multiple' => true,
+        'eval' => 'int',
     ],
 ],
-
         // Bilder
         'images' => [
             'label' => 'Bilder',

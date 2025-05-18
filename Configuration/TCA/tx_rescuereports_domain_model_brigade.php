@@ -22,7 +22,7 @@ return [
         'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_brigade.png'
     ],
     'types' => [
-    '1' => ['showitem' => 'name, priority, stations, --div--;Access, hidden, starttime, endtime'],
+    '1' => ['showitem' => 'name, priority, organization, stations, --div--;Access, hidden, starttime, endtime'],
 ],
     'columns' => [
         'sys_language_uid' => ['exclude' => true, 'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language','config' => ['type' => 'language']],
@@ -59,5 +59,15 @@ return [
                 'size' => 3,
                 ]
             ],
-        ]
+            'organization' => [
+            'label' => 'Organisation',
+            'config' => [
+                'type' => 'select',
+                'renderType' => 'selectSingle',
+                'foreign_table' => 'tx_rescuereports_domain_model_organisation',
+                'minitems' => 0,
+                'maxitems' => 1,
+            ],
+        ],
+    ]
 ];  

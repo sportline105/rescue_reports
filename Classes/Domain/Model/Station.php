@@ -9,19 +9,16 @@ class Station extends AbstractEntity
 {
     protected string $name = '';
 
-    /**
-     * @var \In2code\RescueReports\Domain\Model\Brigade|null
-     */
     protected ?Brigade $brigade = null;
 
     /**
-     * @var ObjectStorage<\In2code\RescueReports\Domain\Model\Car>
+     * @var ObjectStorage<\In2code\RescueReports\Domain\Model\Vehicle>
      */
-    protected ObjectStorage $cars;
+    protected ObjectStorage $vehicles;
 
     public function __construct()
     {
-        $this->cars = new ObjectStorage();
+        $this->vehicles = new ObjectStorage();
     }
 
     public function getName(): string
@@ -45,28 +42,25 @@ class Station extends AbstractEntity
     }
 
     /**
-     * @return ObjectStorage<Car>
+     * @return ObjectStorage<Vehicle>
      */
-    public function getCars(): ObjectStorage
+    public function getVehicles(): ObjectStorage
     {
-        return $this->cars;
+        return $this->vehicles;
     }
 
-    /**
-     * @param ObjectStorage<Car> $cars
-     */
-    public function setCars(ObjectStorage $cars): void
+    public function setVehicles(ObjectStorage $vehicles): void
     {
-        $this->cars = $cars;
+        $this->vehicles = $vehicles;
     }
 
-    public function addCar(Car $car): void
+    public function addVehicle(Vehicle $vehicle): void
     {
-        $this->cars->attach($car);
+        $this->vehicles->attach($vehicle);
     }
 
-    public function removeCar(Car $car): void
+    public function removeVehicle(Vehicle $vehicle): void
     {
-        $this->cars->detach($car);
+        $this->vehicles->detach($vehicle);
     }
 }

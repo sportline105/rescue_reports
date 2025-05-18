@@ -1,6 +1,6 @@
 <f:layout name="Default" />
 <f:section name="main">
-    <h1>{event.title}</h1>
+    <h1><b>{event.title}</b></h1>
     <p>
         <strong>Nummer:</strong> {event.number}<br>
         <strong>Ort:</strong> {event.location}<br>
@@ -29,16 +29,49 @@
             </f:for>
         </ul>
     </f:if>
+    <h1><b>Eingesetzte Fahrzeuge</b></h1>
     <!-- Fahrzeuge -->
-   <f:if condition="{groupedCarData}">
-  <f:for each="{groupedCarData}" as="brigadeGroup">
-    <h2>🏘️ {brigadeGroup.name}</h2>
+<f:if condition="{groupedVehicleData}">
+  <f:for each="{groupedVehicleData}" as="brigadeGroup">
+    <h1>🏘️ <b><u>{brigadeGroup.name}</u></b></h1>
 
     <f:for each="{brigadeGroup.stations}" as="stationGroup">
-      <h3>📍 {stationGroup.name}</h3>
-      <ul>
-        <f:for each="{stationGroup.cars}" as="car">
-          <li>🚒 {car.name}</li>
+      <h3>📍 <b>{stationGroup.name}</b></h3>
+      <ul class="vehicle-list">
+        <f:for each="{stationGroup.vehicles}" as="vehicle">
+          <li class="vehicle-item">
+
+            <!-- Bild + Link -->
+            <f:if condition="{vehicle.image} && {vehicle.link}">
+              <f:link.typolink parameter="{vehicle.link}" target="_blank" additionalAttributes="{rel: 'noopener noreferrer'}">
+                <f:image image="{vehicle.image}" height="33" alt="{vehicle.name}" /><br />
+                {vehicle.name}
+              </f:link.typolink>
+            </f:if>
+
+            <!-- Nur Bild -->
+            <f:if condition="{vehicle.image} && !{vehicle.link}">
+              <f:image image="{vehicle.image}" height="33" alt="{vehicle.name}" /><br />
+              🚒 {vehicle.name}
+            </f:if>
+
+            <!-- Nur Link -->
+            <f:if condition="{vehicle.link} && !{vehicle.image}">
+               <f:link.typolink parameter="{vehicle.link}" target="_blank" additionalAttributes="{rel: 'noopener noreferrer'}">
+                🚒 {vehicle.name}
+              </f:link.typolink>
+            </f:if>
+
+            <!-- Weder Bild noch Link -->
+            <f:if condition="!{vehicle.image} && !{vehicle.link}">
+              🚒 {vehicle.name}
+            </f:if>
+
+            <f:if condition="{vehicle.car}">
+              <span class="car-type" style="display: none;"> ({vehicle.car.name})</span>
+            </f:if>
+
+          </li>
         </f:for>
       </ul>
     </f:for>
@@ -52,5 +85,4 @@
         </a>
     </f:for>
     <p><f:link.action action="list">Zurück zur Übersicht</f:link.action></p>
-    <f:debug>{groupedCarData}</f:debug>
 </f:section>

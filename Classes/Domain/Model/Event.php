@@ -14,8 +14,11 @@ class Event extends AbstractEntity
     protected string $number = '';
     protected string $location = '';
 
-    /** @var ObjectStorage<Car> */
-    protected ObjectStorage $cars;
+    /**
+    * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\In2code\RescueReports\Domain\Model\Vehicle>
+    */
+    protected ObjectStorage $vehicles;
+
 
     /** @var ObjectStorage<Station> */
     protected ObjectStorage $stations;
@@ -28,7 +31,7 @@ class Event extends AbstractEntity
 
     public function __construct()
     {
-        $this->cars = new ObjectStorage();
+        $this->vehicles = new ObjectStorage();
         $this->stations = new ObjectStorage();
         $this->images = new ObjectStorage();
         $this->types = new ObjectStorage();
@@ -94,30 +97,30 @@ class Event extends AbstractEntity
         $this->location = $location;
     }
 
-    /** @return ObjectStorage<Car> */
-    public function getCars(): ObjectStorage
+    /** @return ObjectStorage<Vehicle> */
+    public function getVehicles(): ObjectStorage
     {
-        return $this->cars;
+        return $this->vehicles;
     }
 
-    public function setCars(ObjectStorage $cars): void
+    public function setVehicles(ObjectStorage $vehicles): void
     {
-        $this->cars = $cars;
+        $this->vehicles = $vehicles;
     }
 
-    public function addCar(Car $car): void
+    public function addVehicle(Vehicle $vehicle): void
     {
-        $this->cars->attach($car);
+        $this->vehicles->attach($vehicle);
     }
 
-    public function removeCar(Car $car): void
+    public function removeVehicle(Vehicle $vehicle): void
     {
-        $this->cars->detach($car);
+        $this->vehicles->detach($vehicle);
     }
 
     /**
-    * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\In2code\RescueReports\Domain\Model\Station>
-    */
+     * @return ObjectStorage<Station>
+     */
     public function getStations(): ObjectStorage
     {
         return $this->stations;

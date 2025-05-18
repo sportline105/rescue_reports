@@ -25,10 +25,10 @@
         <source>Feuerwehr</source>
       </trans-unit>
       <trans-unit id="tx_rescuereports_domain_model_brigade" xml:space="preserve">
-        <source>Feuerwehr Stadt</source>
+        <source>Stadtfeuerwehr</source>
       </trans-unit>
       <trans-unit id="tx_rescuereports_domain_model_car" xml:space="preserve">
-        <source>Fahrzeug</source>
+        <source>Fahrzeugtyp</source>
       </trans-unit>
       <trans-unit id="tx_rescuereports_domain_model_event" xml:space="preserve">
         <source>Einsatz</source>

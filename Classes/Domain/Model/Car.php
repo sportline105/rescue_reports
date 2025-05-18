@@ -8,8 +8,6 @@ use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 class Car extends AbstractEntity
 {
     protected string $name = '';
-    protected string $link = '';
-    protected ?FileReference $image = null;
 
     public function getName(): string
     {
@@ -20,24 +18,14 @@ class Car extends AbstractEntity
     {
         $this->name = $name;
     }
+    protected ?Organisation $organization = null;
 
-    public function getLink(): string
+    public function getOrganization(): ?Organisation
     {
-        return $this->link;
+        return $this->organization;
     }
-
-    public function setLink(string $link): void
+    public function setOrganization(?Organisation $organization): void
     {
-        $this->link = $link;
-    }
-
-    public function getImage(): ?FileReference
-    {
-        return $this->image;
-    }
-
-    public function setImage(?FileReference $image): void
-    {
-        $this->image = $image;
+    $this->organization = $organization;
     }
 }

@@ -17,11 +17,12 @@ return [
             'endtime' => 'endtime',
         ],
         'searchFields' => 'name',
-        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_station.png'
+        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_station.png',
+        'hideTable' => true, // ✅ das verhindert Anzeige im Seitenmodul
     ],
     'types' => [
         '1' => [
-            'showitem' => 'name, cars, --div--;Access, hidden, starttime, endtime'
+            'showitem' => 'name, cars, vehicles, --div--;Access, hidden, starttime, endtime'
         ],
     ],
     'columns' => [
@@ -67,16 +68,19 @@ return [
             'label' => 'Name',
             'config' => ['type' => 'input', 'eval' => 'trim,required']
         ],
-        'cars' => [
-    'label' => 'Fahrzeuge',
+'vehicles' => [
+    'exclude' => true,
+    'label' => 'Fahrzeuge dieser Station',
     'config' => [
-        'type' => 'select',
-        'renderType' => 'selectCheckBox',
-        'foreign_table' => 'tx_rescuereports_domain_model_car',
-        'MM' => 'tx_rescuereports_station_car_mm',
-        'size' => 10,
-        'autoSizeMax' => 30,
+        'type' => 'inline',
+        'foreign_table' => 'tx_rescuereports_domain_model_vehicle',
+        'foreign_field' => 'station',
         'maxitems' => 9999,
+        'appearance' => [
+            'collapseAll' => 1,
+            'newRecordLinkAddTitle' => 1,
+            'useSortable' => 1,
+        ],
     ],
 ],
 'brigade' => [

@@ -18,3 +18,5 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][] = [
     'priority' => 40,
     'class' => \In2code\RescueReports\Form\Element\EventVehicleAssignmentElement::class,
 ];
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] =
+    \In2code\RescueReports\Hooks\VehicleNameAutoFill::class;
