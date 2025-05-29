@@ -42,7 +42,7 @@ return [
                 'default' => 0,
             ]
         ],
-        'organization' => [
+        'organisation' => [
             'label' => 'Organisation',
             'config' => [
                 'type' => 'select',
