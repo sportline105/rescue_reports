@@ -1,5 +1,4 @@
 <?php
-
 namespace In2code\RescueReports\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
@@ -23,7 +22,6 @@ class Organisation extends AbstractEntity
     {
         return $this->abbreviation;
     }
-
     public function setAbbreviation(string $abbreviation): void
     {
         $this->abbreviation = $abbreviation;
