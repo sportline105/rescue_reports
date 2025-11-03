@@ -14,48 +14,66 @@ class EventVehicleSelectionUtility
             return;
         }
 
-        // Mehrfachauswahl absichern
         $stationField = $eventRow['stations'];
         $stationIds = is_array($stationField)
-        ? array_map('intval', $stationField)
-        : GeneralUtility::intExplode(',', $stationField, true);
+            ? array_map('intval', $stationField)
+            : GeneralUtility::intExplode(',', $stationField, true);
+
         if (empty($stationIds)) {
             return;
         }
 
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable('tx_rescuereports_domain_model_vehicle')
-            ->createQueryBuilder();
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('tx_rescuereports_domain_model_vehicle');
+
+        $queryBuilder = $connection->createQueryBuilder();
 
         $vehicles = $queryBuilder
-            ->select('v.uid', 'v.name', 's.name AS station_name')
+            ->select('v.uid', 'v.name', 's.name AS station_name', 's.sorting AS station_sorting', 'b.name AS brigade_name', 'b.priority')
             ->from('tx_rescuereports_domain_model_vehicle', 'v')
             ->innerJoin('v', 'tx_rescuereports_domain_model_station', 's', 'v.station = s.uid')
+            ->leftJoin('s', 'tx_rescuereports_domain_model_brigade', 'b', 's.brigade = b.uid')
             ->where(
                 $queryBuilder->expr()->in('v.station', $queryBuilder->createNamedParameter($stationIds, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
             )
-            ->orderBy('s.name')
+            ->orderBy('b.priority')
+            ->addOrderBy('station_sorting')
             ->addOrderBy('v.name')
             ->executeQuery()
             ->fetchAllAssociative();
 
+        $grouped = [];
+
         foreach ($vehicles as $vehicle) {
-            $label = $vehicle['station_name'] . ' – ' . $vehicle['name'];
-            $config['items'][] = [$label, (int)$vehicle['uid']];
+            $groupLabel = str_pad((int)$vehicle['priority'], 3, '0', STR_PAD_LEFT) . '_' . ($vehicle['brigade_name'] ?? 'Unbekannt');
+            $itemLabel = $vehicle['station_name'] . ' – ' . $vehicle['name'];
+            $grouped[$groupLabel][] = [$itemLabel, (int)$vehicle['uid']];
         }
-        // Stelle sicher, dass auch gespeicherte Fahrzeuge enthalten bleiben
+
+        ksort($grouped);
+
+        foreach ($grouped as $groupLabel => $items) {
+            $config['items'][] = [explode('_', $groupLabel, 2)[1], '--div--'];
+            foreach ($items as $item) {
+                $config['items'][] = $item;
+            }
+        }
+
+        // Bereits gewählte Fahrzeuge zusätzlich einfügen
         $alreadySelectedIds = array_unique(array_column($config['itemArray'] ?? [], 1));
         if (!empty($alreadySelectedIds)) {
-            $existingVehicles = $queryBuilder
-                ->select('v.uid', 'v.name', 's.name AS station_name')
+            $existing = $connection->createQueryBuilder()
+                ->select('v.uid', 'v.name', 's.name AS station_name', 'b.name AS brigade_name')
                 ->from('tx_rescuereports_domain_model_vehicle', 'v')
                 ->innerJoin('v', 'tx_rescuereports_domain_model_station', 's', 'v.station = s.uid')
+                ->leftJoin('s', 'tx_rescuereports_domain_model_brigade', 'b', 's.brigade = b.uid')
                 ->where(
                     $queryBuilder->expr()->in('v.uid', $queryBuilder->createNamedParameter($alreadySelectedIds, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
                 )
                 ->executeQuery()
                 ->fetchAllAssociative();
-            foreach ($existingVehicles as $vehicle) {
+
+            foreach ($existing as $vehicle) {
                 $label = $vehicle['station_name'] . ' – ' . $vehicle['name'];
                 $config['items'][] = [$label, (int)$vehicle['uid']];
             }

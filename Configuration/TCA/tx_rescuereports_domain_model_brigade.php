@@ -19,7 +19,7 @@ return [
             'endtime' => 'endtime',
         ],
         'searchFields' => 'name',
-        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_brigade.png'
+        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_brigade.svg'
     ],
     'types' => [
     '1' => ['showitem' => 'name, priority, organization, stations, --div--;Access, hidden, starttime, endtime'],
@@ -31,24 +31,31 @@ return [
         'hidden' => ['label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden','config' => ['type' => 'check','items' => [['', 1]]]],
         'starttime' => ['exclude' => true,'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime','config' => ['type' => 'input','renderType' => 'inputDateTime','eval' => 'datetime','default' => 0]],
         'endtime' => ['exclude' => true,'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime','config' => ['type' => 'input','renderType' => 'inputDateTime','eval' => 'datetime','default' => 0,'range' => ['upper' => mktime(0, 0, 0, 1, 1, 2038)]]],
-        'name' => ['label' => 'Name','config' => ['type' => 'input','eval' => 'trim,required']],
+        'name' => [
+            'label' => 'Name',
+            'config' => [
+                'type' => 'input',
+                'eval' => 'trim,required',                
+                'default' => 'Feuerwehr Stadt ...'
+                ]
+            ],
         'stations' => [
             'label' => 'Ortsfeuerwehren',
             'config' => [
                 'type' => 'inline',
-                    'foreign_table' => 'tx_rescuereports_domain_model_station',
-                    'foreign_field' => 'brigade',
-                    'foreign_sortby' => 'sorting', // Wichtig für die Sortierung!
-                    'maxitems' => 9999,
-                    'appearance' => [
-                        'collapseAll' => true,
-                        'levelLinksPosition' => 'top',
-                        'showSynchronizationLink' => true,
-                        'showPossibleLocalizationRecords' => true,
-                        'showAllLocalizationLink' => true,
-                        'useSortable' => 1, 
-                    ]
-                ],
+                'foreign_table' => 'tx_rescuereports_domain_model_station',
+                'foreign_field' => 'brigade',
+                'foreign_sortby' => 'sorting', // Wichtig für die Sortierung!
+                'maxitems' => 9999,
+                'appearance' => [
+                    'collapseAll' => true,
+                    'levelLinksPosition' => 'top',
+                    'showSynchronizationLink' => true,
+                    'showPossibleLocalizationRecords' => true,
+                    'showAllLocalizationLink' => true,
+                    'useSortable' => 1, 
+                ]
+            ],
         ],
         'priority' => [
             'label' => 'Priorität',
@@ -57,9 +64,9 @@ return [
                 'eval' => 'int',
                 'default' => 0,
                 'size' => 3,
-                ]
-            ],
-            'organization' => [
+            ]
+        ],
+        'organization' => [
             'label' => 'Organisation',
             'config' => [
                 'type' => 'select',
@@ -69,5 +76,5 @@ return [
                 'maxitems' => 1,
             ],
         ],
-    ]
+     ]
 ];  

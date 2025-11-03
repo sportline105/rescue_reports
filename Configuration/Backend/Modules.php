@@ -1,3 +1,4 @@
+<?php
 // === Configuration/Backend/Module.php ===
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 

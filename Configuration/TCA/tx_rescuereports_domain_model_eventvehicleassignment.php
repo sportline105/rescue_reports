@@ -19,7 +19,6 @@ return [
             'config' => [
                 'type' => 'select',
                 'itemsProcFunc' => \In2code\rescue_reports\Utility\EventVehicleAssignmentUtility::class . '->getAssignmentOptions',
-                'renderType' => 'selectMultipleSideBySide',
                 'size' => 10,
                 'maxitems' => 999,
             ],

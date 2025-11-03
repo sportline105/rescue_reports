@@ -17,7 +17,7 @@ return [
             'endtime' => 'endtime',
         ],
         'searchFields' => 'name',
-        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_station.png',
+        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_station.svg',
         'hideTable' => true, // ✅ das verhindert Anzeige im Seitenmodul
     ],
     'types' => [
@@ -26,6 +26,11 @@ return [
         ],
     ],
     'columns' => [
+        'sorting' => [
+            'config' => [
+                'type' => 'passthrough',
+            ],
+        ],
         'sys_language_uid' => [
             'exclude' => true,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
@@ -66,7 +71,11 @@ return [
         ],
         'name' => [
             'label' => 'Name',
-            'config' => ['type' => 'input', 'eval' => 'trim,required']
+            'config' => [
+                'type' => 'input',
+                'eval' => 'trim,required',
+                'default' => 'Ortsfeuerwehr '
+                ]
         ],
 'vehicles' => [
     'exclude' => true,
@@ -75,6 +84,9 @@ return [
         'type' => 'inline',
         'foreign_table' => 'tx_rescuereports_domain_model_vehicle',
         'foreign_field' => 'station',
+        'foreign_label_userFunc' => \In2code\RescueReports\Utility\VehicleLabelUtility::class . '->getCustomLabel',
+        'foreign_table' => 'tx_rescuereports_domain_model_vehicle',
+        'foreign_table_where' => 'AND 1=1 ORDER BY name ASC',
         'maxitems' => 9999,
         'appearance' => [
             'collapseAll' => 1,

@@ -18,7 +18,7 @@ return [
         'ignorePageTypeRestriction' => true,
     ],
     'searchFields' => 'title,description',
-    'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_event.svg',
+    'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_event.png',
     ],
     'types' => [
         '1' => [
@@ -115,20 +115,20 @@ return [
             ],
         ],
        'vehicles' => [
-    'exclude' => true,
-    'label' => 'Eingesetzte Fahrzeuge',
-    'config' => [
-        'type' => 'select',
-        'renderType' => 'selectMultipleSideBySide',
-        //'foreign_table' => 'tx_rescuereports_domain_model_vehicle',
-        'itemsProcFunc' => \In2code\RescueReports\Utility\EventVehicleSelectionUtility::class . '->getAvailableVehicles',
-        //'foreign_table_where' => '', // ← wichtig, NICHT setzen!
-        'size' => 10,
-        'maxitems' => 999,
-        'multiple' => true,
-        'eval' => 'int',
-    ],
-],
+            'exclude' => true,
+            'label' => 'Eingesetzte Fahrzeuge',
+            'config' => [
+                'type' => 'select',
+                'renderType' => 'selectMultipleSideBySide',
+                //'foreign_table' => 'tx_rescuereports_domain_model_vehicle',
+                'itemsProcFunc' => \In2code\RescueReports\Utility\EventVehicleSelectionUtility::class . '->getAvailableVehicles',
+                //'foreign_table_where' => '', // ← wichtig, NICHT setzen!
+                'size' => 15,
+                'maxitems' => 999,
+                'multiple' => true,
+                'eval' => 'int',
+            ],
+        ],
         // Bilder
         'images' => [
             'label' => 'Bilder',

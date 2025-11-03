@@ -30,8 +30,17 @@ return [
                 'eval' => 'trim',
             ],
         ],
+        'icon' => [
+            'exclude' => true,
+            'label' => 'Symbol (Emoji)',
+            'config' => [
+                'type' => 'input',
+                'eval' => 'trim',
+                'size' => 5
+            ],
+        ],
     ],
     'types' => [
-        '0' => ['showitem' => 'name, abbreviation'],
+        '0' => ['showitem' => 'name, abbreviation, icon'],
     ],
 ];

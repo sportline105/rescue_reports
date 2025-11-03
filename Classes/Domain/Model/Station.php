@@ -12,7 +12,9 @@ class Station extends AbstractEntity
     protected ?Brigade $brigade = null;
 
     /**
-     * @var ObjectStorage<\In2code\RescueReports\Domain\Model\Vehicle>
+     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\In2code\RescueReports\Domain\Model\Vehicle>
+     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
+     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
      */
     protected ObjectStorage $vehicles;
 
@@ -62,5 +64,16 @@ class Station extends AbstractEntity
     public function removeVehicle(Vehicle $vehicle): void
     {
         $this->vehicles->detach($vehicle);
+    }
+    protected int $sorting = 9999;
+
+    public function getSorting(): int
+    {
+        return $this->sorting;
+    }
+
+    public function setSorting(int $sorting): void
+    {
+        $this->sorting = $sorting;
     }
 }

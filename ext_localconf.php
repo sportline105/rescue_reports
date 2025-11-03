@@ -2,14 +2,17 @@
 
 defined('TYPO3') or die();
 
-\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
+use In2code\RescueReports\Controller\EventController;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
+
+ExtensionUtility::configurePlugin(
     'In2code.RescueReports',
     'Eventlist',
     [
-        \In2code\RescueReports\Controller\EventController::class => 'list,show',
+        EventController::class => 'list,show',
     ],
     [
-        \In2code\RescueReports\Controller\EventController::class => 'list,show',
+        EventController::class => 'list,show', // list als non-cacheable, damit die Suche wirkt
     ]
 );
 
@@ -18,5 +21,6 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][] = [
     'priority' => 40,
     'class' => \In2code\RescueReports\Form\Element\EventVehicleAssignmentElement::class,
 ];
+
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] =
     \In2code\RescueReports\Hooks\VehicleNameAutoFill::class;

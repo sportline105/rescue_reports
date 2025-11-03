@@ -3,6 +3,7 @@ return [
     'ctrl' => [
         'title' => 'Fahrzeug',
         'label' => 'name',
+        ##'label_userFunc' => \In2code\RescueReports\Utility\VehicleLabelUtility::class . '->getCustomLabel',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
         'cruser_id' => 'cruser_id',
@@ -14,10 +15,10 @@ return [
         ],
         'searchFields' => 'name',
         'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_vehicle.svg',
-        'hideTable' => false, // ✅ das verhindert Anzeige im Seitenmodul
+        'hideTable' => true, // ✅ das verhindert Anzeige im Seitenmodul
     ],
     'types' => [
-        '1' => ['showitem' => 'name, car, station, link, image, --div--;Zugriff, hidden'],
+        '1' => ['showitem' => 'car, name, station, link, image, --div--;Zugriff, hidden'],
     ],
     'columns' => [
         'tstamp' => ['config' => ['type' => 'passthrough']],
@@ -34,7 +35,7 @@ return [
         ],
         'name' => [
     'exclude' => false,
-    'label' => 'Fahrzeugname (wird bei Auswahl des Typs vorbelegt)',
+    'label' => 'Fahrzeugname (wird bei Auswahl des Typs vorbelegt, nur für abweichende Bezeichnungen)',
     'config' => [
         'type' => 'input',
         'size' => 30,
@@ -51,17 +52,19 @@ return [
         'eval' => 'trim',
     ],
 ],
-        'car' => [
-            'exclude' => true,
-            'label' => 'Fahrzeugtyp',
-            'config' => [
-                'type' => 'select',
-                'renderType' => 'selectSingle',
-                'foreign_table' => 'tx_rescuereports_domain_model_car',
-                'minitems' => 1,
-                'maxitems' => 1,
-            ],
-        ],
+'car' => [
+    'exclude' => true,
+    'label' => 'Fahrzeugtyp (Fahrzeugtyp auswählen, Fahrzeugname wird nach Speichern automatisch generiert)',
+    'config' => [
+        'type' => 'select',
+        'renderType' => 'selectSingle',
+        'foreign_table' => 'tx_rescuereports_domain_model_car',
+        'foreign_table_where' => 'ORDER BY name ASC',
+        'itemsProcFunc' => \In2code\RescueReports\Utility\CarLabelItemsProcFunc::class . '->addOrganisationToLabel',
+        'minitems' => 1,
+        'maxitems' => 1,
+    ],
+],
         'image' => [
     'exclude' => true,
     'label' => 'Fahrzeugbild',

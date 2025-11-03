@@ -8,17 +8,9 @@
         <strong>Ende:</strong> <f:format.date format="d.m.Y H:i">{event.end}</f:format.date><br>
         <strong>Einsatzart:</strong> <f:for each="{event.types}" as="type">{type.title}</f:for><br>
     </p>
-    <f:if condition="{event.cars}">
-        <p>
-            <strong>Fahrzeuge:</strong>
-            <f:for each="{event.cars}" as="car" iteration="carIterator">
-                🚒 {car.name}<f:if condition="!{carIterator.isLast}">, </f:if>
-            </f:for>
-        </p>
-    </f:if>
     <f:if condition="{event.description}">
         <div>
-            <strong>Beschreibung:</strong>
+            <strong>Einsatzbericht:</strong>
             <f:format.html>{event.description}</f:format.html>
         </div>
     </f:if>
@@ -29,60 +21,62 @@
             </f:for>
         </ul>
     </f:if>
-    <h1><b>Eingesetzte Fahrzeuge</b></h1>
-    <!-- Fahrzeuge -->
-<f:if condition="{groupedVehicleData}">
-  <f:for each="{groupedVehicleData}" as="brigadeGroup">
-    <h1>🏘️ <b><u>{brigadeGroup.name}</u></b></h1>
-
-    <f:for each="{brigadeGroup.stations}" as="stationGroup">
-      <h3>📍 <b>{stationGroup.name}</b></h3>
-      <ul class="vehicle-list">
-        <f:for each="{stationGroup.vehicles}" as="vehicle">
-          <li class="vehicle-item">
-
-            <!-- Bild + Link -->
-            <f:if condition="{vehicle.image} && {vehicle.link}">
-              <f:link.typolink parameter="{vehicle.link}" target="_blank" additionalAttributes="{rel: 'noopener noreferrer'}">
-                <f:image image="{vehicle.image}" height="33" alt="{vehicle.name}" /><br />
-                {vehicle.name}
-              </f:link.typolink>
-            </f:if>
-
-            <!-- Nur Bild -->
-            <f:if condition="{vehicle.image} && !{vehicle.link}">
-              <f:image image="{vehicle.image}" height="33" alt="{vehicle.name}" /><br />
-              🚒 {vehicle.name}
-            </f:if>
-
-            <!-- Nur Link -->
-            <f:if condition="{vehicle.link} && !{vehicle.image}">
-               <f:link.typolink parameter="{vehicle.link}" target="_blank" additionalAttributes="{rel: 'noopener noreferrer'}">
-                🚒 {vehicle.name}
-              </f:link.typolink>
-            </f:if>
-
-            <!-- Weder Bild noch Link -->
-            <f:if condition="!{vehicle.image} && !{vehicle.link}">
-              🚒 {vehicle.name}
-            </f:if>
-
-            <f:if condition="{vehicle.car}">
-              <span class="car-type" style="display: none;"> ({vehicle.car.name})</span>
-            </f:if>
-
-          </li>
-        </f:for>
-      </ul>
-    </f:for>
-  </f:for>
-</f:if>
-
+    <div class="well columns-2">
+        <h2><b>Kräfte & Mittel im Einsatz:</b></h2>
+        <!-- Fahrzeuge -->
+        <f:if condition="{groupedVehicleData}">
+            <f:for each="{groupedVehicleData}" as="brigadeGroup">
+                <h3><b><u>{brigadeGroup.name}</u></b></h3>
+                <ul>
+                    <f:for each="{brigadeGroup.stations}" as="stationGroup">
+                        <li>
+                            <b>
+                                {stationGroup.name}<f:if condition="{stationGroup.vehicles -> f:count()}">:</f:if>
+                            </b>
+                            <f:for each="{stationGroup.vehicles}" as="vehicle" iteration="vehicleIterator">
+                                <f:if condition="{vehicle.image} && {vehicle.link}">
+                                    <f:then>
+                                        <f:link.typolink parameter="{vehicle.link}" target="_blank" additionalAttributes="{rel: 'noopener noreferrer'}">
+                                            <f:image image="{vehicle.image}" height="33" alt="{vehicle.name}" /><br />
+                                            <span class="car-type">{vehicle.car.organization.icon} {vehicle.name}</span></f:link.typolink><f:if condition="!{vehicleIterator.isLast}">, </f:if>
+                                    </f:then>
+                                    <f:else>
+                                        <f:if condition="{vehicle.image}">
+                                            <f:then>
+                                                <f:image image="{vehicle.image}" height="33" alt="{vehicle.name}" /><br />
+                                                <span class="car-type">{vehicle.car.organization.icon} {vehicle.name}</span><f:if condition="!{vehicleIterator.isLast}">, </f:if>
+                                            </f:then>
+                                            <f:else>
+                                                <f:if condition="{vehicle.link}">
+                                                    <f:then>
+                                                        <f:link.typolink parameter="{vehicle.link}" target="_blank" additionalAttributes="{rel: 'noopener noreferrer'}">
+                                                            <span class="car-type">{vehicle.car.organization.icon} {vehicle.name}</span></f:link.typolink><f:if condition="!{vehicleIterator.isLast}">, </f:if>
+                                                    </f:then>
+                                                    <f:else>
+                                                        <span class="car-type">{vehicle.car.organization.icon} {vehicle.name}</span><f:if condition="!{vehicleIterator.isLast}">, </f:if>
+                                                    </f:else>
+                                                </f:if>
+                                            </f:else>
+                                        </f:if>
+                                    </f:else>
+                                </f:if>
+                            </f:for>
+                        </li>
+                    </f:for>
+                </ul>
+            </f:for>
+        </f:if>
+    </div>
     <!-- Bilder -->
-   <f:for each="{event.images}" as="image">
-        <a href="{f:uri.image(image: image, maxWidth: 1600)}" class="lightbox-img" rel="lightbox[event-{event.uid}]">
-            <f:image image="{image}" maxWidth="400" alt="{event.title}" />
-        </a>
-    </f:for>
-    <p><f:link.action action="list">Zurück zur Übersicht</f:link.action></p>
+    <f:if condition="{event.images}"><h2><b>Einsatzbilder:</b></h2></f:if>
+      <f:for each="{event.images}" as="image">
+          <a href="{f:uri.image(image: image, maxWidth: 1600)}" class="lightbox-img" rel="lightbox[event-{event.uid}]">
+              <f:image image="{image}" maxWidth="400" alt="{event.title}" />
+          </a>
+      </f:for><br /><br /><br />
+      <div class="row">
+        <div class="large-12 medium-12 small-12 column">
+          <button class="button small"><a href="javascript:history.back()" style="color:white;">zurück zur Einsatzliste</a></button>
+        </div>
+  </div>  
 </f:section>

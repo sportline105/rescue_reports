@@ -1,46 +1,76 @@
 <f:layout name="Default" />
 
 <f:section name="main">
+  <h1 class="csc-firstHeader">Einsatz&uuml;bersicht</h1>
+  <!-- Suchformular -->
+  <div class="row" style="padding-top: 10px;">
+    <div class="small-12 columns">
+      <f:form
+        action="list"
+        method="get"
+        extensionName="RescueReports"
+        pluginName="Eventlist"
+        controller="Event">
+
+        <!-- eine gemeinsame Input-Zeile -->
+        <div class="row collapse">
+
+          <!-- Suchfeld -->
+          <div class="small-7 columns">
+            <f:form.textfield 
+              name="searchWord" 
+              id="searchWord" 
+              type="search"
+              value="{searchWord}" 
+              placeholder="Suchbegriff eingeben…" />
+          </div>
+
+          <!-- Suchen-Button direkt dran -->
+          <div class="small-2 columns">
+            <button type="submit" class="button postfix expand">
+              Suchen
+            </button>
+          </div>
+
+          <!-- Filter zurücksetzen, gleiche Höhe durch postfix -->
+          <div class="small-3 columns">
+            <f:link.action
+              action="list"
+              class="button postfix expand secondary">
+              Filter zurücksetzen
+            </f:link.action>
+          </div>
+
+        </div>
+      </f:form>
+    </div>
+  </div>
+
+
+  <!-- Ergebnisliste -->
   <f:if condition="{events}">
     <f:then>
-      <div class="table-responsive">
-        <table class="table table-striped table-hover">
-          <thead class="thead-dark">
-            <tr>
-              <th>Nummer</th>
-              <th>Datum</th>
-              <th>Stichwort</th>
-              <th>Ort</th>
-              <th class="d-none d-md-table-cell">Beschreibung</th>
-              <th>Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            <f:for each="{events}" as="event">
-              <tr>
-                <td>{event.number}</td>
-                <td>
-                  <f:format.date format="d.m.Y H:i">{event.start}</f:format.date>
-                </td>
-                <td>{event.title}</td>
-                <td>{event.location}</td>
-                <td class="d-none d-md-table-cell">
-                  <f:if condition="{event.description}">
-                    <f:format.crop maxCharacters="60">
-                      {event.description -> f:format.stripTags()}
-                    </f:format.crop>
-                  </f:if>
-                </td>
-                <td>
-                  <f:link.action action="show" arguments="{event: event}" class="btn btn-sm btn-primary">
-                    Details
-                  </f:link.action>
-                </td>
-              </tr>
-            </f:for>
-          </tbody>
-        </table>
-      </div>
+      <f:for each="{events}" as="event" iteration="it">
+        <div class="panelsmall">
+          <f:link.action action="show" arguments="{event: event}" class="btn btn-sm btn-primary">
+            <div class="row">
+              <div class="small-2 medium-2 columns enumber text-center">{event.number}</div>
+              <div class="small-10 medium-10 column">
+                <div class="row">
+                  <div class="small-12 column emeta">
+                    <f:format.date format="d.m.Y, H:i">{event.start}</f:format.date>
+                    -
+                    <f:format.date format="H:i">{event.end}</f:format.date> Uhr
+                  </div>
+                  <div class="small-12 column etitle">
+                    <b>{event.title}</b> - <em>{event.location}</em>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </f:link.action>
+        </div>
+      </f:for>
     </f:then>
     <f:else>
       <p>Keine Einsätze gefunden.</p>

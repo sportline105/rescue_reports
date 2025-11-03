@@ -1,10 +1,9 @@
 <?php
-
-// === Configuration/TCA/tx_rescuereports_domain_model_car.php ===
 return [
     'ctrl' => [
         'title' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescuereports_domain_model_car',
         'label' => 'name',
+        'label_userFunc' => \In2code\RescueReports\Utility\CarLabelUtility::class . '->getCustomLabel',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
         'cruser_id' => 'cruser_id',
@@ -42,12 +41,17 @@ return [
                 'default' => 0,
             ]
         ],
-        'organisation' => [
+        'organization' => [
             'label' => 'Organisation',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'foreign_table' => 'tx_rescuereports_domain_model_organisation',
+                'foreign_table_where' => ' AND tx_rescuereports_domain_model_organisation.deleted = 0 AND tx_rescuereports_domain_model_organisation.hidden = 0',
+                'items' => [
+                    ['Bitte wählen', 0],
+                ],
+                'default' => 0,
                 'minitems' => 0,
                 'maxitems' => 1,
             ],

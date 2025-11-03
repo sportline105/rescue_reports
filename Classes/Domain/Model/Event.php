@@ -20,7 +20,11 @@ class Event extends AbstractEntity
     protected ObjectStorage $vehicles;
 
 
-    /** @var ObjectStorage<Station> */
+    /**
+     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\In2code\RescueReports\Domain\Model\Station>
+     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
+     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     */
     protected ObjectStorage $stations;
 
     /** @var ObjectStorage<FileReference> */
