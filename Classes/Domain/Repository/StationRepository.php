@@ -1,14 +1,17 @@
 <?php
+declare(strict_types=1);
+
 namespace In2code\RescueReports\Domain\Repository;
 
-use TYPO3\CMS\Extbase\Persistence\Repository;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class StationRepository extends Repository
 {
     public function findAllGroupedByBrigade(): array
     {
         $query = $this->createQuery();
+
         $query->getQuerySettings()->setRespectStoragePage(true);
 
         $query->setOrderings([

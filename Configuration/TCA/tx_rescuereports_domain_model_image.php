@@ -19,7 +19,8 @@ return [
             'endtime' => 'endtime',
         ],
         'searchFields' => 'title',
-        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_image.svg'
+        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_image.svg',
+        'hideTable' => true
     ],
     'types' => [
         '1' => ['showitem' => 'title, image, --div--;Access, hidden, starttime, endtime'],

@@ -4,13 +4,16 @@ plugin.tx_rescuereports_eventlist {
      layoutRootPaths.0 = EXT:rescue_reports/Resources/Private/Layouts/
      partialRootPaths.0 = EXT:rescue_reports/Resources/Private/Partials/
    }
+
    persistence {
      storagePid = {$plugin.tx_rescuereports_eventlist.persistence.storagePid}
    }
+
    settings {
-    # enableSearch = 1
-    # maxCount = 0
-    # dateFrom = 0
-    # dateTo = 0
-  }
+     # enableSearch = 1
+     # maxCount = 0
+     # dateFrom =
+     # dateTo =
+   }
 }
+page.includeCSS.rescueReports = EXT:rescue_reports/Resources/Public/Css/rescue_reports.css

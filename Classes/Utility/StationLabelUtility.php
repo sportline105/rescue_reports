@@ -1,18 +1,22 @@
 <?php
+declare(strict_types=1);
 
 namespace In2code\RescueReports\Utility;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class StationLabelUtility
 {
     public function addGroupedStations(array &$config): void
     {
+        $config['items'] ??= [];
+
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable('tx_rescuereports_domain_model_station');
 
         $queryBuilder = $connection->createQueryBuilder();
+
         $stations = $queryBuilder
             ->select('uid', 'name', 'brigade')
             ->from('tx_rescuereports_domain_model_station')
@@ -28,15 +32,25 @@ class StationLabelUtility
             $brigadeName = $brigadeData[$brigadeId]['name'] ?? 'Unbekannt';
             $priority = $brigadeData[$brigadeId]['priority'] ?? 999;
 
-            $key = str_pad($priority, 3, '0', STR_PAD_LEFT) . '_' . $brigadeName;
-            $grouped[$key][] = [$station['name'], $station['uid']];
+            $key = str_pad((string)$priority, 3, '0', STR_PAD_LEFT) . '_' . $brigadeName;
+
+            $grouped[$key][] = [
+                $station['name'],
+                (int)$station['uid']
+            ];
         }
 
-        ksort($grouped); // sort by priority+name
+        ksort($grouped);
 
         foreach ($grouped as $label => $items) {
-            usort($items, fn($a, $b) => strcasecmp($a[0], $b[0]));
-            $config['items'][] = [explode('_', $label, 2)[1], '--div--'];
+
+            usort($items, static fn($a, $b) => strcasecmp($a[0], $b[0]));
+
+            $config['items'][] = [
+                explode('_', $label, 2)[1],
+                '--div--'
+            ];
+
             foreach ($items as $item) {
                 $config['items'][] = $item;
             }
@@ -49,6 +63,7 @@ class StationLabelUtility
             ->getConnectionForTable('tx_rescuereports_domain_model_brigade');
 
         $queryBuilder = $connection->createQueryBuilder();
+
         $rows = $queryBuilder
             ->select('uid', 'name', 'priority')
             ->from('tx_rescuereports_domain_model_brigade')
@@ -56,12 +71,14 @@ class StationLabelUtility
             ->fetchAllAssociative();
 
         $result = [];
+
         foreach ($rows as $row) {
             $result[(int)$row['uid']] = [
                 'name' => $row['name'],
-                'priority' => (int)$row['priority'],
+                'priority' => (int)$row['priority']
             ];
         }
+
         return $result;
     }
 }

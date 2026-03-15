@@ -9,10 +9,7 @@ class Car extends AbstractEntity
 {
     protected string $name = '';
 
-    /**
-     * @var Organisation|null
-     */
-    protected $organization = null;
+    protected ?Organisation $organization = null;
 
     public function getName(): string
     {
