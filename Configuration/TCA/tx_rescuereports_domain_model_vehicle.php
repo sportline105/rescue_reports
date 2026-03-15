@@ -4,6 +4,7 @@ return [
     'ctrl' => [
         'title' => 'Fahrzeug',
         'label' => 'name',
+        // 'label_userFunc' => \In2code\RescueReports\Utility\VehicleLabelUtility::class . '->getCustomLabel',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
         'cruser_id' => 'cruser_id',
@@ -24,7 +25,6 @@ return [
     ],
 
     'columns' => [
-
         'tstamp' => [
             'config' => [
                 'type' => 'passthrough',
@@ -61,7 +61,8 @@ return [
         ],
 
         'name' => [
-            'label' => 'Fahrzeugname',
+            'exclude' => false,
+            'label' => 'Fahrzeugname (wird bei Auswahl des Typs vorbelegt, nur für abweichende Bezeichnungen)',
             'config' => [
                 'type' => 'input',
                 'size' => 30,
@@ -82,12 +83,12 @@ return [
 
         'car' => [
             'exclude' => true,
-            'label' => 'Fahrzeugtyp',
+            'label' => 'Fahrzeugtyp (Fahrzeugtyp auswählen, Fahrzeugname wird nach Speichern automatisch generiert)',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'foreign_table' => 'tx_rescuereports_domain_model_car',
-                'foreign_table_where' => 'ORDER BY {#tx_rescuereports_domain_model_car}.{#name} ASC',
+                'foreign_table_where' => 'ORDER BY name ASC',
                 'itemsProcFunc' => \In2code\RescueReports\Utility\CarLabelItemsProcFunc::class . '->addOrganisationToLabel',
                 'minitems' => 1,
                 'maxitems' => 1,
@@ -114,7 +115,6 @@ return [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'foreign_table' => 'tx_rescuereports_domain_model_station',
-                'foreign_table_where' => 'ORDER BY {#tx_rescuereports_domain_model_station}.{#name} ASC',
                 'minitems' => 1,
                 'maxitems' => 1,
             ],
