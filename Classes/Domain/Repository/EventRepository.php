@@ -1,43 +1,35 @@
 <?php
+declare(strict_types=1);
+
 namespace In2code\RescueReports\Domain\Repository;
 
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+use DateTime;
+use DateTimeInterface;
+use In2code\RescueReports\Domain\Model\Event;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
-class EventRepository extends Repository
+final class EventRepository extends Repository
 {
-    protected $objectManager;
-
-    public function injectObjectManager(ObjectManager $objectManager): void
-    {
-        $this->objectManager = $objectManager;
-    }
-
-    /**
-     * Holt ein einzelnes Event inkl. Relationen
-     */
-    public function findByUid($uid)
+    public function findOneWithRelationsByUid(int $uid): ?Event
     {
         $query = $this->createQuery();
         $query->getQuerySettings()->setRespectStoragePage(false);
-        $query->matching($query->equals('uid', (int)$uid));
+        $query->matching($query->equals('uid', $uid));
         $query->setLimit(1);
 
         $event = $query->execute()->getFirst();
 
-        if ($event instanceof \In2code\RescueReports\Domain\Model\Event) {
+        if ($event instanceof Event) {
             $event->getStations();
             $event->getVehicles();
+            return $event;
         }
 
-        return $event;
+        return null;
     }
 
-    /**
-     * Liefert alle Events (optional: mit Relationen)
-     */
     public function findAllWithRelations(): QueryResultInterface
     {
         $query = $this->createQuery();
@@ -47,33 +39,34 @@ class EventRepository extends Repository
         return $query->execute();
     }
 
-    /**
-     * Suche mit optionalen Filtern (Datum & Limit)
-     */
-    public function search(string $searchWord = '', $dateFrom = null, $dateTo = null, int $limit = 0): QueryResultInterface
-    {
+    public function search(
+        string $searchWord = '',
+        mixed $dateFrom = null,
+        mixed $dateTo = null,
+        int $limit = 0
+    ): QueryResultInterface {
         $query = $this->createQuery();
         $query->getQuerySettings()->setRespectStoragePage(false);
 
         $constraints = [];
 
         if (trim($searchWord) !== '') {
-            $constraints[] = $query->logicalOr([
+            $constraints[] = $query->logicalOr(
                 $query->like('title', '%' . $searchWord . '%'),
                 $query->like('description', '%' . $searchWord . '%'),
                 $query->like('location', '%' . $searchWord . '%'),
                 $query->like('types.title', '%' . $searchWord . '%'),
-                $query->like('number', '%' . $searchWord . '%'),
-            ]);
+                $query->like('number', '%' . $searchWord . '%')
+            );
         }
 
         $dateConstraints = $this->buildDateConstraints($query, $dateFrom, $dateTo);
-        if (!empty($dateConstraints)) {
+        if ($dateConstraints !== []) {
             $constraints = array_merge($constraints, $dateConstraints);
         }
 
-        if (!empty($constraints)) {
-            $query->matching($query->logicalAnd($constraints));
+        if ($constraints !== []) {
+            $query->matching($query->logicalAnd(...$constraints));
         }
 
         if ($limit > 0) {
@@ -85,18 +78,18 @@ class EventRepository extends Repository
         return $query->execute();
     }
 
-    /**
-     * Liefert Events gefiltert nach Datum & Limit
-     */
-    public function findFiltered($dateFrom = null, $dateTo = null, int $limit = 0): QueryResultInterface
-    {
+    public function findFiltered(
+        mixed $dateFrom = null,
+        mixed $dateTo = null,
+        int $limit = 0
+    ): QueryResultInterface {
         $query = $this->createQuery();
         $query->getQuerySettings()->setRespectStoragePage(false);
 
         $constraints = $this->buildDateConstraints($query, $dateFrom, $dateTo);
 
-        if (!empty($constraints)) {
-            $query->matching($query->logicalAnd($constraints));
+        if ($constraints !== []) {
+            $query->matching($query->logicalAnd(...$constraints));
         }
 
         if ($limit > 0) {
@@ -108,9 +101,6 @@ class EventRepository extends Repository
         return $query->execute();
     }
 
-    /**
-     * Gemeinsame Sortierung
-     */
     protected function getDefaultOrderings(): array
     {
         return [
@@ -120,42 +110,40 @@ class EventRepository extends Repository
         ];
     }
 
-    /**
-     * Baut Datums-Constraints für den Einsatzbeginn auf
-     *
-     * dateFrom => start ab 00:00:00 dieses Tages
-     * dateTo   => start bis 23:59:59 dieses Tages
-     */
-    protected function buildDateConstraints($query, $dateFrom = null, $dateTo = null): array
-    {
+    protected function buildDateConstraints(
+        QueryInterface $query,
+        mixed $dateFrom = null,
+        mixed $dateTo = null
+    ): array {
         $constraints = [];
 
         $fromDate = $this->convertToDateTime($dateFrom);
-        if ($fromDate instanceof \DateTimeInterface) {
-            $fromDate = (clone $fromDate)->setTime(0, 0, 0)->format('Y-m-d H:i:s');
-            $constraints[] = $query->greaterThanOrEqual('start', $fromDate);
+        if ($fromDate instanceof DateTimeInterface) {
+            $constraints[] = $query->greaterThanOrEqual(
+                'start',
+                (clone $fromDate)->setTime(0, 0, 0)->format('Y-m-d H:i:s')
+            );
         }
 
         $toDate = $this->convertToDateTime($dateTo);
-        if ($toDate instanceof \DateTimeInterface) {
-            $toDate = (clone $toDate)->setTime(23, 59, 59)->format('Y-m-d H:i:s');
-            $constraints[] = $query->lessThanOrEqual('start', $toDate);
+        if ($toDate instanceof DateTimeInterface) {
+            $constraints[] = $query->lessThanOrEqual(
+                'start',
+                (clone $toDate)->setTime(23, 59, 59)->format('Y-m-d H:i:s')
+            );
         }
 
         return $constraints;
     }
 
-    /**
-     * Hilfsfunktion: String oder Timestamp -> DateTime
-     */
-    protected function convertToDateTime($value): ?\DateTime
+    protected function convertToDateTime(mixed $value): ?DateTime
     {
-        if ($value instanceof \DateTime) {
+        if ($value instanceof DateTime) {
             return clone $value;
         }
 
-        if ($value instanceof \DateTimeInterface) {
-            return new \DateTime($value->format('Y-m-d H:i:s'));
+        if ($value instanceof DateTimeInterface) {
+            return new DateTime($value->format('Y-m-d H:i:s'));
         }
 
         if ($value === null || $value === '' || $value === '0') {
@@ -163,11 +151,11 @@ class EventRepository extends Repository
         }
 
         if (is_numeric($value)) {
-            return (new \DateTime())->setTimestamp((int)$value);
+            return (new DateTime())->setTimestamp((int)$value);
         }
 
         if (is_string($value) && strtotime($value) !== false) {
-            return new \DateTime($value);
+            return new DateTime($value);
         }
 
         return null;

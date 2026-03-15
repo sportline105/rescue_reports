@@ -1,8 +1,9 @@
 <?php
 namespace In2code\RescueReports\Utility;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Doctrine\DBAL\ArrayParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class EventVehicleSelectionUtility
 {
@@ -17,9 +18,9 @@ class EventVehicleSelectionUtility
         $stationField = $eventRow['stations'];
         $stationIds = is_array($stationField)
             ? array_map('intval', $stationField)
-            : GeneralUtility::intExplode(',', $stationField, true);
+            : GeneralUtility::intExplode(',', (string)$stationField, true);
 
-        if (empty($stationIds)) {
+        if ($stationIds === []) {
             return;
         }
 
@@ -29,12 +30,22 @@ class EventVehicleSelectionUtility
         $queryBuilder = $connection->createQueryBuilder();
 
         $vehicles = $queryBuilder
-            ->select('v.uid', 'v.name', 's.name AS station_name', 's.sorting AS station_sorting', 'b.name AS brigade_name', 'b.priority')
+            ->select(
+                'v.uid',
+                'v.name',
+                's.name AS station_name',
+                's.sorting AS station_sorting',
+                'b.name AS brigade_name',
+                'b.priority'
+            )
             ->from('tx_rescuereports_domain_model_vehicle', 'v')
             ->innerJoin('v', 'tx_rescuereports_domain_model_station', 's', 'v.station = s.uid')
             ->leftJoin('s', 'tx_rescuereports_domain_model_brigade', 'b', 's.brigade = b.uid')
             ->where(
-                $queryBuilder->expr()->in('v.station', $queryBuilder->createNamedParameter($stationIds, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
+                $queryBuilder->expr()->in(
+                    'v.station',
+                    $queryBuilder->createNamedParameter($stationIds, ArrayParameterType::INTEGER)
+                )
             )
             ->orderBy('b.priority')
             ->addOrderBy('station_sorting')
@@ -45,7 +56,9 @@ class EventVehicleSelectionUtility
         $grouped = [];
 
         foreach ($vehicles as $vehicle) {
-            $groupLabel = str_pad((int)$vehicle['priority'], 3, '0', STR_PAD_LEFT) . '_' . ($vehicle['brigade_name'] ?? 'Unbekannt');
+            $groupLabel = str_pad((int)($vehicle['priority'] ?? 999), 3, '0', STR_PAD_LEFT)
+                . '_'
+                . ($vehicle['brigade_name'] ?? 'Unbekannt');
             $itemLabel = $vehicle['station_name'] . ' – ' . $vehicle['name'];
             $grouped[$groupLabel][] = [$itemLabel, (int)$vehicle['uid']];
         }
@@ -59,16 +72,23 @@ class EventVehicleSelectionUtility
             }
         }
 
-        // Bereits gewählte Fahrzeuge zusätzlich einfügen
-        $alreadySelectedIds = array_unique(array_column($config['itemArray'] ?? [], 1));
-        if (!empty($alreadySelectedIds)) {
-            $existing = $connection->createQueryBuilder()
+        $alreadySelectedIds = array_values(array_filter(
+            array_unique(array_map('intval', array_column($config['itemArray'] ?? [], 1)))
+        ));
+
+        if ($alreadySelectedIds !== []) {
+            $existingQueryBuilder = $connection->createQueryBuilder();
+
+            $existing = $existingQueryBuilder
                 ->select('v.uid', 'v.name', 's.name AS station_name', 'b.name AS brigade_name')
                 ->from('tx_rescuereports_domain_model_vehicle', 'v')
                 ->innerJoin('v', 'tx_rescuereports_domain_model_station', 's', 'v.station = s.uid')
                 ->leftJoin('s', 'tx_rescuereports_domain_model_brigade', 'b', 's.brigade = b.uid')
                 ->where(
-                    $queryBuilder->expr()->in('v.uid', $queryBuilder->createNamedParameter($alreadySelectedIds, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
+                    $existingQueryBuilder->expr()->in(
+                        'v.uid',
+                        $existingQueryBuilder->createNamedParameter($alreadySelectedIds, ArrayParameterType::INTEGER)
+                    )
                 )
                 ->executeQuery()
                 ->fetchAllAssociative();

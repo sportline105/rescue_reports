@@ -1,9 +1,11 @@
 <?php
 namespace In2code\RescueReports\Form\Element;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class EventVehicleAssignmentElement extends AbstractFormElement
 {
@@ -46,7 +48,7 @@ class EventVehicleAssignmentElement extends AbstractFormElement
             ->select('uid_foreign')
             ->from('tx_rescuereports_event_station_mm')
             ->where('uid_local = :uid')
-            ->setParameter(':uid', $eventUid)
+            ->setParameter('uid', $eventUid)
             ->executeQuery()
             ->fetchFirstColumn();
     }
@@ -56,13 +58,18 @@ class EventVehicleAssignmentElement extends AbstractFormElement
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable('tx_rescuereports_station_car_mm');
 
-        return $connection->createQueryBuilder()
+        $queryBuilder = $connection->createQueryBuilder();
+
+        return $queryBuilder
             ->select('c.uid AS car_uid', 's.name AS station_name', 'c.name AS car_name')
             ->from('tx_rescuereports_station_car_mm', 'sc')
             ->innerJoin('sc', 'tx_rescuereports_domain_model_station', 's', 's.uid = sc.uid_local')
             ->innerJoin('sc', 'tx_rescuereports_domain_model_car', 'c', 'c.uid = sc.uid_foreign')
             ->where(
-                $connection->createQueryBuilder()->expr()->in('sc.uid_local', $stationUids)
+                $queryBuilder->expr()->in(
+                    'sc.uid_local',
+                    $queryBuilder->createNamedParameter($stationUids, ArrayParameterType::INTEGER)
+                )
             )
             ->orderBy('s.name', 'ASC')
             ->addOrderBy('c.name', 'ASC')

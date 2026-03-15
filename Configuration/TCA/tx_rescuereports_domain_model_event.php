@@ -2,27 +2,27 @@
 
 return [
     'ctrl' => [
-    'title' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescuereports_domain_model_event',
-    'label' => 'title',
-    'tstamp' => 'tstamp',
-    'crdate' => 'crdate',
-    'cruser_id' => 'cruser_id',
-    'languageField' => 'sys_language_uid',
-    'transOrigPointerField' => 'l10n_parent',
-    'transOrigDiffSourceField' => 'l10n_diffsource',
-    'delete' => 'deleted',
-    'enablecolumns' => [
-        'disabled' => 'hidden',
-    ],
-    'security' => [
-        'ignorePageTypeRestriction' => true,
-    ],
-    'searchFields' => 'title,description',
-    'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_event.png',
+        'title' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescuereports_domain_model_event',
+        'label' => 'title',
+        'tstamp' => 'tstamp',
+        'crdate' => 'crdate',
+        'cruser_id' => 'cruser_id',
+        'languageField' => 'sys_language_uid',
+        'transOrigPointerField' => 'l10n_parent',
+        'transOrigDiffSourceField' => 'l10n_diffsource',
+        'delete' => 'deleted',
+        'enablecolumns' => [
+            'disabled' => 'hidden',
+        ],
+        'security' => [
+            'ignorePageTypeRestriction' => true,
+        ],
+        'searchFields' => 'title,description',
+        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_event.png',
     ],
     'types' => [
         '1' => [
-            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;Eingesetzte Einheiten, stations, --div--;Fahrzeuge, vehicles, --div--;Bilder, images'
+            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;Eingesetzte Einheiten, stations, --div--;Fahrzeuge, vehicles, --div--;Bilder, images',
         ],
     ],
 
@@ -39,52 +39,92 @@ return [
         'sys_language_uid' => [
             'exclude' => true,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
-            'config' => ['type' => 'language'],
+            'config' => [
+                'type' => 'language',
+            ],
         ],
-        'l18n_parent' => [
+        'l10n_parent' => [
             'displayCond' => 'FIELD:sys_language_uid:>:0',
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'items' => [['', 0]],
+                'items' => [
+                    ['', 0],
+                ],
                 'foreign_table' => 'tx_rescuereports_domain_model_event',
                 'foreign_table_where' => 'AND {#tx_rescuereports_domain_model_event}.{#pid}=###CURRENT_PID###',
                 'default' => 0,
             ],
         ],
-        'l18n_diffsource' => ['config' => ['type' => 'passthrough']],
+        'l10n_diffsource' => [
+            'config' => [
+                'type' => 'passthrough',
+            ],
+        ],
         'hidden' => [
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden',
-            'config' => ['type' => 'check', 'default' => 1],
+            'config' => [
+                'type' => 'check',
+                'default' => 1,
+            ],
         ],
 
         // Einsatzzeit
         'start' => [
             'label' => 'Einsatzbeginn',
-            'config' => ['type' => 'input', 'renderType' => 'inputDateTime', 'eval' => 'datetime', 'dbType' => 'datetime', 'default' => null],
+            'config' => [
+                'type' => 'input',
+                'renderType' => 'inputDateTime',
+                'eval' => 'datetime',
+                'dbType' => 'datetime',
+                'default' => null,
+            ],
         ],
         'end' => [
             'label' => 'Einsatzende',
-            'config' => ['type' => 'input', 'renderType' => 'inputDateTime', 'eval' => 'datetime', 'dbType' => 'datetime', 'default' => null],
+            'config' => [
+                'type' => 'input',
+                'renderType' => 'inputDateTime',
+                'eval' => 'datetime',
+                'dbType' => 'datetime',
+                'default' => null,
+            ],
         ],
 
         // Inhaltliche Felder
         'title' => [
             'label' => 'Einsatztitel',
-            'config' => ['type' => 'input', 'eval' => 'trim,required'],
+            'config' => [
+                'type' => 'input',
+                'eval' => 'trim,required',
+            ],
         ],
         'location' => [
             'label' => 'Einsatzort',
-            'config' => ['type' => 'input', 'eval' => 'trim', 'default' => "Stadt, Straße // BAB X, Richtung ...",],
+            'config' => [
+                'type' => 'input',
+                'eval' => 'trim',
+                'default' => 'Stadt, Straße // BAB X, Richtung ...',
+            ],
         ],
         'number' => [
             'label' => 'Einsatznummer',
-            'config' => ['type' => 'input', 'eval' => 'trim,required', 'placeholder' => '26/123', 'max' => 6, 'default' => 'ZÖ/'],
+            'config' => [
+                'type' => 'input',
+                'eval' => 'trim,required',
+                'placeholder' => '26/123',
+                'max' => 6,
+                'default' => '26/',
+            ],
         ],
         'description' => [
             'label' => 'Einsatzbericht',
-            'config' => ['type' => 'text', 'enableRichtext' => true, 'rows' => 5],
+            'config' => [
+                'type' => 'text',
+                'enableRichtext' => true,
+                'rows' => 5,
+            ],
         ],
 
         // Typen
@@ -118,34 +158,32 @@ return [
                 'maxitems' => 9999,
             ],
         ],
-       'vehicles' => [
+
+        'vehicles' => [
             'exclude' => true,
             'label' => 'Eingesetzte Fahrzeuge',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectMultipleSideBySide',
-                //'foreign_table' => 'tx_rescuereports_domain_model_vehicle',
                 'itemsProcFunc' => \In2code\RescueReports\Utility\EventVehicleSelectionUtility::class . '->getAvailableVehicles',
-                //'foreign_table_where' => '', // ← wichtig, NICHT setzen!
                 'size' => 15,
                 'maxitems' => 999,
                 'multiple' => true,
                 'eval' => 'int',
             ],
         ],
+
         // Bilder
         'images' => [
             'label' => 'Bilder',
-            'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
-                'images',
-                [
-                    'maxitems' => 10,
-                    'appearance' => [
-                        'createNewRelationLinkTitle' => 'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:label.addFileReference',
-                    ],
+            'config' => [
+                'type' => 'file',
+                'allowed' => 'common-image-types',
+                'maxitems' => 10,
+                'appearance' => [
+                    'createNewRelationLinkTitle' => 'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:label.addFileReference',
                 ],
-                $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext']
-            ),
+            ],
         ],
     ],
 ];

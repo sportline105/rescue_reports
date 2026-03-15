@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace In2code\RescueReports\Domain\Model;
 
@@ -12,11 +13,13 @@ class Station extends AbstractEntity
     protected ?Brigade $brigade = null;
 
     /**
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\In2code\RescueReports\Domain\Model\Vehicle>
+     * @var ObjectStorage<Vehicle>
      * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
      * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
      */
     protected ObjectStorage $vehicles;
+
+    protected int $sorting = 9999;
 
     public function __construct()
     {
@@ -65,7 +68,6 @@ class Station extends AbstractEntity
     {
         $this->vehicles->detach($vehicle);
     }
-    protected int $sorting = 9999;
 
     public function getSorting(): int
     {

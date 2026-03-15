@@ -1,8 +1,11 @@
 <?php
+declare(strict_types=1);
+
 namespace In2code\RescueReports\Utility;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class VehicleLabelUtility
 {
@@ -13,7 +16,15 @@ class VehicleLabelUtility
         $vehicleName = $row['name'] ?? '';
         $orgAbbr = '';
 
-        if (!empty($row['car'])) {
+        $car = $row['car'] ?? 0;
+
+        if (is_array($car)) {
+            $car = (int)($car[0] ?? 0);
+        } else {
+            $car = (int)$car;
+        }
+
+        if ($car > 0) {
             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
                 ->getConnectionForTable('tx_rescuereports_domain_model_car')
                 ->createQueryBuilder();
@@ -22,7 +33,10 @@ class VehicleLabelUtility
                 ->select('organization', 'name')
                 ->from('tx_rescuereports_domain_model_car')
                 ->where(
-                    $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter((int)$row['car'], \PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq(
+                        'uid',
+                        $queryBuilder->createNamedParameter($car, ParameterType::INTEGER)
+                    )
                 )
                 ->executeQuery()
                 ->fetchAssociative();
@@ -36,7 +50,10 @@ class VehicleLabelUtility
                     ->select('abbreviation')
                     ->from('tx_rescuereports_domain_model_organisation')
                     ->where(
-                        $orgQuery->expr()->eq('uid', $orgQuery->createNamedParameter((int)$carRow['organization'], \PDO::PARAM_INT))
+                        $orgQuery->expr()->eq(
+                            'uid',
+                            $orgQuery->createNamedParameter((int)$carRow['organization'], ParameterType::INTEGER)
+                        )
                     )
                     ->executeQuery()
                     ->fetchAssociative();

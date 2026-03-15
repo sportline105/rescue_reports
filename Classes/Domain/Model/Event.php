@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 namespace In2code\RescueReports\Domain\Model;
 
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 
 class Event extends AbstractEntity
 {
@@ -15,22 +17,23 @@ class Event extends AbstractEntity
     protected string $location = '';
 
     /**
-    * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\In2code\RescueReports\Domain\Model\Vehicle>
-    */
+     * @var ObjectStorage<Vehicle>
+     */
     protected ObjectStorage $vehicles;
 
-
     /**
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\In2code\RescueReports\Domain\Model\Station>
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var ObjectStorage<Station>
      */
     protected ObjectStorage $stations;
 
-    /** @var ObjectStorage<FileReference> */
+    /**
+     * @var ObjectStorage<FileReference>
+     */
     protected ObjectStorage $images;
 
-    /** @var ObjectStorage<Type> */
+    /**
+     * @var ObjectStorage<Type>
+     */
     protected ObjectStorage $types;
 
     public function __construct()
@@ -109,7 +112,9 @@ class Event extends AbstractEntity
         $this->location = $location;
     }
 
-    /** @return ObjectStorage<Vehicle> */
+    /**
+     * @return ObjectStorage<Vehicle>
+     */
     public function getVehicles(): ObjectStorage
     {
         return $this->vehicles;
@@ -153,7 +158,9 @@ class Event extends AbstractEntity
         $this->stations->detach($station);
     }
 
-    /** @return ObjectStorage<FileReference> */
+    /**
+     * @return ObjectStorage<FileReference>
+     */
     public function getImages(): ObjectStorage
     {
         return $this->images;
@@ -174,7 +181,9 @@ class Event extends AbstractEntity
         $this->images->detach($image);
     }
 
-    /** @return ObjectStorage<Type> */
+    /**
+     * @return ObjectStorage<Type>
+     */
     public function getTypes(): ObjectStorage
     {
         return $this->types;

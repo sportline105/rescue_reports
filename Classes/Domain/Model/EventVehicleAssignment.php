@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace In2code\RescueReports\Domain\Model;
 
@@ -7,7 +8,9 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 class EventVehicleAssignment extends AbstractEntity
 {
     protected ?Event $event = null;
+
     protected ?Station $station = null;
+
     protected ?Car $car = null;
 
     public function getEvent(): ?Event

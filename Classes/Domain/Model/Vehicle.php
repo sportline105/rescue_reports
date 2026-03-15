@@ -1,29 +1,22 @@
 <?php
+declare(strict_types=1);
+
 namespace In2code\RescueReports\Domain\Model;
 
-use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 class Vehicle extends AbstractEntity
 {
     protected string $name = '';
 
-    /**
-         * @var \In2code\RescueReports\Domain\Model\Car
-         */
-        protected $car;
+    protected ?Car $car = null;
 
-    /**
-     * @var \In2code\RescueReports\Domain\Model\Station|null
-     */
-    protected $station = null;
+    protected ?Station $station = null;
 
     protected string $link = '';
 
-    /**
-     * @var FileReference|null
-     */
-    protected $image = null;
+    protected ?FileReference $image = null;
 
     public function getName(): string
     {
@@ -36,14 +29,14 @@ class Vehicle extends AbstractEntity
     }
 
     public function getCar(): ?Car
-        {
-            return $this->car;
-        }
+    {
+        return $this->car;
+    }
 
-        public function setCar(?Car $car): void
-        {
-            $this->car = $car;
-        }
+    public function setCar(?Car $car): void
+    {
+        $this->car = $car;
+    }
 
     public function getStation(): ?Station
     {

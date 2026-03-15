@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace In2code\RescueReports\Controller;
 
 use In2code\RescueReports\Domain\Model\Event;
@@ -10,6 +12,7 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 class EventController extends ActionController
 {
     protected EventRepository $eventRepository;
+
     protected TypeRepository $typeRepository;
 
     public function __construct(EventRepository $eventRepository)
@@ -22,10 +25,7 @@ class EventController extends ActionController
         $this->typeRepository = $typeRepository;
     }
 
-    /**
-     * Liste aller Einsätze (mit optionalen FlexForm-Filtern)
-     */
-    public function listAction(string $searchWord = null): ResponseInterface
+    public function listAction(?string $searchWord = null): ResponseInterface
     {
         $maxCount = (int)($this->settings['maxCount'] ?? 0);
         $dateFromValue = $this->settings['dateFrom'] ?? null;
@@ -45,16 +45,12 @@ class EventController extends ActionController
             $templateVariant = 'standard';
         }
 
-        $searchWord = trim((string)($searchWord ?? ''));
-
-        // Rohwerte aus FlexForm an Repository weitergeben
-        $dateFrom = $dateFromValue;
-        $dateTo = $dateToValue;
+        $searchWord = trim((string)$searchWord);
 
         if ($enableSearch && $searchWord !== '') {
-            $events = $this->eventRepository->search($searchWord, $dateFrom, $dateTo, $maxCount);
+            $events = $this->eventRepository->search($searchWord, $dateFromValue, $dateToValue, $maxCount);
         } else {
-            $events = $this->eventRepository->findFiltered($dateFrom, $dateTo, $maxCount);
+            $events = $this->eventRepository->findFiltered($dateFromValue, $dateToValue, $maxCount);
         }
 
         $this->view->assignMultiple([
@@ -72,9 +68,6 @@ class EventController extends ActionController
         return $this->htmlResponse();
     }
 
-    /**
-     * Detailansicht eines einzelnen Einsatzes
-     */
     public function showAction(Event $event): ResponseInterface
     {
         $event = $this->eventRepository->findByUid($event->getUid());
@@ -91,9 +84,6 @@ class EventController extends ActionController
         return $this->htmlResponse();
     }
 
-    /**
-     * Gruppiert Fahrzeuge nach Feuerwehr und Standort
-     */
     protected function groupVehiclesByBrigadeAndStation(Event $event): array
     {
         $grouped = [];
@@ -130,31 +120,16 @@ class EventController extends ActionController
         ksort($grouped);
 
         foreach ($grouped as &$group) {
-            if (isset($group['stations']) && is_array($group['stations'])) {
-                usort(
-                    $group['stations'],
-                    static function (array $a, array $b): int {
-                        return $a['sorting'] <=> $b['sorting'];
-                    }
-                );
-            }
+            usort($group['stations'], static fn($a, $b) => $a['sorting'] <=> $b['sorting']);
         }
-        unset($group);
 
         return $grouped;
     }
 
-    /**
-     * Wandelt FlexForm-Datumswerte zuverlässig in DateTime um
-     */
-    protected function createDateTimeFromFlexFormValue($value): ?\DateTime
+    protected function createDateTimeFromFlexFormValue(mixed $value): ?\DateTimeInterface
     {
-        if ($value instanceof \DateTime) {
-            return clone $value;
-        }
-
         if ($value instanceof \DateTimeInterface) {
-            return new \DateTime($value->format('Y-m-d H:i:s'));
+            return clone $value;
         }
 
         if ($value === null || $value === '' || $value === '0') {
@@ -172,23 +147,17 @@ class EventController extends ActionController
         return null;
     }
 
-    /**
-     * Normalisiert das Seitenfeld aus der FlexForm
-     *
-     * Kann je nach Konfiguration als int, String oder Array kommen.
-     */
-    protected function normalizeDetailPageUid($value): ?int
+    protected function normalizeDetailPageUid(mixed $value): ?int
     {
         if (is_array($value)) {
             $value = $value[0] ?? null;
         }
 
         if (is_string($value) && strpos($value, ',') !== false) {
-            $parts = explode(',', $value);
-            $value = $parts[0] ?? null;
+            $value = explode(',', $value)[0] ?? null;
         }
 
-        if ($value === null || $value === '' || $value === '0' || $value === 0) {
+        if ($value === null || $value === '' || $value === '0') {
             return null;
         }
 
