@@ -91,6 +91,14 @@ class Event extends AbstractEntity
         $this->number = $number;
     }
 
+    public function getNumberShort(): string
+    {
+        $number = (string)$this->number;
+        $digits = preg_replace('/\D+/', '', $number) ?? '';
+
+        return substr(str_pad($digits, 3, '0', STR_PAD_LEFT), -3);
+    }
+
     public function getLocation(): string
     {
         return $this->location;
@@ -185,5 +193,23 @@ class Event extends AbstractEntity
     public function removeType(Type $type): void
     {
         $this->types->detach($type);
+    }
+
+    public function getDuration(): string
+    {
+        if (!$this->start instanceof \DateTimeInterface || !$this->end instanceof \DateTimeInterface) {
+            return '';
+        }
+
+        $diff = $this->start->diff($this->end);
+
+        $hours = ($diff->days * 24) + $diff->h;
+        $minutes = $diff->i;
+
+        if ($hours > 0) {
+            return sprintf('%d Std. %02d Min.', $hours, $minutes);
+        }
+
+        return sprintf('%d Min.', $minutes);
     }
 }

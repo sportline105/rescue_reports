@@ -22,7 +22,7 @@ return [
         'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_type.svg'
     ],
     'types' => [
-        '1' => ['showitem' => 'title, --div--;Access, hidden, starttime, endtime'],
+        '1' => ['showitem' => 'deprecated, title, --div--;Access, hidden, starttime, endtime'],
     ],
     'columns' => [
         'sys_language_uid' => [
@@ -46,6 +46,16 @@ return [
         'hidden' => ['label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden','config' => ['type' => 'check','items' => [['', 1]]]],
         'starttime' => ['exclude' => true,'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime','config' => ['type' => 'input','renderType' => 'inputDateTime','eval' => 'datetime','default' => 0]],
         'endtime' => ['exclude' => true,'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime','config' => ['type' => 'input','renderType' => 'inputDateTime','eval' => 'datetime','default' => 0,'range' => ['upper' => mktime(0, 0, 0, 1, 1, 2038)]]],
-        'title' => ['label' => 'Title','config' => ['type' => 'input','eval' => 'trim,required']]
+        'title' => ['label' => 'Title','config' => ['type' => 'input','eval' => 'trim,required']],
+        'deprecated' => [
+            'exclude' => true,
+            'label' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescuereports_domain_model_type.deprecated',
+            'config' => [
+                'type' => 'check',
+                'items' => [
+                    ['Einsatzstichwort für neue Einsätze nicht mehr anzeigen (wird für bestehende Einsätze weiterhin angezeigt)', 1],
+                ],
+            ],
+        ]
     ]
 ];

@@ -1,60 +1,99 @@
 <?php
 namespace In2code\RescueReports\Controller;
 
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use In2code\RescueReports\Domain\Model\Event;
 use In2code\RescueReports\Domain\Repository\EventRepository;
 use In2code\RescueReports\Domain\Repository\TypeRepository;
-use In2code\RescueReports\Domain\Model\Event;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 class EventController extends ActionController
 {
     protected EventRepository $eventRepository;
-    //protected TypeRepository $typeRepository;
-    protected \In2code\RescueReports\Domain\Repository\TypeRepository $typeRepository;
+    protected TypeRepository $typeRepository;
 
     public function __construct(EventRepository $eventRepository)
     {
         $this->eventRepository = $eventRepository;
     }
 
-    public function injectTypeRepository(\In2code\RescueReports\Domain\Repository\TypeRepository $typeRepository): void
+    public function injectTypeRepository(TypeRepository $typeRepository): void
     {
         $this->typeRepository = $typeRepository;
     }
 
+    /**
+     * Liste aller Einsätze (mit optionalen FlexForm-Filtern)
+     */
     public function listAction(string $searchWord = null): ResponseInterface
     {
-        $searchWord = (string)($searchWord ?? '');
+        $maxCount = (int)($this->settings['maxCount'] ?? 0);
+        $dateFromValue = $this->settings['dateFrom'] ?? null;
+        $dateToValue = $this->settings['dateTo'] ?? null;
+        $enableSearch = (bool)($this->settings['enableSearch'] ?? false);
+        $templateVariant = (string)($this->settings['templateVariant'] ?? 'standard');
+        $detailPageUid = $this->normalizeDetailPageUid($this->settings['detailPageUid'] ?? null);
 
-        if ($searchWord !== '') {
-            // Suche
-            $events = $this->eventRepository->search($searchWord);
+        $allowedTemplateVariants = [
+            'standard',
+            'sidebar',
+            'newdesign',
+            'newdesignsidebar',
+        ];
+
+        if (!in_array($templateVariant, $allowedTemplateVariants, true)) {
+            $templateVariant = 'standard';
+        }
+
+        $searchWord = trim((string)($searchWord ?? ''));
+
+        // Rohwerte aus FlexForm an Repository weitergeben
+        $dateFrom = $dateFromValue;
+        $dateTo = $dateToValue;
+
+        if ($enableSearch && $searchWord !== '') {
+            $events = $this->eventRepository->search($searchWord, $dateFrom, $dateTo, $maxCount);
         } else {
-            // Standard-Liste
-            $events = $this->eventRepository->findAllWithRelations();
+            $events = $this->eventRepository->findFiltered($dateFrom, $dateTo, $maxCount);
         }
 
         $this->view->assignMultiple([
-            'events'     => $events,
+            'events' => $events,
             'searchWord' => $searchWord,
+            'enableSearch' => $enableSearch,
+            'maxCount' => $maxCount,
+            'dateFrom' => $this->createDateTimeFromFlexFormValue($dateFromValue),
+            'dateTo' => $this->createDateTimeFromFlexFormValue($dateToValue),
+            'templateVariant' => $templateVariant,
+            'detailPageUid' => $detailPageUid,
+            'settings' => $this->settings,
         ]);
 
         return $this->htmlResponse();
     }
 
+    /**
+     * Detailansicht eines einzelnen Einsatzes
+     */
     public function showAction(Event $event): ResponseInterface
     {
         $event = $this->eventRepository->findByUid($event->getUid());
         $groupedVehicleData = $this->groupVehiclesByBrigadeAndStation($event);
+
         $this->view->assignMultiple([
             'event' => $event,
-            'groupedVehicleData' => $groupedVehicleData
+            'groupedVehicleData' => $groupedVehicleData,
+            'detailPageUid' => $this->normalizeDetailPageUid($this->settings['detailPageUid'] ?? null),
+            'templateVariant' => (string)($this->settings['templateVariant'] ?? 'standard'),
+            'settings' => $this->settings,
         ]);
+
         return $this->htmlResponse();
     }
 
+    /**
+     * Gruppiert Fahrzeuge nach Feuerwehr und Standort
+     */
     protected function groupVehiclesByBrigadeAndStation(Event $event): array
     {
         $grouped = [];
@@ -63,7 +102,7 @@ class EventController extends ActionController
         foreach ($event->getStations() as $station) {
             $brigade = $station->getBrigade();
             $brigadeName = $brigade ? $brigade->getName() : 'Unbekannt';
-            $brigadePriority = $brigade && method_exists($brigade, 'getPriority') ? $brigade->getPriority() : 9999;
+            $brigadePriority = ($brigade && method_exists($brigade, 'getPriority')) ? $brigade->getPriority() : 9999;
             $stationName = $station->getName();
             $stationSorting = method_exists($station, 'getSorting') ? $station->getSorting() : 9999;
 
@@ -74,21 +113,85 @@ class EventController extends ActionController
                 }
             }
 
-            $grouped[$brigadePriority]['name'] = $brigadeName;
+            if (!isset($grouped[$brigadePriority])) {
+                $grouped[$brigadePriority] = [
+                    'name' => $brigadeName,
+                    'stations' => [],
+                ];
+            }
+
             $grouped[$brigadePriority]['stations'][] = [
                 'name' => $stationName,
                 'sorting' => $stationSorting,
-                'vehicles' => $vehicles
+                'vehicles' => $vehicles,
             ];
         }
 
         ksort($grouped);
+
         foreach ($grouped as &$group) {
             if (isset($group['stations']) && is_array($group['stations'])) {
-                usort($group['stations'], fn($a, $b) => $a['sorting'] <=> $b['sorting']);
+                usort(
+                    $group['stations'],
+                    static function (array $a, array $b): int {
+                        return $a['sorting'] <=> $b['sorting'];
+                    }
+                );
             }
         }
+        unset($group);
 
         return $grouped;
+    }
+
+    /**
+     * Wandelt FlexForm-Datumswerte zuverlässig in DateTime um
+     */
+    protected function createDateTimeFromFlexFormValue($value): ?\DateTime
+    {
+        if ($value instanceof \DateTime) {
+            return clone $value;
+        }
+
+        if ($value instanceof \DateTimeInterface) {
+            return new \DateTime($value->format('Y-m-d H:i:s'));
+        }
+
+        if ($value === null || $value === '' || $value === '0') {
+            return null;
+        }
+
+        if (is_numeric($value)) {
+            return (new \DateTime())->setTimestamp((int)$value);
+        }
+
+        if (is_string($value) && strtotime($value) !== false) {
+            return new \DateTime($value);
+        }
+
+        return null;
+    }
+
+    /**
+     * Normalisiert das Seitenfeld aus der FlexForm
+     *
+     * Kann je nach Konfiguration als int, String oder Array kommen.
+     */
+    protected function normalizeDetailPageUid($value): ?int
+    {
+        if (is_array($value)) {
+            $value = $value[0] ?? null;
+        }
+
+        if (is_string($value) && strpos($value, ',') !== false) {
+            $parts = explode(',', $value);
+            $value = $parts[0] ?? null;
+        }
+
+        if ($value === null || $value === '' || $value === '0' || $value === 0) {
+            return null;
+        }
+
+        return (int)$value;
     }
 }

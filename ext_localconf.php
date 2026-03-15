@@ -1,20 +1,38 @@
 <?php
+declare(strict_types=1);
 
 defined('TYPO3') or die();
 
 use In2code\RescueReports\Controller\EventController;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
-ExtensionUtility::configurePlugin(
-    'In2code.RescueReports',
-    'Eventlist',
-    [
-        EventController::class => 'list,show',
-    ],
-    [
-        EventController::class => 'list,show', // list als non-cacheable, damit die Suche wirkt
-    ]
-);
+(function (): void {
+
+    // Hauptplugin
+    ExtensionUtility::configurePlugin(
+        'RescueReports',
+        'Eventlist',
+        [
+            EventController::class => 'list,show',
+        ],
+        [
+            EventController::class => 'list',
+        ]
+    );
+
+    // Sidebar-Plugin
+    ExtensionUtility::configurePlugin(
+        'RescueReports',
+        'Sidebar',
+        [
+            EventController::class => 'list',
+        ],
+        [
+            EventController::class => '',
+        ]
+    );
+
+})();
 
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][] = [
     'nodeName' => 'eventVehicleAssignment',

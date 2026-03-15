@@ -22,7 +22,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;Stationen, stations, --div--;Fahrzeuge, vehicles, --div--;Bilder, images'
+            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;Eingesetzte Einheiten, stations, --div--;Fahrzeuge, vehicles, --div--;Bilder, images'
         ],
     ],
 
@@ -76,15 +76,15 @@ return [
         ],
         'location' => [
             'label' => 'Einsatzort',
-            'config' => ['type' => 'input', 'eval' => 'trim'],
+            'config' => ['type' => 'input', 'eval' => 'trim', 'default' => "Stadt, Straße // BAB X, Richtung ...",],
         ],
         'number' => [
             'label' => 'Einsatznummer',
-            'config' => ['type' => 'input', 'eval' => 'trim', 'default' => 'ZÖ/'],
+            'config' => ['type' => 'input', 'eval' => 'trim,required', 'placeholder' => '26/123', 'max' => 6, 'default' => 'ZÖ/'],
         ],
         'description' => [
             'label' => 'Einsatzbericht',
-            'config' => ['type' => 'text', 'enableRichtext' => true, 'richtextConfiguration' => 'default', 'rows' => 5],
+            'config' => ['type' => 'text', 'enableRichtext' => true, 'rows' => 5],
         ],
 
         // Typen
@@ -94,6 +94,10 @@ return [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'foreign_table' => 'tx_rescuereports_domain_model_type',
+                'foreign_table_where' => '
+                    AND tx_rescuereports_domain_model_type.deprecated = 0
+                    ORDER BY tx_rescuereports_domain_model_type.title
+                ',
                 'MM' => 'tx_rescuereports_event_type_mm',
                 'minitems' => 0,
                 'maxitems' => 1,
@@ -102,7 +106,7 @@ return [
 
         // Stationen
         'stations' => [
-            'label' => 'Stationen',
+            'label' => 'Eingesetzte Einheiten',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectCheckBox',

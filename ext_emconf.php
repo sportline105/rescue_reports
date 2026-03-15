@@ -1,7 +1,7 @@
 <?php
 $EM_CONF[$_EXTKEY] = [
     'title' => 'rescue_reports',
-    'description' => 'Darstellung von Feuerwehreinsätzen, Fahrzeugen, Typen und Stationen mit Extbase/Fluid.',
+    'description' => 'Detaillierte Einsatzberichte für Feuerwehren und BOS',
     'category' => 'plugin',
     'author' => 'Dein Name',
     'author_email' => 'dein@example.com',
