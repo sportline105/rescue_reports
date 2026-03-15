@@ -1,6 +1,6 @@
-# Detaillierte Einsatzberichte für Feuerwehren und BOS auf Grundlage der TYPO3-Extension "firefighter".
+# Detaillierte Einsatzberichte für Feuerwehren und BOS
 
-Entwickelt mithilfe TYPO3 Dev Assist [by in2code]
+Entwickelt mithilfe TYPO3 Dev Assist [by in2code]. Weiterentwicklung auf Grundlage der TYPO3-Extension "firefighter".
 
 ---
 
