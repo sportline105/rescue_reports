@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace In2code\RescueReports\Updates;
+namespace nkfire\RescueReports\Updates;
 
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

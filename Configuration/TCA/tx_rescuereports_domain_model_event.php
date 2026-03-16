@@ -115,7 +115,7 @@ return [
                 'eval' => 'trim,required',
                 'placeholder' => '26/123',
                 'max' => 6,
-                'default' => '26/',
+                'default' => 'ZÖ/',
             ],
         ],
         'description' => [

@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace In2code\RescueReports\Controller;
+namespace nkfire\RescueReports\Controller;
 
-use In2code\RescueReports\Domain\Model\Event;
-use In2code\RescueReports\Domain\Repository\EventRepository;
-use In2code\RescueReports\Domain\Repository\TypeRepository;
+use nkfire\RescueReports\Domain\Model\Event;
+use nkfire\RescueReports\Domain\Repository\EventRepository;
+use nkfire\RescueReports\Domain\Repository\TypeRepository;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 

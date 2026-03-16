@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace In2code\RescueReports\Domain\Repository;
+namespace nkfire\RescueReports\Domain\Repository;
 
 use DateTime;
 use DateTimeInterface;
-use In2code\RescueReports\Domain\Model\Event;
+use nkfire\RescueReports\Domain\Model\Event;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
