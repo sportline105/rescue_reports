@@ -150,7 +150,7 @@ return [
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectCheckBox',
-                'itemsProcFunc' => 'In2code\\RescueReports\\Utility\\StationLabelUtility->addGroupedStations',
+                'itemsProcFunc' => 'nkfire\\RescueReports\\Utility\\StationLabelUtility->addGroupedStations',
                 'foreign_table' => 'tx_rescuereports_domain_model_station',
                 'foreign_table_where' => 'AND 1=0',
                 'MM' => 'tx_rescuereports_event_station_mm',
@@ -165,7 +165,7 @@ return [
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectMultipleSideBySide',
-                'itemsProcFunc' => \In2code\RescueReports\Utility\EventVehicleSelectionUtility::class . '->getAvailableVehicles',
+                'itemsProcFunc' => \nkfire\RescueReports\Utility\EventVehicleSelectionUtility::class . '->getAvailableVehicles',
                 'size' => 15,
                 'maxitems' => 999,
                 'multiple' => true,
