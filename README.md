@@ -38,4 +38,3 @@ Dieser erstellt einen Speicherordner für die Extension und fügt diverse (deuts
 ## Templates:
 - Standard/Sidebar > Foundation 7 Framework
 - NewDesign/NewDesignSidebar > Bootstrap Framework
->>>>>>> Stashed changes
