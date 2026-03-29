@@ -4,7 +4,7 @@ services:
     autoconfigure: true
     public: false
 
-  In2code\RescueReports\:
+  nkfire\RescueReports\:
     resource: '../Classes/*'
     exclude:
       - '../Classes/Domain/Model/*'

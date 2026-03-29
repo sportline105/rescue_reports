@@ -1,5 +1,6 @@
 <?php
-namespace In2code\RescueReports\Form\Element;
+declare(strict_types=1);
+namespace nkfire\RescueReports\Form\Element;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;

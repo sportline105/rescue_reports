@@ -1,19 +1,20 @@
 {
-  "name": "In2code/rescue-reports",
+  "name": "nkfire/rescue-reports",
   "type": "typo3-cms-extension",
   "description": "Extbase-basierte Feuerwehr-Extension mit Einsatzverwaltung",
   "license": "GPL-2.0-or-later",
   "require": {
-    "typo3/cms-core": "^13.0 || ^14.9"
+    "php": "^8.2",
+    "typo3/cms-core": "^13.0 || ^14.0"
   },
   "autoload": {
-  "psr-4": {
-    "In2code\\RescueReports\\": "Classes/"
-  }
-},
+    "psr-4": {
+      "nkfire\\RescueReports\\": "Classes/"
+    }
+  },
   "extra": {
     "typo3/cms": {
-      "extension-key": "rescue-reports"
+      "extension-key": "rescue_reports"
     }
   }
 }

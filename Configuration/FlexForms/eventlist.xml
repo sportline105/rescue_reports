@@ -14,20 +14,20 @@
               <renderType>selectSingle</renderType>
               <items>
                 <numIndex index="0">
-                  <numIndex index="0">Standard</numIndex>
-                  <numIndex index="1">standard</numIndex>
+                  <label>Standard</label>
+                  <value>standard</value>
                 </numIndex>
                 <numIndex index="1">
-                  <numIndex index="0">Sidebar</numIndex>
-                  <numIndex index="1">sidebar</numIndex>
+                  <label>Sidebar</label>
+                  <value>sidebar</value>
                 </numIndex>
                 <numIndex index="2">
-                  <numIndex index="0">NewDesign</numIndex>
-                  <numIndex index="1">newdesign</numIndex>
+                  <label>NewDesign</label>
+                  <value>newdesign</value>
                 </numIndex>
                 <numIndex index="3">
-                  <numIndex index="0">NewDesignSidebar</numIndex>
-                  <numIndex index="1">newdesignsidebar</numIndex>
+                  <label>NewDesignSidebar</label>
+                  <value>newdesignsidebar</value>
                 </numIndex>
               </items>
               <default>standard</default>
@@ -37,8 +37,7 @@
           <settings.maxCount>
             <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:maxCount</label>
             <config>
-              <type>input</type>
-              <eval>int</eval>
+              <type>number</type>
               <size>5</size>
               <default>0</default>
             </config>
@@ -47,18 +46,16 @@
           <settings.dateFrom>
             <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:dateFrom</label>
             <config>
-              <type>input</type>
-              <renderType>inputDateTime</renderType>
-              <eval>date</eval>
+              <type>datetime</type>
+              <format>date</format>
             </config>
           </settings.dateFrom>
 
           <settings.dateTo>
             <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:dateTo</label>
             <config>
-              <type>input</type>
-              <renderType>inputDateTime</renderType>
-              <eval>date</eval>
+              <type>datetime</type>
+              <format>date</format>
             </config>
           </settings.dateTo>
 
@@ -68,7 +65,7 @@
               <type>check</type>
               <items>
                 <numIndex index="0">
-                  <numIndex index="0">Ja</numIndex>
+                  <label>Ja</label>
                 </numIndex>
               </items>
             </config>

@@ -1,8 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace In2code\RescueReports\Domain\Model;
+namespace nkfire\RescueReports\Domain\Model;
 
+use TYPO3\CMS\Extbase\Annotation\ORM\Cascade;
+use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
@@ -14,9 +16,9 @@ class Station extends AbstractEntity
 
     /**
      * @var ObjectStorage<Vehicle>
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
      */
+    #[Lazy]
+    #[Cascade(['value' => 'remove'])]
     protected ObjectStorage $vehicles;
 
     protected int $sorting = 9999;

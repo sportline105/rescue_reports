@@ -6,7 +6,6 @@ return [
         'label' => 'title',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
-        'cruser_id' => 'cruser_id',
         'languageField' => 'sys_language_uid',
         'transOrigPointerField' => 'l10n_parent',
         'transOrigDiffSourceField' => 'l10n_diffsource',
@@ -17,7 +16,6 @@ return [
         'security' => [
             'ignorePageTypeRestriction' => true,
         ],
-        'searchFields' => 'title,description',
         'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_event.png',
     ],
     'types' => [
@@ -50,7 +48,7 @@ return [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'items' => [
-                    ['', 0],
+                    ['label' => '', 'value' => 0],
                 ],
                 'foreign_table' => 'tx_rescuereports_domain_model_event',
                 'foreign_table_where' => 'AND {#tx_rescuereports_domain_model_event}.{#pid}=###CURRENT_PID###',
@@ -74,9 +72,7 @@ return [
         'start' => [
             'label' => 'Einsatzbeginn',
             'config' => [
-                'type' => 'input',
-                'renderType' => 'inputDateTime',
-                'eval' => 'datetime',
+                'type' => 'datetime',
                 'dbType' => 'datetime',
                 'default' => null,
             ],
@@ -84,9 +80,7 @@ return [
         'end' => [
             'label' => 'Einsatzende',
             'config' => [
-                'type' => 'input',
-                'renderType' => 'inputDateTime',
-                'eval' => 'datetime',
+                'type' => 'datetime',
                 'dbType' => 'datetime',
                 'default' => null,
             ],
@@ -97,7 +91,7 @@ return [
             'label' => 'Einsatztitel',
             'config' => [
                 'type' => 'input',
-                'eval' => 'trim,required',
+                'eval' => 'trim', 'required' => true,
             ],
         ],
         'location' => [
@@ -112,7 +106,7 @@ return [
             'label' => 'Einsatznummer',
             'config' => [
                 'type' => 'input',
-                'eval' => 'trim,required',
+                'eval' => 'trim', 'required' => true,
                 'placeholder' => '26/123',
                 'max' => 6,
                 'default' => 'ZÖ/',
@@ -150,7 +144,7 @@ return [
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectCheckBox',
-                'itemsProcFunc' => 'In2code\\RescueReports\\Utility\\StationLabelUtility->addGroupedStations',
+                'itemsProcFunc' => 'nkfire\\RescueReports\\Utility\\StationLabelUtility->addGroupedStations',
                 'foreign_table' => 'tx_rescuereports_domain_model_station',
                 'foreign_table_where' => 'AND 1=0',
                 'MM' => 'tx_rescuereports_event_station_mm',
@@ -165,12 +159,11 @@ return [
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectMultipleSideBySide',
-                'itemsProcFunc' => \In2code\RescueReports\Utility\EventVehicleSelectionUtility::class . '->getAvailableVehicles',
+                'itemsProcFunc' => \nkfire\RescueReports\Utility\EventVehicleSelectionUtility::class . '->getAvailableVehicles',
                 'size' => 15,
                 'maxitems' => 999,
                 'multiple' => true,
-                'eval' => 'int',
-            ],
+                            ],
         ],
 
         // Bilder

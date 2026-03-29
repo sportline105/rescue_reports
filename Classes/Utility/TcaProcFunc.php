@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace In2code\RescueReports\Utility;
+namespace nkfire\RescueReports\Utility;
 
 use Doctrine\DBAL\ArrayParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
