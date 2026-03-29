@@ -1,7 +1,7 @@
 {
   "name": "nkfire/rescue-reports",
   "type": "typo3-cms-extension",
-  "description": "Extbase-basierte Feuerwehr-Extension mit Einsatzverwaltung",
+  "description": "Detaillierte Einsatzberichte für Feuerwehren und BOS",
   "license": "GPL-2.0-or-later",
   "require": {
     "php": "^8.2",
