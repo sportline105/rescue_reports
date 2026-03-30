@@ -14,7 +14,6 @@ CREATE TABLE tx_rescuereports_domain_model_event (
   brigade INT(11) DEFAULT 0 NOT NULL,
   stations int(11) DEFAULT '0' NOT NULL,
   number varchar(255) DEFAULT '0' NOT NULL,
-  deployments int(11) DEFAULT '0' NOT NULL,
   event_vehicle_assignments int(11) DEFAULT 0 NOT NULL,
   hidden tinyint(4) DEFAULT '0' NOT NULL,
   deleted tinyint(4) DEFAULT '0' NOT NULL,
@@ -137,21 +136,6 @@ CREATE TABLE tx_rescuereports_event_station_mm (
   KEY uid_foreign (uid_foreign)
 );
 
-CREATE TABLE tx_rescuereports_deployment_station_mm (
-  uid_local INT(11) DEFAULT 0 NOT NULL,
-  uid_foreign INT(11) DEFAULT 0 NOT NULL,
-  sorting INT(11) DEFAULT 0 NOT NULL,
-  KEY uid_local (uid_local),
-  KEY uid_foreign (uid_foreign)
-);
-
-CREATE TABLE tx_rescuereports_event_deployment_mm (
-  uid_local INT(11) DEFAULT 0 NOT NULL,
-  uid_foreign INT(11) DEFAULT 0 NOT NULL,
-  sorting INT(11) DEFAULT 0 NOT NULL,
-  KEY uid_local (uid_local),
-  KEY uid_foreign (uid_foreign)
-);
 
 CREATE TABLE tx_rescuereports_domain_model_station (
   uid INT(11) NOT NULL AUTO_INCREMENT,
