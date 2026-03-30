@@ -137,6 +137,14 @@ CREATE TABLE tx_rescuereports_event_station_mm (
   KEY uid_foreign (uid_foreign)
 );
 
+CREATE TABLE tx_rescuereports_deployment_station_mm (
+  uid_local INT(11) DEFAULT 0 NOT NULL,
+  uid_foreign INT(11) DEFAULT 0 NOT NULL,
+  sorting INT(11) DEFAULT 0 NOT NULL,
+  KEY uid_local (uid_local),
+  KEY uid_foreign (uid_foreign)
+);
+
 CREATE TABLE tx_rescuereports_event_deployment_mm (
   uid_local INT(11) DEFAULT 0 NOT NULL,
   uid_foreign INT(11) DEFAULT 0 NOT NULL,
