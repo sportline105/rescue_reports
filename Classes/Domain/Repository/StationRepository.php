@@ -15,7 +15,7 @@ class StationRepository extends Repository
         $query->getQuerySettings()->setRespectStoragePage(true);
 
         $query->setOrderings([
-            'brigade.priority' => QueryInterface::ORDER_ASCENDING,
+            'brigade.sorting' => QueryInterface::ORDER_ASCENDING,
             'brigade.name' => QueryInterface::ORDER_ASCENDING,
             'name' => QueryInterface::ORDER_ASCENDING
         ]);

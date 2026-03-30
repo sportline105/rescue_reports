@@ -30,9 +30,9 @@ class StationLabelUtility
         foreach ($stations as $station) {
             $brigadeId = (int)($station['brigade'] ?? 0);
             $brigadeName = $brigadeData[$brigadeId]['name'] ?? 'Unbekannt';
-            $priority = $brigadeData[$brigadeId]['priority'] ?? 999;
+            $sorting = $brigadeData[$brigadeId]['sorting'] ?? 999999;
 
-            $key = str_pad((string)$priority, 3, '0', STR_PAD_LEFT) . '_' . $brigadeName;
+            $key = str_pad((string)$sorting, 10, '0', STR_PAD_LEFT) . '_' . $brigadeName;
 
             $grouped[$key][] = [
                 $station['name'],
@@ -71,7 +71,7 @@ class StationLabelUtility
         $queryBuilder = $connection->createQueryBuilder();
 
         $rows = $queryBuilder
-            ->select('uid', 'name', 'priority')
+            ->select('uid', 'name', 'sorting')
             ->from('tx_rescuereports_domain_model_brigade')
             ->executeQuery()
             ->fetchAllAssociative();
@@ -81,7 +81,7 @@ class StationLabelUtility
         foreach ($rows as $row) {
             $result[(int)$row['uid']] = [
                 'name' => $row['name'],
-                'priority' => (int)$row['priority']
+                'sorting' => (int)$row['sorting']
             ];
         }
 

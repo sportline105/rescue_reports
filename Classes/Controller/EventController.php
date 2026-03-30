@@ -92,7 +92,7 @@ class EventController extends ActionController
         foreach ($event->getStations() as $station) {
             $brigade = $station->getBrigade();
             $brigadeName = $brigade ? $brigade->getName() : 'Unbekannt';
-            $brigadePriority = ($brigade && method_exists($brigade, 'getPriority')) ? $brigade->getPriority() : 9999;
+            $brigadePriority = ($brigade && method_exists($brigade, 'getSorting')) ? $brigade->getSorting() : 9999;
             $stationName = $station->getName();
             $stationSorting = method_exists($station, 'getSorting') ? $station->getSorting() : 9999;
             $stationIsPrimary = method_exists($station, 'isPrimary') ? $station->isPrimary() : false;
