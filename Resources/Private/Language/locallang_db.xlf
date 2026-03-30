@@ -39,6 +39,9 @@
       <trans-unit id="tx_rescuereports_domain_model_station" xml:space="preserve">
         <source>Ortsfeuerwehr</source>
       </trans-unit>
+      <trans-unit id="tx_rescuereports_domain_model_station.is_primary" xml:space="preserve">
+        <source>Hauptwache</source>
+      </trans-unit>
       <trans-unit id="tx_rescuereports_domain_model_deployment" xml:space="preserve">
         <source>Deployment</source>
       </trans-unit>

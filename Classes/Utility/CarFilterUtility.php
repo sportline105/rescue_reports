@@ -64,7 +64,7 @@ class CarFilterUtility
                 }
 
                 $brigadeName = '';
-                $brigadePriority = 9999;
+                $brigadeSorting = 999999;
                 $brigadeUid = 0;
 
                 if (!empty($station['brigade'])) {
@@ -72,7 +72,7 @@ class CarFilterUtility
                         ->getQueryBuilderForTable('tx_rescuereports_domain_model_brigade');
 
                     $brigade = $brigadeQuery
-                        ->select('uid', 'name', 'priority')
+                        ->select('uid', 'name', 'sorting')
                         ->from('tx_rescuereports_domain_model_brigade')
                         ->where(
                             $brigadeQuery->expr()->eq(
@@ -84,7 +84,7 @@ class CarFilterUtility
                         ->fetchAssociative();
 
                     $brigadeName = $brigade['name'] ?? '';
-                    $brigadePriority = isset($brigade['priority']) ? (int)$brigade['priority'] : 9999;
+                    $brigadeSorting = (int)($brigade['sorting'] ?? 999999);
                     $brigadeUid = (int)($brigade['uid'] ?? 0);
                 }
 
@@ -108,7 +108,7 @@ class CarFilterUtility
                     $value = (int)$car['uid'];
 
                     $alreadyAddedCarUids[] = $value;
-                    $grouped[$brigadeUid]['priority'] = $brigadePriority;
+                    $grouped[$brigadeUid]['sorting'] = $brigadeSorting;
                     $grouped[$brigadeUid]['name'] = $brigadeName;
                     $grouped[$brigadeUid]['stations'][$stationUid]['name'] = $station['name'];
                     $grouped[$brigadeUid]['stations'][$stationUid]['sorting'] = $station['sorting'];
@@ -117,7 +117,7 @@ class CarFilterUtility
             }
 
             uasort($grouped, static function (array $a, array $b): int {
-                return ($a['priority'] ?? 9999) <=> ($b['priority'] ?? 9999);
+                return ($a['sorting'] ?? 999999) <=> ($b['sorting'] ?? 999999);
             });
 
             foreach ($grouped as $brigadeArr) {

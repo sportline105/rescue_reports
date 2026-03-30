@@ -22,7 +22,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'name, is_primary, cars, vehicles, --div--;Access, hidden, starttime, endtime'
+            'showitem' => 'name, is_primary, vehicles, --div--;Access, hidden, starttime, endtime'
         ],
     ],
     'columns' => [
@@ -32,7 +32,7 @@ return [
             ],
         ],
         'is_primary' => [
-            'label' => 'Hauptwache',
+            'label' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescuereports_domain_model_station.is_primary',
             'config' => [
                 'type' => 'check',
                 'items' => [['Als Hauptwache markieren (erscheint immer zuerst)', 1]],
