@@ -36,6 +36,8 @@ class EventVehicleSelectionUtility
                 'v.name',
                 's.name AS station_name',
                 's.sorting AS station_sorting',
+                's.is_primary AS station_is_primary',
+                'b.uid AS brigade_uid',
                 'b.name AS brigade_name',
                 'b.sorting AS brigade_sorting'
             )
@@ -54,12 +56,23 @@ class EventVehicleSelectionUtility
             ->executeQuery()
             ->fetchAllAssociative();
 
+        // Detect which brigades contain a primary station
+        $primaryBrigadeUids = [];
+        foreach ($vehicles as $vehicle) {
+            if ((bool)$vehicle['station_is_primary']) {
+                $primaryBrigadeUids[] = (int)$vehicle['brigade_uid'];
+            }
+        }
+
         $grouped = [];
 
         foreach ($vehicles as $vehicle) {
-            $groupLabel = str_pad((string)(int)($vehicle['brigade_sorting'] ?? 999999), 10, '0', STR_PAD_LEFT)
-                . '_'
-                . ($vehicle['brigade_name'] ?? 'Unbekannt');
+            $brigadeUid = (int)$vehicle['brigade_uid'];
+            $sortPrefix = in_array($brigadeUid, $primaryBrigadeUids, true)
+                ? '-1'
+                : str_pad((string)(int)($vehicle['brigade_sorting'] ?? 999999), 10, '0', STR_PAD_LEFT);
+
+            $groupLabel = $sortPrefix . '_' . ($vehicle['brigade_name'] ?? 'Unbekannt');
             $itemLabel = $vehicle['station_name'] . ' – ' . $vehicle['name'];
             $grouped[$groupLabel][] = [$itemLabel, (int)$vehicle['uid']];
         }

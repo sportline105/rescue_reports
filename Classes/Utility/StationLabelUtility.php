@@ -25,6 +25,14 @@ class StationLabelUtility
 
         $brigadeData = $this->getBrigadeData();
 
+        // Detect which brigades contain a primary station
+        $primaryBrigadeIds = [];
+        foreach ($stations as $station) {
+            if ((bool)$station['is_primary']) {
+                $primaryBrigadeIds[] = (int)$station['brigade'];
+            }
+        }
+
         $grouped = [];
 
         foreach ($stations as $station) {
@@ -32,7 +40,11 @@ class StationLabelUtility
             $brigadeName = $brigadeData[$brigadeId]['name'] ?? 'Unbekannt';
             $sorting = $brigadeData[$brigadeId]['sorting'] ?? 999999;
 
-            $key = str_pad((string)$sorting, 10, '0', STR_PAD_LEFT) . '_' . $brigadeName;
+            $sortPrefix = in_array($brigadeId, $primaryBrigadeIds, true)
+                ? '-1'
+                : str_pad((string)$sorting, 10, '0', STR_PAD_LEFT);
+
+            $key = $sortPrefix . '_' . $brigadeName;
 
             $grouped[$key][] = [
                 $station['name'],
