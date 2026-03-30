@@ -22,13 +22,21 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'name, cars, vehicles, --div--;Access, hidden, starttime, endtime'
+            'showitem' => 'name, is_primary, cars, vehicles, --div--;Access, hidden, starttime, endtime'
         ],
     ],
     'columns' => [
         'sorting' => [
             'config' => [
                 'type' => 'passthrough',
+            ],
+        ],
+        'is_primary' => [
+            'label' => 'Hauptwache',
+            'config' => [
+                'type' => 'check',
+                'items' => [['Als Hauptwache markieren (erscheint immer zuerst)', 1]],
+                'default' => 0,
             ],
         ],
         'sys_language_uid' => [

@@ -18,7 +18,7 @@ class StationLabelUtility
         $queryBuilder = $connection->createQueryBuilder();
 
         $stations = $queryBuilder
-            ->select('uid', 'name', 'brigade')
+            ->select('uid', 'name', 'brigade', 'is_primary')
             ->from('tx_rescuereports_domain_model_station')
             ->executeQuery()
             ->fetchAllAssociative();
@@ -36,7 +36,8 @@ class StationLabelUtility
 
             $grouped[$key][] = [
                 $station['name'],
-                (int)$station['uid']
+                (int)$station['uid'],
+                (bool)$station['is_primary'],
             ];
         }
 
@@ -44,7 +45,12 @@ class StationLabelUtility
 
         foreach ($grouped as $label => $items) {
 
-            usort($items, static fn($a, $b) => strcasecmp($a[0], $b[0]));
+            usort($items, static function ($a, $b) {
+                if ($a[2] !== $b[2]) {
+                    return $b[2] <=> $a[2];
+                }
+                return strcasecmp($a[0], $b[0]);
+            });
 
             $config['items'][] = [
                 explode('_', $label, 2)[1],
@@ -52,7 +58,7 @@ class StationLabelUtility
             ];
 
             foreach ($items as $item) {
-                $config['items'][] = $item;
+                $config['items'][] = [$item[0], $item[1]];
             }
         }
     }

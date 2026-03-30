@@ -149,6 +149,7 @@ CREATE TABLE tx_rescuereports_domain_model_station (
   uid INT(11) NOT NULL AUTO_INCREMENT,
   pid INT(11) DEFAULT '0' NOT NULL,
   name VARCHAR(255) DEFAULT '' NOT NULL,
+  is_primary TINYINT(1) DEFAULT 0 NOT NULL,
   sorting INT(11) DEFAULT 0 NOT NULL,
   brigade INT(11) DEFAULT 0 NOT NULL,
   cars int(11) DEFAULT '0' NOT NULL,
