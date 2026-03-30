@@ -1,7 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
+$lll = 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:';
+
 return [
     'ctrl' => [
-        'title' => 'Organisation',
+        'title' => $lll . 'tx_rescuereports_domain_model_organisation',
         'label' => 'name',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
@@ -12,17 +17,21 @@ return [
         'enablecolumns' => ['disabled' => 'hidden'],
         'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_organisation.svg',
     ],
+    'types' => [
+        '0' => ['showitem' => 'name, abbreviation, icon'],
+    ],
     'columns' => [
         'name' => [
-            'label' => 'Name',
+            'label' => $lll . 'tx_rescuereports_domain_model_organisation.name',
             'config' => [
                 'type' => 'input',
                 'size' => 30,
-                'eval' => 'trim', 'required' => true,
+                'eval' => 'trim',
+                'required' => true,
             ],
         ],
         'abbreviation' => [
-            'label' => 'Abkürzung',
+            'label' => $lll . 'tx_rescuereports_domain_model_organisation.abbreviation',
             'config' => [
                 'type' => 'input',
                 'size' => 10,
@@ -31,15 +40,12 @@ return [
         ],
         'icon' => [
             'exclude' => true,
-            'label' => 'Symbol (Emoji)',
+            'label' => $lll . 'tx_rescuereports_domain_model_organisation.icon',
             'config' => [
                 'type' => 'input',
                 'eval' => 'trim',
-                'size' => 5
+                'size' => 5,
             ],
         ],
-    ],
-    'types' => [
-        '0' => ['showitem' => 'name, abbreviation, icon'],
     ],
 ];

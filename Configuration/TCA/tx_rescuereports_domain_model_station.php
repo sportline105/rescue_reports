@@ -1,7 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
+$lll = 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:';
+
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescuereports_domain_model_station',
+        'title' => $lll . 'tx_rescuereports_domain_model_station',
         'label' => 'name',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
@@ -16,31 +21,31 @@ return [
             'endtime' => 'endtime',
         ],
         'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_station.svg',
-        'hideTable' => true, // ✅ das verhindert Anzeige im Seitenmodul
+        'hideTable' => true,
     ],
     'types' => [
         '1' => [
-            'showitem' => 'name, is_primary, vehicles, --div--;Access, hidden, starttime, endtime'
+            'showitem' => 'name, is_primary, vehicles, --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, hidden, starttime, endtime',
         ],
     ],
     'columns' => [
         'sorting' => [
-            'config' => [
-                'type' => 'passthrough',
-            ],
+            'config' => ['type' => 'passthrough'],
         ],
         'is_primary' => [
-            'label' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescuereports_domain_model_station.is_primary',
+            'label' => $lll . 'tx_rescuereports_domain_model_station.is_primary',
             'config' => [
                 'type' => 'check',
-                'items' => [['Als Hauptwache markieren (erscheint immer zuerst)', 1]],
+                'items' => [
+                    ['label' => $lll . 'tx_rescuereports_domain_model_station.is_primary.item', 'value' => 1],
+                ],
                 'default' => 0,
             ],
         ],
         'sys_language_uid' => [
             'exclude' => true,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
-            'config' => ['type' => 'language']
+            'config' => ['type' => 'language'],
         ],
         'l18n_parent' => [
             'displayCond' => 'FIELD:sys_language_uid:>:0',
@@ -52,17 +57,17 @@ return [
                 'foreign_table' => 'tx_rescuereports_domain_model_station',
                 'foreign_table_where' => 'AND {#tx_rescuereports_domain_model_station}.{#pid}=###CURRENT_PID### AND {#tx_rescuereports_domain_model_station}.{#sys_language_uid} IN (-1,0)',
                 'default' => 0,
-            ]
+            ],
         ],
         'l18n_diffsource' => ['config' => ['type' => 'passthrough']],
         'hidden' => [
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden',
-            'config' => ['type' => 'check', 'items' => [['label' => '', 'value' => 1]]]
+            'config' => ['type' => 'check', 'items' => [['label' => '', 'value' => 1]]],
         ],
         'starttime' => [
             'exclude' => true,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
-            'config' => ['type' => 'datetime', 'default' => 0]
+            'config' => ['type' => 'datetime', 'default' => 0],
         ],
         'endtime' => [
             'exclude' => true,
@@ -70,43 +75,43 @@ return [
             'config' => [
                 'type' => 'datetime',
                 'default' => 0,
-                'range' => ['upper' => mktime(0, 0, 0, 1, 1, 2038)]
-            ]
+                'range' => ['upper' => mktime(0, 0, 0, 1, 1, 2038)],
+            ],
         ],
         'name' => [
-            'label' => 'Name',
+            'label' => $lll . 'tx_rescuereports_domain_model_station.name',
             'config' => [
                 'type' => 'input',
-                'eval' => 'trim', 'required' => true,
-                'default' => 'Ortsfeuerwehr '
-                ]
+                'eval' => 'trim',
+                'required' => true,
+                'default' => 'Ortsfeuerwehr ',
+            ],
         ],
-'vehicles' => [
-    'exclude' => true,
-    'label' => 'Fahrzeuge dieser Station',
-    'config' => [
-        'type' => 'inline',
-        'foreign_table' => 'tx_rescuereports_domain_model_vehicle',
-        'foreign_field' => 'station',
-        'foreign_label_userFunc' => \nkfire\RescueReports\Utility\VehicleLabelUtility::class . '->getCustomLabel',
-        'foreign_table' => 'tx_rescuereports_domain_model_vehicle',
-        'foreign_table_where' => 'AND 1=1 ORDER BY name ASC',
-        'maxitems' => 9999,
-        'appearance' => [
-            'collapseAll' => 1,
-            'newRecordLinkAddTitle' => 1,
-            'useSortable' => 1,
+        'vehicles' => [
+            'exclude' => true,
+            'label' => $lll . 'tx_rescuereports_domain_model_station.vehicles',
+            'config' => [
+                'type' => 'inline',
+                'foreign_table' => 'tx_rescuereports_domain_model_vehicle',
+                'foreign_field' => 'station',
+                'foreign_label_userFunc' => \nkfire\RescueReports\Utility\VehicleLabelUtility::class . '->getCustomLabel',
+                'foreign_table_where' => 'AND 1=1 ORDER BY name ASC',
+                'maxitems' => 9999,
+                'appearance' => [
+                    'collapseAll' => 1,
+                    'newRecordLinkAddTitle' => 1,
+                    'useSortable' => 1,
+                ],
+            ],
+        ],
+        'brigade' => [
+            'label' => $lll . 'tx_rescuereports_domain_model_station.brigade',
+            'config' => [
+                'type' => 'select',
+                'renderType' => 'selectSingle',
+                'foreign_table' => 'tx_rescuereports_domain_model_brigade',
+                'default' => 0,
+            ],
         ],
     ],
-],
-'brigade' => [
-    'label' => 'Feuerwehr',
-    'config' => [
-        'type' => 'select',
-        'renderType' => 'selectSingle',
-        'foreign_table' => 'tx_rescuereports_domain_model_brigade',
-        'default' => 0,
-    ],
-],
-    ]
 ];

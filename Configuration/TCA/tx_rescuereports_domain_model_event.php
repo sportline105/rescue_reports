@@ -1,8 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+defined('TYPO3') or die();
+
+$lll = 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:';
+
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescuereports_domain_model_event',
+        'title' => $lll . 'tx_rescuereports_domain_model_event',
         'label' => 'title',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
@@ -20,20 +26,20 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;Eingesetzte Einheiten, stations, --div--;Fahrzeuge, vehicles, --div--;Bilder, images',
+            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;' . $lll . 'tx_rescuereports_domain_model_event.tab.units, stations, --div--;' . $lll . 'tx_rescuereports_domain_model_event.tab.vehicles, vehicles, --div--;' . $lll . 'tx_rescuereports_domain_model_event.tab.images, images',
         ],
     ],
 
     'palettes' => [
         'times' => [
             'showitem' => 'start, end',
-            'label' => 'Einsatzzeit',
+            'label' => $lll . 'tx_rescuereports_domain_model_event.palette.times',
         ],
     ],
 
     'columns' => [
 
-        // Systemfelder
+        // System fields
         'sys_language_uid' => [
             'exclude' => true,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
@@ -68,9 +74,9 @@ return [
             ],
         ],
 
-        // Einsatzzeit
+        // Date/time
         'start' => [
-            'label' => 'Einsatzbeginn',
+            'label' => $lll . 'tx_rescuereports_domain_model_event.start',
             'config' => [
                 'type' => 'datetime',
                 'dbType' => 'datetime',
@@ -78,7 +84,7 @@ return [
             ],
         ],
         'end' => [
-            'label' => 'Einsatzende',
+            'label' => $lll . 'tx_rescuereports_domain_model_event.end',
             'config' => [
                 'type' => 'datetime',
                 'dbType' => 'datetime',
@@ -86,16 +92,16 @@ return [
             ],
         ],
 
-        // Inhaltliche Felder
+        // Content fields
         'title' => [
-            'label' => 'Einsatztitel',
+            'label' => $lll . 'tx_rescuereports_domain_model_event.title',
             'config' => [
                 'type' => 'input',
                 'eval' => 'trim', 'required' => true,
             ],
         ],
         'location' => [
-            'label' => 'Einsatzort',
+            'label' => $lll . 'tx_rescuereports_domain_model_event.location',
             'config' => [
                 'type' => 'input',
                 'eval' => 'trim',
@@ -103,7 +109,7 @@ return [
             ],
         ],
         'number' => [
-            'label' => 'Einsatznummer',
+            'label' => $lll . 'tx_rescuereports_domain_model_event.number',
             'config' => [
                 'type' => 'input',
                 'eval' => 'trim', 'required' => true,
@@ -113,7 +119,7 @@ return [
             ],
         ],
         'description' => [
-            'label' => 'Einsatzbericht',
+            'label' => $lll . 'tx_rescuereports_domain_model_event.description',
             'config' => [
                 'type' => 'text',
                 'enableRichtext' => true,
@@ -121,9 +127,9 @@ return [
             ],
         ],
 
-        // Typen
+        // Types
         'types' => [
-            'label' => 'Einsatzart',
+            'label' => $lll . 'tx_rescuereports_domain_model_event.types',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
@@ -138,9 +144,9 @@ return [
             ],
         ],
 
-        // Stationen
+        // Stations
         'stations' => [
-            'label' => 'Eingesetzte Einheiten',
+            'label' => $lll . 'tx_rescuereports_domain_model_event.stations',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectCheckBox',
@@ -155,7 +161,7 @@ return [
 
         'vehicles' => [
             'exclude' => true,
-            'label' => 'Eingesetzte Fahrzeuge',
+            'label' => $lll . 'tx_rescuereports_domain_model_event.vehicles',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectMultipleSideBySide',
@@ -163,12 +169,12 @@ return [
                 'size' => 15,
                 'maxitems' => 999,
                 'multiple' => true,
-                            ],
+            ],
         ],
 
-        // Bilder
+        // Images
         'images' => [
-            'label' => 'Bilder',
+            'label' => $lll . 'tx_rescuereports_domain_model_event.images',
             'config' => [
                 'type' => 'file',
                 'allowed' => 'common-image-types',

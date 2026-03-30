@@ -1,7 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
+$lll = 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:';
+
 return [
     'ctrl' => [
-        'title' => 'Fahrzeug',
+        'title' => $lll . 'tx_rescuereports_domain_model_vehicle',
         'label' => 'name',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
@@ -16,7 +21,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'car, name, station, link, image, --div--;Zugriff, hidden',
+            'showitem' => 'car, name, station, link, image, --div--;' . $lll . 'tx_rescuereports_domain_model_vehicle.tab.access, hidden',
         ],
     ],
     'columns' => [
@@ -25,7 +30,7 @@ return [
         'deleted' => ['config' => ['type' => 'passthrough']],
         'hidden' => [
             'exclude' => true,
-            'label' => 'Unsichtbar',
+            'label' => $lll . 'tx_rescuereports_domain_model_vehicle.hidden',
             'config' => [
                 'type' => 'check',
                 'items' => [
@@ -35,7 +40,7 @@ return [
         ],
         'name' => [
             'exclude' => false,
-            'label' => 'Fahrzeugname (wird bei Auswahl des Typs vorbelegt, nur für abweichende Bezeichnungen)',
+            'label' => $lll . 'tx_rescuereports_domain_model_vehicle.name',
             'config' => [
                 'type' => 'input',
                 'size' => 30,
@@ -44,14 +49,14 @@ return [
         ],
         'link' => [
             'exclude' => true,
-            'label' => 'Weiterführender Link',
+            'label' => $lll . 'tx_rescuereports_domain_model_vehicle.link',
             'config' => [
                 'type' => 'link',
             ],
         ],
         'car' => [
             'exclude' => true,
-            'label' => 'Fahrzeugtyp (Fahrzeugtyp auswählen, Fahrzeugname wird nach Speichern automatisch generiert)',
+            'label' => $lll . 'tx_rescuereports_domain_model_vehicle.car',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
@@ -64,19 +69,19 @@ return [
         ],
         'image' => [
             'exclude' => true,
-            'label' => 'Fahrzeugbild',
+            'label' => $lll . 'tx_rescuereports_domain_model_vehicle.image',
             'config' => [
                 'type' => 'file',
                 'allowed' => 'common-image-types',
                 'maxitems' => 1,
                 'appearance' => [
-                    'createNewRelationLinkTitle' => 'Bild hinzufügen',
+                    'createNewRelationLinkTitle' => $lll . 'tx_rescuereports_domain_model_vehicle.image.addNew',
                 ],
             ],
         ],
         'station' => [
             'exclude' => true,
-            'label' => 'Feuerwehr / Station',
+            'label' => $lll . 'tx_rescuereports_domain_model_vehicle.station',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',

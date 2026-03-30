@@ -1,7 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
+$lll = 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:';
+
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescuereports_domain_model_car',
+        'title' => $lll . 'tx_rescuereports_domain_model_car',
         'label' => 'name',
         'label_userFunc' => \nkfire\RescueReports\Utility\CarLabelUtility::class . '->getCustomLabel',
         'tstamp' => 'tstamp',
@@ -16,16 +21,16 @@ return [
             'starttime' => 'starttime',
             'endtime' => 'endtime',
         ],
-        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_car.png'
+        'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_car.png',
     ],
     'types' => [
-        '1' => ['showitem' => 'name, organization, link, image, --div--;Access, hidden, starttime, endtime'],
+        '1' => ['showitem' => 'name, organization, link, image, --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, hidden, starttime, endtime'],
     ],
     'columns' => [
         'sys_language_uid' => [
             'exclude' => true,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
-            'config' => ['type' => 'language']
+            'config' => ['type' => 'language'],
         ],
         'l18n_parent' => [
             'displayCond' => 'FIELD:sys_language_uid:>:0',
@@ -37,27 +42,41 @@ return [
                 'foreign_table' => 'tx_rescuereports_domain_model_car',
                 'foreign_table_where' => 'AND {#tx_rescuereports_domain_model_car}.{#pid}=###CURRENT_PID### AND {#tx_rescuereports_domain_model_car}.{#sys_language_uid} IN (-1,0)',
                 'default' => 0,
-            ]
+            ],
+        ],
+        'l18n_diffsource' => ['config' => ['type' => 'passthrough']],
+        'hidden' => [
+            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden',
+            'config' => ['type' => 'check', 'items' => [['label' => '', 'value' => 1]]],
+        ],
+        'starttime' => [
+            'exclude' => true,
+            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
+            'config' => ['type' => 'datetime', 'default' => 0],
+        ],
+        'endtime' => [
+            'exclude' => true,
+            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
+            'config' => ['type' => 'datetime', 'default' => 0, 'range' => ['upper' => mktime(0, 0, 0, 1, 1, 2038)]],
+        ],
+        'name' => [
+            'label' => $lll . 'tx_rescuereports_domain_model_car.name',
+            'config' => ['type' => 'input', 'eval' => 'trim', 'required' => true],
         ],
         'organization' => [
-            'label' => 'Organisation',
+            'label' => $lll . 'tx_rescuereports_domain_model_car.organization',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'foreign_table' => 'tx_rescuereports_domain_model_organisation',
                 'foreign_table_where' => ' AND tx_rescuereports_domain_model_organisation.deleted = 0 AND tx_rescuereports_domain_model_organisation.hidden = 0',
                 'items' => [
-                    ['label' => 'Bitte wählen', 'value' => 0],
+                    ['label' => $lll . 'tx_rescuereports_domain_model_car.pleaseSelect', 'value' => 0],
                 ],
                 'default' => 0,
                 'minitems' => 0,
                 'maxitems' => 1,
             ],
         ],
-        'l18n_diffsource' => ['config' => ['type' => 'passthrough']],
-        'hidden' => ['label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden','config' => ['type' => 'check','items' => [['label' => '', 'value' => 1]]]],
-        'starttime' => ['exclude' => true,'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime','config' => ['type' => 'datetime','default' => 0]],
-        'endtime' => ['exclude' => true,'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime','config' => ['type' => 'datetime','default' => 0,'range' => ['upper' => mktime(0, 0, 0, 1, 1, 2038)]]],
-        'name' => ['label' => 'Name','config' => ['type' => 'input','eval' => 'trim', 'required' => true]],
-    ]
+    ],
 ];
