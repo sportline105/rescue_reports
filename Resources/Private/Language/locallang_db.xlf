@@ -75,7 +75,15 @@
       <trans-unit id="plugin.eventlist">
         <source>Detaillierte Einsatzberichte für Feuerwehren und BOS</source>
       </trans-unit>
-      
+      <trans-unit id="wizard.initialData.sysfolderTitle" xml:space="preserve">
+        <source>Rescue Reports Daten</source>
+      </trans-unit>
+      <trans-unit id="wizard.initialData.title" xml:space="preserve">
+        <source>Create Rescue Reports default data</source>
+      </trans-unit>
+      <trans-unit id="wizard.initialData.description" xml:space="preserve">
+        <source>Creates a sysfolder and imports default organisations and vehicle types if they do not exist yet.</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>
