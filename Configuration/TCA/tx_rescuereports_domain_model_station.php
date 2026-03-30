@@ -20,13 +20,21 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'name, cars, vehicles, --div--;Access, hidden, starttime, endtime'
+            'showitem' => 'name, is_primary, vehicles, --div--;Access, hidden, starttime, endtime'
         ],
     ],
     'columns' => [
         'sorting' => [
             'config' => [
                 'type' => 'passthrough',
+            ],
+        ],
+        'is_primary' => [
+            'label' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescuereports_domain_model_station.is_primary',
+            'config' => [
+                'type' => 'check',
+                'items' => [['Als Hauptwache markieren (erscheint immer zuerst)', 1]],
+                'default' => 0,
             ],
         ],
         'sys_language_uid' => [

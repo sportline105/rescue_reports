@@ -37,7 +37,7 @@ class EventVehicleSelectionUtility
                 's.name AS station_name',
                 's.sorting AS station_sorting',
                 'b.name AS brigade_name',
-                'b.priority'
+                'b.sorting AS brigade_sorting'
             )
             ->from('tx_rescuereports_domain_model_vehicle', 'v')
             ->innerJoin('v', 'tx_rescuereports_domain_model_station', 's', 'v.station = s.uid')
@@ -48,7 +48,7 @@ class EventVehicleSelectionUtility
                     $queryBuilder->createNamedParameter($stationIds, ArrayParameterType::INTEGER)
                 )
             )
-            ->orderBy('b.priority')
+            ->orderBy('b.sorting')
             ->addOrderBy('station_sorting')
             ->addOrderBy('v.name')
             ->executeQuery()
@@ -57,7 +57,7 @@ class EventVehicleSelectionUtility
         $grouped = [];
 
         foreach ($vehicles as $vehicle) {
-            $groupLabel = str_pad((string)(int)($vehicle['priority'] ?? 999), 3, '0', STR_PAD_LEFT)
+            $groupLabel = str_pad((int)($vehicle['brigade_sorting'] ?? 999999), 10, '0', STR_PAD_LEFT)
                 . '_'
                 . ($vehicle['brigade_name'] ?? 'Unbekannt');
             $itemLabel = $vehicle['station_name'] . ' – ' . $vehicle['name'];
