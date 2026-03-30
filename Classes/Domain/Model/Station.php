@@ -19,6 +19,8 @@ class Station extends AbstractEntity
      */
     protected ObjectStorage $vehicles;
 
+    protected bool $isPrimary = false;
+
     protected int $sorting = 9999;
 
     public function __construct()
@@ -67,6 +69,16 @@ class Station extends AbstractEntity
     public function removeVehicle(Vehicle $vehicle): void
     {
         $this->vehicles->detach($vehicle);
+    }
+
+    public function isPrimary(): bool
+    {
+        return $this->isPrimary;
+    }
+
+    public function setIsPrimary(bool $isPrimary): void
+    {
+        $this->isPrimary = $isPrimary;
     }
 
     public function getSorting(): int

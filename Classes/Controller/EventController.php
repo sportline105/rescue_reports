@@ -92,9 +92,10 @@ class EventController extends ActionController
         foreach ($event->getStations() as $station) {
             $brigade = $station->getBrigade();
             $brigadeName = $brigade ? $brigade->getName() : 'Unbekannt';
-            $brigadePriority = ($brigade && method_exists($brigade, 'getPriority')) ? $brigade->getPriority() : 9999;
+            $brigadePriority = ($brigade && method_exists($brigade, 'getSorting')) ? $brigade->getSorting() : 9999;
             $stationName = $station->getName();
             $stationSorting = method_exists($station, 'getSorting') ? $station->getSorting() : 9999;
+            $stationIsPrimary = method_exists($station, 'isPrimary') ? $station->isPrimary() : false;
 
             $vehicles = [];
             foreach ($station->getVehicles() as $vehicle) {
@@ -113,6 +114,7 @@ class EventController extends ActionController
             $grouped[$brigadePriority]['stations'][] = [
                 'name' => $stationName,
                 'sorting' => $stationSorting,
+                'isPrimary' => $stationIsPrimary,
                 'vehicles' => $vehicles,
             ];
         }
@@ -120,7 +122,12 @@ class EventController extends ActionController
         ksort($grouped);
 
         foreach ($grouped as &$group) {
-            usort($group['stations'], static fn($a, $b) => $a['sorting'] <=> $b['sorting']);
+            usort($group['stations'], static function ($a, $b) {
+                if ($a['isPrimary'] !== $b['isPrimary']) {
+                    return $b['isPrimary'] <=> $a['isPrimary'];
+                }
+                return $a['sorting'] <=> $b['sorting'];
+            });
         }
 
         return $grouped;

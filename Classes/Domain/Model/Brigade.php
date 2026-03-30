@@ -10,7 +10,7 @@ class Brigade extends AbstractEntity
 {
     protected string $name = '';
 
-    protected int $priority = 0;
+    protected int $sorting = 0;
 
     /**
      * @var ObjectStorage<Station>
@@ -32,14 +32,14 @@ class Brigade extends AbstractEntity
         $this->name = $name;
     }
 
-    public function getPriority(): int
+    public function getSorting(): int
     {
-        return $this->priority;
+        return $this->sorting;
     }
 
-    public function setPriority(int $priority): void
+    public function setSorting(int $sorting): void
     {
-        $this->priority = $priority;
+        $this->sorting = $sorting;
     }
 
     /**

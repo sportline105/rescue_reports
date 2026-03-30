@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace nkfire\RescueReports\Updates;
 
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Install\Attribute\UpgradeWizard;
 use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
@@ -11,14 +14,22 @@ use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 #[UpgradeWizard('rescueReportsInitialData')]
 final class InitialDataWizard implements UpgradeWizardInterface
 {
+    public function __construct(
+        private readonly LanguageServiceFactory $languageServiceFactory,
+    ) {}
+
     public function getTitle(): string
     {
-        return 'Create Rescue Reports default data';
+        return $this->getLanguageService()->sL(
+            'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:wizard.initialData.title'
+        );
     }
 
     public function getDescription(): string
     {
-        return 'Creates a sysfolder and imports default organisations and vehicle types if they do not exist yet.';
+        return $this->getLanguageService()->sL(
+            'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:wizard.initialData.description'
+        );
     }
 
     public function executeUpdate(): bool
@@ -54,6 +65,13 @@ final class InitialDataWizard implements UpgradeWizardInterface
     public function getPrerequisites(): array
     {
         return [];
+    }
+
+    private function getLanguageService(): LanguageService
+    {
+        return isset($GLOBALS['BE_USER']) && $GLOBALS['BE_USER'] instanceof BackendUserAuthentication
+            ? $this->languageServiceFactory->createFromUserPreferences($GLOBALS['BE_USER'])
+            : $this->languageServiceFactory->create('default');
     }
 
     private function tableExists(string $tableName): bool
@@ -93,9 +111,9 @@ final class InitialDataWizard implements UpgradeWizardInterface
                     'doktype',
                     $queryBuilder->createNamedParameter(254)
                 ),
-                $queryBuilder->expr()->eq(
+                $queryBuilder->expr()->like(
                     'title',
-                    $queryBuilder->createNamedParameter('Rescue Reports Daten')
+                    $queryBuilder->createNamedParameter('Rescue Reports%')
                 )
             )
             ->setMaxResults(1)
@@ -111,7 +129,9 @@ final class InitialDataWizard implements UpgradeWizardInterface
 
         $connection->insert('pages', [
             'pid' => 0,
-            'title' => 'Rescue Reports Daten',
+            'title' => $this->getLanguageService()->sL(
+                'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:wizard.initialData.sysfolderTitle'
+            ),
             'doktype' => 254,
             'hidden' => 0,
             'deleted' => 0,
