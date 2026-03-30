@@ -57,7 +57,7 @@ class EventVehicleSelectionUtility
         $grouped = [];
 
         foreach ($vehicles as $vehicle) {
-            $groupLabel = str_pad((int)($vehicle['brigade_sorting'] ?? 999999), 10, '0', STR_PAD_LEFT)
+            $groupLabel = str_pad((string)(int)($vehicle['brigade_sorting'] ?? 999999), 10, '0', STR_PAD_LEFT)
                 . '_'
                 . ($vehicle['brigade_name'] ?? 'Unbekannt');
             $itemLabel = $vehicle['station_name'] . ' – ' . $vehicle['name'];
