@@ -15,7 +15,7 @@ class EventController extends ActionController
 
     protected TypeRepository $typeRepository;
 
-    public function __construct(EventRepository $eventRepository)
+    public function injectEventRepository(EventRepository $eventRepository): void
     {
         $this->eventRepository = $eventRepository;
     }

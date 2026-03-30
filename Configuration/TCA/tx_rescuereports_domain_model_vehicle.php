@@ -1,65 +1,38 @@
 <?php
-
 return [
     'ctrl' => [
         'title' => 'Fahrzeug',
         'label' => 'name',
-        // 'label_userFunc' => \nkfire\RescueReports\Utility\VehicleLabelUtility::class . '->getCustomLabel',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
-        'cruser_id' => 'cruser_id',
         'sortby' => 'sorting',
         'delete' => 'deleted',
+        'versioningWS' => true,
         'enablecolumns' => [
             'disabled' => 'hidden',
         ],
-        'searchFields' => 'name',
         'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_vehicle.svg',
         'hideTable' => true,
     ],
-
     'types' => [
         '1' => [
             'showitem' => 'car, name, station, link, image, --div--;Zugriff, hidden',
         ],
     ],
-
     'columns' => [
-        'tstamp' => [
-            'config' => [
-                'type' => 'passthrough',
-            ],
-        ],
-
-        'crdate' => [
-            'config' => [
-                'type' => 'passthrough',
-            ],
-        ],
-
-        'cruser_id' => [
-            'config' => [
-                'type' => 'passthrough',
-            ],
-        ],
-
-        'deleted' => [
-            'config' => [
-                'type' => 'passthrough',
-            ],
-        ],
-
+        'tstamp' => ['config' => ['type' => 'passthrough']],
+        'crdate' => ['config' => ['type' => 'passthrough']],
+        'deleted' => ['config' => ['type' => 'passthrough']],
         'hidden' => [
             'exclude' => true,
             'label' => 'Unsichtbar',
             'config' => [
                 'type' => 'check',
                 'items' => [
-                    ['', 1],
+                    ['label' => '', 'value' => 1],
                 ],
             ],
         ],
-
         'name' => [
             'exclude' => false,
             'label' => 'Fahrzeugname (wird bei Auswahl des Typs vorbelegt, nur für abweichende Bezeichnungen)',
@@ -69,18 +42,13 @@ return [
                 'eval' => 'trim',
             ],
         ],
-
         'link' => [
             'exclude' => true,
             'label' => 'Weiterführender Link',
             'config' => [
-                'type' => 'input',
-                'renderType' => 'inputLink',
-                'size' => 50,
-                'eval' => 'trim',
+                'type' => 'link',
             ],
         ],
-
         'car' => [
             'exclude' => true,
             'label' => 'Fahrzeugtyp (Fahrzeugtyp auswählen, Fahrzeugname wird nach Speichern automatisch generiert)',
@@ -94,7 +62,6 @@ return [
                 'maxitems' => 1,
             ],
         ],
-
         'image' => [
             'exclude' => true,
             'label' => 'Fahrzeugbild',
@@ -107,7 +74,6 @@ return [
                 ],
             ],
         ],
-
         'station' => [
             'exclude' => true,
             'label' => 'Feuerwehr / Station',
