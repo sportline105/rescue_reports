@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace nkfire\RescueReports\Utility;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -36,7 +37,6 @@ class EventVehicleSelectionUtility
                 'v.name',
                 's.name AS station_name',
                 's.sorting AS station_sorting',
-                's.is_primary AS station_is_primary',
                 'b.uid AS brigade_uid',
                 'b.name AS brigade_name',
                 'b.sorting AS brigade_sorting'
@@ -56,13 +56,8 @@ class EventVehicleSelectionUtility
             ->executeQuery()
             ->fetchAllAssociative();
 
-        // Detect which brigades contain a primary station
-        $primaryBrigadeUids = [];
-        foreach ($vehicles as $vehicle) {
-            if ((bool)$vehicle['station_is_primary']) {
-                $primaryBrigadeUids[] = (int)$vehicle['brigade_uid'];
-            }
-        }
+        // Detect which brigades contain a primary station among the selected stations
+        $primaryBrigadeUids = $this->getPrimaryBrigadeUids($stationIds);
 
         $grouped = [];
 
@@ -112,5 +107,29 @@ class EventVehicleSelectionUtility
                 $config['items'][] = [$label, (int)$vehicle['uid']];
             }
         }
+    }
+
+    private function getPrimaryBrigadeUids(array $stationIds): array
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tx_rescuereports_domain_model_station');
+
+        $rows = $queryBuilder
+            ->select('brigade')
+            ->from('tx_rescuereports_domain_model_station')
+            ->where(
+                $queryBuilder->expr()->in(
+                    'uid',
+                    $queryBuilder->createNamedParameter($stationIds, ArrayParameterType::INTEGER)
+                ),
+                $queryBuilder->expr()->eq(
+                    'is_primary',
+                    $queryBuilder->createNamedParameter(1, ParameterType::INTEGER)
+                )
+            )
+            ->executeQuery()
+            ->fetchAllAssociative();
+
+        return array_unique(array_map(static fn($row) => (int)$row['brigade'], $rows));
     }
 }
