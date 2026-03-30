@@ -111,25 +111,49 @@ class EventVehicleSelectionUtility
 
     private function getPrimaryBrigadeUids(array $stationIds): array
     {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable('tx_rescuereports_domain_model_station');
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('tx_rescuereports_domain_model_station');
 
-        $rows = $queryBuilder
+        // Step 1: find brigade UIDs for all selected stations
+        $brigadeQb = $connection->createQueryBuilder();
+        $brigadeRows = $brigadeQb
             ->select('brigade')
             ->from('tx_rescuereports_domain_model_station')
             ->where(
-                $queryBuilder->expr()->in(
+                $brigadeQb->expr()->in(
                     'uid',
-                    $queryBuilder->createNamedParameter($stationIds, ArrayParameterType::INTEGER)
-                ),
-                $queryBuilder->expr()->eq(
-                    'is_primary',
-                    $queryBuilder->createNamedParameter(1, ParameterType::INTEGER)
+                    $brigadeQb->createNamedParameter($stationIds, ArrayParameterType::INTEGER)
                 )
             )
             ->executeQuery()
             ->fetchAllAssociative();
 
-        return array_unique(array_map(static fn($row) => (int)$row['brigade'], $rows));
+        $brigadeIds = array_values(array_unique(array_filter(
+            array_map(static fn($row) => (int)$row['brigade'], $brigadeRows)
+        )));
+
+        if ($brigadeIds === []) {
+            return [];
+        }
+
+        // Step 2: of those brigades, return only ones that have a primary station
+        $primaryQb = $connection->createQueryBuilder();
+        $primaryRows = $primaryQb
+            ->select('brigade')
+            ->from('tx_rescuereports_domain_model_station')
+            ->where(
+                $primaryQb->expr()->in(
+                    'brigade',
+                    $primaryQb->createNamedParameter($brigadeIds, ArrayParameterType::INTEGER)
+                ),
+                $primaryQb->expr()->eq(
+                    'is_primary',
+                    $primaryQb->createNamedParameter(1, ParameterType::INTEGER)
+                )
+            )
+            ->executeQuery()
+            ->fetchAllAssociative();
+
+        return array_unique(array_map(static fn($row) => (int)$row['brigade'], $primaryRows));
     }
 }
