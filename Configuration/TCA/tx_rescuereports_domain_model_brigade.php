@@ -10,7 +10,6 @@ return [
         'label' => 'name',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
-        'cruser_id' => 'cruser_id',
         'versioningWS' => true,
         'languageField' => 'sys_language_uid',
         'transOrigPointerField' => 'l18n_parent',
@@ -21,7 +20,6 @@ return [
             'starttime' => 'starttime',
             'endtime' => 'endtime',
         ],
-        'searchFields' => 'name',
         'sortby' => 'sorting',
         'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_brigade.svg',
     ],
@@ -56,18 +54,19 @@ return [
         'starttime' => [
             'exclude' => true,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
-            'config' => ['type' => 'datetime', 'default' => 0],
+            'config' => ['type' => 'datetime', 'default' => 0, 'searchable' => false],
         ],
         'endtime' => [
             'exclude' => true,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
-            'config' => ['type' => 'datetime', 'default' => 0, 'range' => ['upper' => mktime(0, 0, 0, 1, 1, 2038)]],
+            'config' => ['type' => 'datetime', 'default' => 0, 'searchable' => false, 'range' => ['upper' => mktime(0, 0, 0, 1, 1, 2038)]],
         ],
         'name' => [
             'label' => $lll . 'tx_rescuereports_domain_model_brigade.name',
             'config' => [
                 'type' => 'input',
-                'eval' => 'trim,required',
+                'eval' => 'trim',
+                'required' => true,
                 'default' => 'Feuerwehr Stadt ...',
             ],
         ],
