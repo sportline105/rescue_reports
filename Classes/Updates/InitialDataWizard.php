@@ -43,6 +43,10 @@ final class InitialDataWizard implements UpgradeWizardInterface
         }
 
         $pid = $this->getOrCreateSysFolder();
+        if ($pid === 0) {
+            return false;
+        }
+
         $organisationMap = $this->createOrganisations($pid);
         $this->createCars($pid, $organisationMap);
 
@@ -88,10 +92,11 @@ final class InitialDataWizard implements UpgradeWizardInterface
 
     private function countRecords(string $tableName): int
     {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable($tableName);
+        // Use unrestricted connection so hidden/deleted records are included
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable($tableName);
 
-        return (int)$queryBuilder
+        return (int)$connection->createQueryBuilder()
             ->count('uid')
             ->from($tableName)
             ->executeQuery()
@@ -100,52 +105,60 @@ final class InitialDataWizard implements UpgradeWizardInterface
 
     private function getOrCreateSysFolder(): int
     {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable('pages');
+        // Use unrestricted connection so the folder is found even if hidden
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('pages');
 
-        $existingUid = $queryBuilder
+        $qb = $connection->createQueryBuilder();
+        $existingUid = $qb
             ->select('uid')
             ->from('pages')
             ->where(
-                $queryBuilder->expr()->eq(
-                    'doktype',
-                    $queryBuilder->createNamedParameter(254)
-                ),
-                $queryBuilder->expr()->like(
-                    'title',
-                    $queryBuilder->createNamedParameter('Rescue Reports%')
-                )
+                $qb->expr()->eq('doktype', $qb->createNamedParameter(254, \Doctrine\DBAL\ParameterType::INTEGER)),
+                $qb->expr()->eq('deleted', $qb->createNamedParameter(0, \Doctrine\DBAL\ParameterType::INTEGER)),
+                $qb->expr()->like('title', $qb->createNamedParameter('Rescue Reports%'))
             )
             ->setMaxResults(1)
             ->executeQuery()
             ->fetchOne();
 
-        if ($existingUid !== false) {
+        if ($existingUid !== false && $existingUid > 0) {
             return (int)$existingUid;
         }
 
-        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable('pages');
+        $folderTitle = $this->getLanguageService()->sL(
+            'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:wizard.initialData.sysfolderTitle'
+        );
+        if (empty($folderTitle)) {
+            $folderTitle = 'Rescue Reports Data';
+        }
 
         $connection->insert('pages', [
             'pid' => 0,
-            'title' => $this->getLanguageService()->sL(
-                'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:wizard.initialData.sysfolderTitle'
-            ),
+            'title' => $folderTitle,
+            'slug' => '',
             'doktype' => 254,
             'hidden' => 0,
             'deleted' => 0,
             'tstamp' => time(),
             'crdate' => time(),
             'sorting' => 9999,
-            'perms_userid' => 0,
+            'sys_language_uid' => 0,
+            'perms_userid' => 1,
             'perms_groupid' => 0,
             'perms_user' => 31,
             'perms_group' => 27,
             'perms_everybody' => 0,
         ]);
 
-        return (int)$connection->lastInsertId();
+        $newUid = (int)$connection->lastInsertId();
+
+        // If insert succeeded, set the slug from the UID
+        if ($newUid > 0) {
+            $connection->update('pages', ['slug' => '/' . $newUid], ['uid' => $newUid]);
+        }
+
+        return $newUid;
     }
 
     /**
@@ -174,16 +187,14 @@ final class InitialDataWizard implements UpgradeWizardInterface
         $map = [];
 
         foreach ($seedData as $organisation) {
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-                ->getQueryBuilderForTable('tx_rescuereports_domain_model_organisation');
-
-            $existingUid = $queryBuilder
+            $qb = $connection->createQueryBuilder();
+            $existingUid = $qb
                 ->select('uid')
                 ->from('tx_rescuereports_domain_model_organisation')
                 ->where(
-                    $queryBuilder->expr()->eq(
+                    $qb->expr()->eq(
                         'abbreviation',
-                        $queryBuilder->createNamedParameter($organisation['abbreviation'])
+                        $qb->createNamedParameter($organisation['abbreviation'])
                     )
                 )
                 ->setMaxResults(1)
@@ -279,20 +290,18 @@ final class InitialDataWizard implements UpgradeWizardInterface
                 continue;
             }
 
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-                ->getQueryBuilderForTable('tx_rescuereports_domain_model_car');
-
-            $existingUid = $queryBuilder
+            $qb = $connection->createQueryBuilder();
+            $existingUid = $qb
                 ->select('uid')
                 ->from('tx_rescuereports_domain_model_car')
                 ->where(
-                    $queryBuilder->expr()->eq(
+                    $qb->expr()->eq(
                         'name',
-                        $queryBuilder->createNamedParameter($car['name'])
+                        $qb->createNamedParameter($car['name'])
                     ),
-                    $queryBuilder->expr()->eq(
+                    $qb->expr()->eq(
                         'organization',
-                        $queryBuilder->createNamedParameter($organisationUid)
+                        $qb->createNamedParameter($organisationUid, \Doctrine\DBAL\ParameterType::INTEGER)
                     )
                 )
                 ->setMaxResults(1)
