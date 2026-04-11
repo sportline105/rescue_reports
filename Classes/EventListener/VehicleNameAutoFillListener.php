@@ -3,53 +3,41 @@ declare(strict_types=1);
 
 namespace nkfire\RescueReports\EventListener;
 
-use TYPO3\CMS\Core\Attribute\AsEventListener;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\DataHandling\Event\AfterDatabaseOperationsForRecordEvent;
+use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\DataHandling\Event\AfterRecordCreatedEvent;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 
-/**
- * PSR-14 Event Listener — replaces the deprecated processDatamapClass hook.
- * Active in TYPO3 v14+. For v13, the classic hook in ext_localconf.php is used.
- */
-#[AsEventListener(identifier: 'rescue-reports/vehicle-name-autofill')]
-final class VehicleNameAutoFillListener
+class VehicleNameAutoFillListener
 {
-    public function __invoke(AfterDatabaseOperationsForRecordEvent $event): void
+    public function __invoke(AfterRecordCreatedEvent $event): void
     {
-        if ($event->getTable() !== 'tx_rescuereports_domain_model_vehicle') {
-            return;
-        }
-        if ($event->getStatus() !== 'new') {
+        if ($event->getTableName() !== 'tx_rescuereports_domain_model_vehicle') {
             return;
         }
 
-        $fieldArray = $event->getFields();
-        $id = $event->getId();
-        $dataHandler = $event->getDataHandler();
-        $realUid = $dataHandler->substNEWwithIDs[$id] ?? 0;
+        $recordUid = $event->getRecordUid();
+        $fields = $event->getRecord();
 
-        if (empty($fieldArray['car']) || $realUid <= 0) {
-            return;
-        }
+        if (!empty($fields['car']) && $recordUid > 0) {
+            $connection = GeneralUtility::makeInstance(ConnectionPool::class)
+                ->getConnectionForTable('tx_rescuereports_domain_model_car');
 
-        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable('tx_rescuereports_domain_model_car');
+            $carRow = $connection->select(
+                ['name'],
+                'tx_rescuereports_domain_model_car',
+                ['uid' => (int)$fields['car']]
+            )->fetchAssociative();
 
-        $carRow = $connection->select(
-            ['name'],
-            'tx_rescuereports_domain_model_car',
-            ['uid' => (int)$fieldArray['car']]
-        )->fetchAssociative();
-
-        if (!empty($carRow['name'])) {
-            GeneralUtility::makeInstance(ConnectionPool::class)
-                ->getConnectionForTable('tx_rescuereports_domain_model_vehicle')
-                ->update(
-                    'tx_rescuereports_domain_model_vehicle',
-                    ['name' => $carRow['name']],
-                    ['uid' => $realUid]
-                );
+            if (!empty($carRow['name'])) {
+                GeneralUtility::makeInstance(ConnectionPool::class)
+                    ->getConnectionForTable('tx_rescuereports_domain_model_vehicle')
+                    ->update(
+                        'tx_rescuereports_domain_model_vehicle',
+                        ['name' => $carRow['name']],
+                        ['uid' => $recordUid]
+                    );
+            }
         }
     }
 }

@@ -1,24 +1,101 @@
 <f:layout name="Default" />
 
 <f:section name="main">
+
     <f:switch expression="{templateVariant}">
 
         <!-- =========================================================
-             Sidebar
+             Sidebar Foundation
              Keine Filter-Info, kein Suchformular
         ========================================================== -->
-        <f:case value="sidebar">
-            <h1 class="element-header">Letzte Einsätze</h1>
+        <f:case value="sidebar-foundation">
+            <h1 class="element-header">
+                <f:if condition="{widgetTitle}">
+                    <f:then>{widgetTitle}</f:then>
+                    <f:else>Letzte Einsätze</f:else>
+                </f:if>
+            </h1>
 
             <f:render section="EventListContentSidebar" arguments="{_all}" />
+
+            <f:if condition="{listPageUid}">
+                <div class="einsaetze__more">
+                    <f:link.page pageUid="{listPageUid}" class="einsaetze__more-link">Alle Einsätze anzeigen ›</f:link.page>
+                </div>
+            </f:if>
         </f:case>
 
         <!-- =========================================================
-             NewDesign
+             Bootstrap
         ========================================================== -->
-        <f:case value="newdesign">
+        <f:case value="bootstrap">
             <div class="rescue-reports rescue-reports--newdesign">
-                <h1 class="element-header">Einsatzübersicht</h1>
+                <h1 class="element-header">
+                    Einsatzübersicht
+                    <f:if condition="{activeStationName}">
+                        <f:then>{activeStationName}</f:then>
+                    </f:if>
+                </h1>
+
+                <f:if condition="{showStationFilter}">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Ortsfeuerwehr</label>
+                        <f:form action="list" method="post">
+                            <f:form.hidden name="year" value="{selectedYear}" />
+                            <f:form.hidden name="dateFrom" value="{dateFromStr}" />
+                            <f:form.hidden name="dateTo" value="{dateToStr}" />
+                            <div class="row g-2 align-items-stretch">
+                                <div class="col-12 col-md-6">
+                                    <f:form.select
+                                        name="station"
+                                        options="{stations}"
+                                        optionLabelField="name"
+                                        optionValueField="uid"
+                                        value="{activeStationUid}"
+                                        class="form-select"
+                                        additionalAttributes="{onchange: 'this.form.submit()'}" />
+                                </div>
+                            </div>
+                        </f:form>
+                    </div>
+                </f:if>
+
+                <f:if condition="{enableYearFilter}">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Jahr</label>
+                        <f:form action="list" method="post">
+                            <f:form.hidden name="station" value="{activeStationUid}" />
+                            <f:form.hidden name="dateFrom" value="{dateFromStr}" />
+                            <f:form.hidden name="dateTo" value="{dateToStr}" />
+                            <div class="row g-2 align-items-stretch">
+                                <div class="col-12 col-md-6">
+                                    <f:form.select
+                                        name="year"
+                                        value="{selectedYear}"
+                                        class="form-select"
+                                        additionalAttributes="{onchange: 'this.form.submit()'}">
+                                        <f:form.select.option value="0">Alle Jahre</f:form.select.option>
+                                        <f:for each="{availableYears}" as="y">
+                                            <f:form.select.option value="{y}">{y}</f:form.select.option>
+                                        </f:for>
+                                    </f:form.select>
+                                </div>
+                            </div>
+                        </f:form>
+                    </div>
+                </f:if>
+
+                <f:if condition="{showBlockStatistics}">
+                    <f:if condition="{statisticsPosition} == 'above'">
+                        <f:render partial="Statistics/PieChart" arguments="{statistics: statistics, title: 'Einsatzstatistik'}" />
+                    </f:if>
+                </f:if>
+
+                <f:if condition="{showMapView}">
+                    <f:if condition="{mapPosition} == 'above'">
+                        <f:render partial="Map/EventList" arguments="{events: events, settings: settings}" />
+                    </f:if>
+                </f:if>
 
                 <f:if condition="{maxCount} > 0">
                     <f:then>
@@ -52,9 +129,60 @@
                 <f:if condition="{enableSearch}">
                     <div class="card mb-1 border-0">
                         <div class="card-body">
-                            <f:form action="list" method="get">
-                                <div class="row g-2 align-items-stretch">
+                            <h3 class="fs-6 fw-semibold text-muted mb-3">Einsätze suchen und filtern</h3>
+                            <f:form action="list" method="post">
+                                <!-- Zeile 1: Stations-/Jahr-/Datumsfilter -->
+                                <div class="row g-2 align-items-end mb-2">
+                                    <div class="col-12 col-md-4">
+                                        <label class="form-label small">Ortsfeuerwehr</label>
+                                        <f:form.select
+                                            name="station"
+                                            options="{stations}"
+                                            optionLabelField="name"
+                                            optionValueField="uid"
+                                            value="{activeStationUid}"
+                                            class="form-select" />
+                                    </div>
+
+                                    <f:if condition="{enableYearFilter}">
+                                        <div class="col-12 col-md-2">
+                                            <label class="form-label small">Jahr</label>
+                                            <f:form.select
+                                                name="year"
+                                                value="{selectedYear}"
+                                                class="form-select">
+                                                <f:form.select.option value="0">Alle</f:form.select.option>
+                                                <f:for each="{availableYears}" as="y">
+                                                    <f:form.select.option value="{y}">{y}</f:form.select.option>
+                                                </f:for>
+                                            </f:form.select>
+                                        </div>
+                                    </f:if>
+
+                                    <f:if condition="{enableDateFilter}">
+                                        <div class="col-12 col-md-3">
+                                            <label class="form-label small">Von</label>
+                                            <f:form.textfield
+                                                name="dateFrom"
+                                                type="date"
+                                                value="{dateFromStr}"
+                                                class="form-control" />
+                                        </div>
+                                        <div class="col-12 col-md-3">
+                                            <label class="form-label small">Bis</label>
+                                            <f:form.textfield
+                                                name="dateTo"
+                                                type="date"
+                                                value="{dateToStr}"
+                                                class="form-control" />
+                                        </div>
+                                    </f:if>
+                                </div>
+
+                                <!-- Zeile 2: Suchfeld + Buttons (immer gleiche Breite) -->
+                                <div class="row g-2 align-items-end">
                                     <div class="col-12 col-md-8">
+                                        <label class="form-label small">Suchbegriff</label>
                                         <f:form.textfield
                                             name="searchWord"
                                             id="searchWordNewdesign"
@@ -66,14 +194,14 @@
 
                                     <div class="col-12 col-md-2">
                                         <button type="submit" class="btn btn-primary w-100">
-                                            Suchen
+                                            Filtern
                                         </button>
                                     </div>
 
                                     <div class="col-12 col-md-2">
                                         <f:link.action
                                             action="list"
-                                            arguments="{searchWord: ''}"
+                                            arguments="{searchWord: '', station: 0, year: 0, dateFrom: '', dateTo: ''}"
                                             class="btn btn-outline-secondary w-100">
                                             Reset
                                         </f:link.action>
@@ -89,22 +217,48 @@
         </f:case>
 
         <!-- =========================================================
-             NewDesignSidebar
+             Sidebar Bootstrap
              Keine Filter-Info, kein Suchformular
         ========================================================== -->
-        <f:case value="newdesignsidebar">
-            <div class="rescue-reports rescue-reports--newdesignsidebar">
-                <h1 class="element-header">Letzte Einsätze</h1>
-
+        <f:case value="sidebar-bootstrap">
+            <div class="rescue-reports rescue-reports--sidebar-bootstrap">
+                <h1 class="element-header">
+                    <f:if condition="{widgetTitle}">
+                        <f:then>{widgetTitle}</f:then>
+                        <f:else>Letzte Einsätze</f:else>
+                    </f:if>
+                </h1>
                 <f:render section="EventListContentSidebarNewDesign" arguments="{_all}" />
+                <f:if condition="{listPageUid}">
+                    <div class="einsaetze__more">
+                        <f:link.page pageUid="{listPageUid}" class="einsaetze__more-link">Alle Einsätze anzeigen ›</f:link.page>
+                    </div>
+                </f:if>
             </div>
         </f:case>
 
         <!-- =========================================================
-             Standard
+             Foundation
         ========================================================== -->
-        <f:defaultCase>
-            <h1 class="csc-firstHeader">Einsatzübersicht</h1>
+        <f:case value="foundation">
+            <h1 class="csc-firstHeader">
+                Einsatzübersicht
+                <f:if condition="{activeStationName}">
+                    <f:then>{activeStationName}</f:then>
+                </f:if>
+            </h1>
+
+            <f:if condition="{showBlockStatistics}">
+                <f:if condition="{statisticsPosition} == 'above'">
+                    <f:render partial="Statistics/PieChart" arguments="{statistics: statistics, title: 'Einsatzstatistik'}" />
+                </f:if>
+            </f:if>
+
+            <f:if condition="{showMapView}">
+                <f:if condition="{mapPosition} == 'above'">
+                    <f:render partial="Map/EventList" arguments="{events: events, settings: settings}" />
+                </f:if>
+            </f:if>
 
             <div class="filter-info" style="margin-bottom: 10px; font-size: 0.9em; color: #555;">
                 <f:if condition="{maxCount} > 0">
@@ -121,12 +275,71 @@
                 </f:if>
             </div>
 
+            <f:if condition="{showStationFilter}">
+                <div class="row" style="padding-top:10px; padding-bottom:5px;">
+                    <div class="small-12 columns">
+                        <f:form action="list" method="post">
+                            <f:form.hidden name="year" value="{selectedYear}" />
+                            <f:form.hidden name="dateFrom" value="{dateFromStr}" />
+                            <f:form.hidden name="dateTo" value="{dateToStr}" />
+                            <f:form.select
+                                name="station"
+                                options="{stations}"
+                                optionLabelField="name"
+                                optionValueField="uid"
+                                value="{activeStationUid}"
+                                additionalAttributes="{onchange: 'this.form.submit()'}" />
+                        </f:form>
+                    </div>
+                </div>
+            </f:if>
+
+            <f:if condition="{enableYearFilter}">
+                <div class="row" style="padding-top:10px; padding-bottom:5px;">
+                    <div class="small-12 columns">
+                        <f:form action="list" method="post">
+                            <f:form.hidden name="station" value="{activeStationUid}" />
+                            <f:form.hidden name="dateFrom" value="{dateFromStr}" />
+                            <f:form.hidden name="dateTo" value="{dateToStr}" />
+                            <f:form.select
+                                name="year"
+                                value="{selectedYear}"
+                                additionalAttributes="{onchange: 'this.form.submit()'}">
+                                <f:form.select.option value="0">Alle Jahre</f:form.select.option>
+                                <f:for each="{availableYears}" as="y">
+                                    <f:form.select.option value="{y}">{y}</f:form.select.option>
+                                </f:for>
+                            </f:form.select>
+                        </f:form>
+                    </div>
+                </div>
+            </f:if>
+
             <f:if condition="{enableSearch}">
                 <div class="row" style="padding-top:10px;">
                     <div class="small-12 columns">
-                        <f:form action="list" method="get">
+                        <f:form action="list" method="post">
+                            <f:form.hidden name="year" value="{selectedYear}" />
                             <div class="row collapse">
-                                <div class="small-7 columns">
+
+                                <f:if condition="{enableDateFilter}">
+                                    <div class="small-2 columns">
+                                        <f:form.textfield
+                                            name="dateFrom"
+                                            type="date"
+                                            value="{dateFromStr}"
+                                            placeholder="Von" />
+                                    </div>
+                                    <div class="small-2 columns">
+                                        <f:form.textfield
+                                            name="dateTo"
+                                            type="date"
+                                            value="{dateToStr}"
+                                            placeholder="Bis" />
+                                    </div>
+                                </f:if>
+
+                                <div class="{f:if(condition: enableDateFilter, then: 'small-4', else: 'small-8')} columns">
                                     <f:form.textfield
                                         name="searchWord"
                                         id="searchWord"
@@ -141,12 +354,12 @@
                                     </button>
                                 </div>
 
-                                <div class="small-3 columns">
+                                <div class="small-2 columns">
                                     <f:link.action
                                         action="list"
-                                        arguments="{searchWord: ''}"
+                                        arguments="{searchWord: '', station: 0, year: 0, dateFrom: '', dateTo: ''}"
                                         class="button postfix expand secondary">
-                                        Filter zurücksetzen
+                                        Reset
                                     </f:link.action>
                                 </div>
                             </div>
@@ -156,13 +369,27 @@
             </f:if>
 
             <f:render section="EventListContent" arguments="{_all}" />
-        </f:defaultCase>
+        </f:case>
 
     </f:switch>
+
+    <f:if condition="{showBlockStatistics}">
+        <f:if condition="{statisticsPosition} != 'above'">
+            <hr class="my-4">
+            <f:render partial="Statistics/PieChart" arguments="{statistics: statistics, title: 'Einsatzstatistik'}" />
+        </f:if>
+    </f:if>
+
+    <f:if condition="{showMapView}">
+        <f:if condition="{mapPosition} != 'above'">
+            <f:render partial="Map/EventList" arguments="{events: events, settings: settings}" />
+        </f:if>
+    </f:if>
+
 </f:section>
 
 <!-- =========================================================
-     Standard-Ausgabeliste
+     Foundation-Ausgabeliste
 ========================================================== -->
 <f:section name="EventListContent">
     <f:if condition="{events}">
@@ -179,41 +406,116 @@
                 </div>
             </f:if>
 
-            <f:for each="{events}" as="event">
-                <div class="panelsmall" style="margin-bottom:10px;">
-                    <f:link.action
-                        action="show"
-                        arguments="{event: event}"
-                        pageUid="{detailPageUid}"
-                        class="btn btn-sm btn-primary">
+            <f:if condition="{yearGroupsWithStats}">
+                <f:then>
+                <div class="year-jump-nav" style="margin: 0 0 10px;">
+                    <strong>Sprungmarken:</strong>
+                    <f:for each="{yearGroupsWithStats}" as="yearGroup" key="year" iteration="i">
+                        <a href="#event-year-{year}" style="margin-left:8px;">{year}</a><f:if condition="{!i.isLast}"> ·</f:if>
+                    </f:for>
+                </div>
 
-                        <div class="row">
-                            <div class="small-2 medium-1 columns enumber text-center">
-                                {event.numberShort}
-                            </div>
+                <f:for each="{yearGroupsWithStats}" as="yearGroup" key="year">
+                    <h2 id="event-year-{year}" style="margin:16px 0 8px;">{year}</h2>
+                    <f:if condition="{showStatistics} && {yearGroup.statistics}">
+                        <f:if condition="{statisticsPosition} == 'above'">
+                            <f:render partial="Statistics/PieChart" arguments="{statistics: yearGroup.statistics}" />
+                        </f:if>
+                    </f:if>
+                    <f:for each="{yearGroup.events}" as="item">
+                        <f:variable name="event" value="{item.event}" />
 
-                            <div class="small-10 medium-11 column">
+                        <div class="panelsmall <f:if condition='!{event.disableDetail}'>panelsmall--clickable</f:if>">
+                            <div class="panelsmall__inner">
                                 <div class="row">
-                                    <div class="small-12 column emeta">
-                                        <f:format.date format="d.m.Y, H:i">{event.start}</f:format.date>
-                                        <f:if condition="{event.end}">
-                                            -
-                                            <f:format.date format="H:i">{event.end}</f:format.date> Uhr
-                                        </f:if>
+                                    <div class="small-2 medium-1 columns enumber text-center">
+                                        {item.plainNumber}
                                     </div>
 
-                                    <div class="small-12 column etitle">
-                                        <b>{event.title}</b>
-                                        <f:if condition="{event.location}">
-                                            – <em>{event.location}</em>
-                                        </f:if>
+                                    <div class="small-10 medium-11 column">
+                                        <div class="row">
+                                            <div class="small-12 column emeta">
+                                                <f:format.date format="d.m.Y, H:i">{event.start}</f:format.date>
+                                                <f:if condition="{event.end}">
+                                                    -
+                                                    <f:format.date format="H:i">{event.end}</f:format.date> Uhr
+                                                </f:if>
+                                            </div>
+
+                                            <div class="small-12 column etitle">
+                                                <b>{event.title}</b>
+                                                <f:if condition="{event.location}">
+                                                    – <em>{event.location}</em>
+                                                </f:if>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <f:if condition="!{event.disableDetail}">
+                                <f:link.action
+                                    action="show"
+                                    arguments="{event: event, station: activeStationUid}"
+                                    pageUid="{detailPageUid}"
+                                    class="panelsmall__overlaylink">
+                                    Zum Einsatz {event.title}
+                                </f:link.action>
+                            </f:if>
+                        </div>
+                    </f:for>
+                    <f:if condition="{showStatistics} && {yearGroup.statistics}">
+                        <f:if condition="{statisticsPosition} != 'above'">
+                            <f:render partial="Statistics/PieChart" arguments="{statistics: yearGroup.statistics}" />
+                        </f:if>
+                    </f:if>
+                </f:for>
+                </f:then>
+                <f:else>
+                <f:for each="{eventItems}" as="item">
+                    <f:variable name="event" value="{item.event}" />
+
+                    <div class="panelsmall <f:if condition='!{event.disableDetail}'>panelsmall--clickable</f:if>">
+                        <div class="panelsmall__inner">
+                            <div class="row">
+                                <div class="small-2 medium-1 columns enumber text-center">
+                                    {item.plainNumber}
+                                </div>
+
+                                <div class="small-10 medium-11 column">
+                                    <div class="row">
+                                        <div class="small-12 column emeta">
+                                            <f:format.date format="d.m.Y, H:i">{event.start}</f:format.date>
+                                            <f:if condition="{event.end}">
+                                                -
+                                                <f:format.date format="H:i">{event.end}</f:format.date> Uhr
+                                            </f:if>
+                                        </div>
+
+                                        <div class="small-12 column etitle">
+                                            <b>{event.title}</b>
+                                            <f:if condition="{event.location}">
+                                                – <em>{event.location}</em>
+                                            </f:if>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </f:link.action>
-                </div>
-            </f:for>
+
+                        <f:if condition="!{event.disableDetail}">
+                            <f:link.action
+                                action="show"
+                                arguments="{event: event, station: activeStationUid}"
+                                pageUid="{detailPageUid}"
+                                class="panelsmall__overlaylink">
+                                Zum Einsatz {event.title}
+                            </f:link.action>
+                        </f:if>
+                    </div>
+                </f:for>
+                </f:else>
+            </f:if>
         </f:then>
 
         <f:else>
@@ -228,25 +530,37 @@
 </f:section>
 
 <!-- =========================================================
-     Sidebar-Ausgabeliste
-     Übernommen aus firefighter, angepasst auf rescue_reports
+     Sidebar-Foundation-Ausgabeliste
 ========================================================== -->
 <f:section name="EventListContentSidebar">
     <f:if condition="{events}">
         <f:then>
-            <f:variable name="total" value="{events -> f:count()}" />
+            <ul class="einsaetze einsaetze--sidebar">
+                <f:for each="{eventItems}" as="item" iteration="i">
+                    <f:variable name="event" value="{item.event}" />
 
-            <ul class="einsaetze">
-                <f:for each="{events}" as="event" iteration="i">
-                    <li>
-                        <f:link.action
-                            action="show"
-                            arguments="{event: event}"
-                            pageUid="{detailPageUid}"
-                            class="einsatz-link">
-
-                            <f:format.date format="d.m.Y">{event.start}</f:format.date>: {event.title}
-                        </f:link.action>
+                    <li class="einsaetze__item <f:if condition='!{event.disableDetail}'>einsaetze__item--clickable</f:if>">
+                        <f:if condition="!{event.disableDetail}">
+                            <f:then>
+                                <f:link.action
+                                    action="show"
+                                    arguments="{event: event, station: activeStationUid}"
+                                    pageUid="{detailPageUid}"
+                                    class="einsaetze__link">
+                                    <span class="einsaetze__date">
+                                        <f:format.date format="d.m.Y">{event.start}</f:format.date></span><span class="einsaetze__separator">:</span>
+                                    <span class="einsaetze__title">{event.title}</span>
+                                    <span class="einsaetze__indicator" aria-hidden="true">›</span>
+                                </f:link.action>
+                            </f:then>
+                            <f:else>
+                                <div class="einsaetze__text">
+                                    <span class="einsaetze__date">
+                                        <f:format.date format="d.m.Y">{event.start}</f:format.date></span><span class="einsaetze__separator">:</span>
+                                    <span class="einsaetze__title">{event.title}</span>
+                                </div>
+                            </f:else>
+                        </f:if>
                     </li>
                 </f:for>
             </ul>
@@ -259,7 +573,7 @@
 </f:section>
 
 <!-- =========================================================
-     NewDesign-Ausgabeliste
+     Bootstrap-Ausgabeliste
 ========================================================== -->
 <f:section name="EventListContentNewDesign">
     <f:if condition="{events}">
@@ -267,61 +581,123 @@
             <f:if condition="{searchWord}">
                 <div class="result-info mt-3">
                     <strong>{events -> f:count()}</strong>
-                        <f:if condition="{events -> f:count()} == 1">
-                            Einsatz gefunden
-                        </f:if>
-                        <f:if condition="{events -> f:count()} != 1">
-                            Einsätze gefunden
-                        </f:if>
+                    <f:if condition="{events -> f:count()} == 1">
+                        Einsatz gefunden
+                    </f:if>
+                    <f:if condition="{events -> f:count()} != 1">
+                        Einsätze gefunden
+                    </f:if>
                 </div>
             </f:if>
 
-            <ul class="list-group list-group-flush list-striped no-bullet event-list-newdesign">
-                <f:for each="{events}" as="event" iteration="it">
-                    <li class="list-group-item py-4">
-                        <div class="row g-3 align-items-start position-relative">
+            <f:if condition="{yearGroupsWithStats}">
+                <f:then>
+                <div class="year-jump-nav mb-2 small">
+                    <strong>Sprungmarken:</strong>
+                    <f:for each="{yearGroupsWithStats}" as="yearGroup" key="year" iteration="i">
+                        <a href="#event-year-nd-{year}" class="ms-2">{year}</a><f:if condition="{!i.isLast}"> ·</f:if>
+                    </f:for>
+                </div>
+                <f:for each="{yearGroupsWithStats}" as="yearGroup" key="year">
+                    <h3 id="event-year-nd-{year}" class="mt-3 mb-2">{year}</h3>
+                    <f:if condition="{showStatistics} && {yearGroup.statistics}">
+                        <f:if condition="{statisticsPosition} == 'above'">
+                            <f:render partial="Statistics/PieChart" arguments="{statistics: yearGroup.statistics}" />
+                        </f:if>
+                    </f:if>
+                    <ul class="list-group list-group-flush no-bullet event-list-newdesign"
+                        style="margin:0; padding:0; list-style:none;">
+                        <f:for each="{yearGroup.events}" as="item">
+                            <f:variable name="event" value="{item.event}" />
 
-                            <!-- Nummer links -->
-                            <div class="col-3 col-sm-2 col-md-1 text-right enumber">
-                                <f:if condition="{event.number}">
-                                    {event.numberShort}
-                                </f:if>
-                            </div>
-
-                            <!-- Inhalt rechts -->
-                            <div class="col">
-                                <div class="emeta">
-                                    <f:link.action
-                                        action="show"
-                                        arguments="{event: event}"
-                                        pageUid="{detailPageUid}">
-                                        <f:format.date format="d.m.Y, H:i">{event.start}</f:format.date>
-                                        <f:if condition="{event.end}">
-                                            – <f:format.date format="H:i">{event.end}</f:format.date> Uhr
+                            <li class="panelsmall <f:if condition='!{event.disableDetail}'>panelsmall--clickable</f:if>" style="padding:12px 10px; border-bottom:1px solid #e5e9f2; position:relative;">
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-auto enumber" style="font-weight:600; opacity: 0.8; color:#5b8fd9; min-width:60px;">
+                                        {item.plainNumber}
+                                    </div>
+                                    <div class="col">
+                                        <div style="font-size:1.1rem; font-weight:700; color:#111; line-height:1.2;">
+                                            {event.title}
+                                            <f:if condition="{event.location}">
+                                                <span style="font-style:italic; font-weight:500; color:#444;">
+                                                    – {event.location}
+                                                </span>
+                                            </f:if>
+                                        </div>
+                                        <div style="font-size:0.85rem; color:#6c757d;">
+                                            <f:format.date format="d.m.Y">{event.start}</f:format.date>
+                                            ·
+                                            <f:format.date format="H:i">{event.start}</f:format.date>
+                                            <f:if condition="{event.end}">
+                                                – <f:format.date format="H:i">{event.end}</f:format.date>
+                                            </f:if>
+                                            Uhr
+                                        </div>
+                                        <f:if condition="!{event.disableDetail}">
+                                            <f:link.action
+                                                action="show"
+                                                arguments="{event: event, station: activeStationUid}"
+                                                pageUid="{detailPageUid}"
+                                                class="stretched-link">
+                                                <span class="visually-hidden">Zum Einsatz {event.title}</span>
+                                            </f:link.action>
                                         </f:if>
-                                    </f:link.action>
+                                    </div>
                                 </div>
-
-                                <div class="h5 fw-bold mb-1">
-                                    {event.title}
-                                    <f:if condition="{event.location}">
-                                        – <em>{event.location}</em>
+                            </li>
+                        </f:for>
+                    </ul>
+                    <f:if condition="{showStatistics} && {yearGroup.statistics}">
+                        <f:if condition="{statisticsPosition} != 'above'">
+                            <f:render partial="Statistics/PieChart" arguments="{statistics: yearGroup.statistics}" />
+                        </f:if>
+                    </f:if>
+                </f:for>
+                </f:then>
+                <f:else>
+                <ul class="list-group list-group-flush no-bullet event-list-newdesign"
+                    style="margin:0; padding:0; list-style:none;">
+                    <f:for each="{eventItems}" as="item">
+                        <f:variable name="event" value="{item.event}" />
+                        <li class="panelsmall <f:if condition='!{event.disableDetail}'>panelsmall--clickable</f:if>" style="padding:12px 10px; border-bottom:1px solid #e5e9f2; position:relative;">
+                            <div class="row g-2 align-items-center">
+                                <div class="col-auto enumber" style="font-weight:600; opacity: 0.8; color:#5b8fd9; min-width:60px;">
+                                    {item.plainNumber}
+                                </div>
+                                <div class="col">
+                                    <div style="font-size:1.1rem; font-weight:700; color:#111; line-height:1.2;">
+                                        {event.title}
+                                        <f:if condition="{event.location}">
+                                            <span style="font-style:italic; font-weight:500; color:#444;">
+                                                – {event.location}
+                                            </span>
+                                        </f:if>
+                                    </div>
+                                    <div style="font-size:0.85rem; color:#6c757d;">
+                                        <f:format.date format="d.m.Y">{event.start}</f:format.date>
+                                        ·
+                                        <f:format.date format="H:i">{event.start}</f:format.date>
+                                        <f:if condition="{event.end}">
+                                            – <f:format.date format="H:i">{event.end}</f:format.date>
+                                        </f:if>
+                                        Uhr
+                                    </div>
+                                    <f:if condition="!{event.disableDetail}">
+                                        <f:link.action
+                                            action="show"
+                                            arguments="{event: event, station: activeStationUid}"
+                                            pageUid="{detailPageUid}"
+                                            class="stretched-link">
+                                            <span class="visually-hidden">Zum Einsatz {event.title}</span>
+                                        </f:link.action>
                                     </f:if>
                                 </div>
-
-                                <!-- gesamte Zeile klickbar -->
-                                <f:link.action
-                                    action="show"
-                                    arguments="{event: event}"
-                                    pageUid="{detailPageUid}"
-                                    class="stretched-link">
-                                    <span class="visually-hidden">Zum Einsatz {event.title}</span>
-                                </f:link.action>
                             </div>
-                        </div>
-                    </li>
-                </f:for>
-            </ul>
+                        </li>
+                    </f:for>
+                </ul>
+                </f:else>
+            </f:if>
         </f:then>
 
         <f:else>
@@ -336,22 +712,41 @@
 </f:section>
 
 <!-- =========================================================
-     NewDesignSidebar-Ausgabeliste
-     firefighter-Stil + NewDesign-Optik
+     Sidebar-Bootstrap-Ausgabeliste
 ========================================================== -->
 <f:section name="EventListContentSidebarNewDesign">
     <f:if condition="{events}">
         <f:then>
-            <ul class="einsaetze">
-                <f:for each="{events}" as="event" iteration="i">
-                    <li>
-                        <f:link.action
-                            action="show"
-                            arguments="{event: event}"
-                            pageUid="{detailPageUid}"
-                            class="einsatz-link">
-                            <f:format.date format="d.m.Y">{event.start}</f:format.date>: {event.title}
-                        </f:link.action>
+            <ul class="einsaetze einsaetze--sidebar einsaetze--sidebar-bootstrap">
+                <f:for each="{eventItems}" as="item" iteration="i">
+                    <f:variable name="event" value="{item.event}" />
+
+                    <li class="einsaetze__item <f:if condition='!{event.disableDetail}'>einsaetze__item--clickable</f:if>">
+                        <f:if condition="!{event.disableDetail}">
+                            <f:then>
+                                <f:link.action
+                                    action="show"
+                                    arguments="{event: event, station: activeStationUid}"
+                                    pageUid="{detailPageUid}"
+                                    class="einsaetze__link">
+                                    <span class="einsaetze__date">
+                                        <f:format.date format="d.m.Y">{event.start}</f:format.date>
+                                    </span>
+                                    <span class="einsaetze__separator">:</span>
+                                    <span class="einsaetze__title">{event.title}</span>
+                                    <span class="einsaetze__indicator" aria-hidden="true">›</span>
+                                </f:link.action>
+                            </f:then>
+                            <f:else>
+                                <div class="einsaetze__text">
+                                    <span class="einsaetze__date">
+                                        <f:format.date format="d.m.Y">{event.start}</f:format.date>
+                                    </span>
+                                    <span class="einsaetze__separator">:</span>
+                                    <span class="einsaetze__title">{event.title}</span>
+                                </div>
+                            </f:else>
+                        </f:if>
                     </li>
                 </f:for>
             </ul>

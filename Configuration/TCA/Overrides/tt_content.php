@@ -8,76 +8,82 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 (function (): void {
-    $typo3Version = (new Typo3Version())->getMajorVersion();
 
-    $pluginSignatureEventlist = ExtensionUtility::registerPlugin(
+    // Hauptplugin
+    ExtensionUtility::registerPlugin(
         'RescueReports',
         'Eventlist',
-        'Rescue Reports: Einsätze',
-        'rescue_reports_eventlist',
-        'plugins',
-        'Vollständige Einsatzliste mit Detailansicht'
+        'Rescue Reports: Einsatzübersicht',
+        'rescue_reports_eventlist'
     );
 
-    $pluginSignatureSidebar = ExtensionUtility::registerPlugin(
+    $pluginSignature = 'rescuereports_eventlist';
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignature] = 'pi_flexform';
+    ExtensionManagementUtility::addPiFlexFormValue(
+        $pluginSignature,
+        'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml'
+    );
+
+    // Statistik-Plugin
+    ExtensionUtility::registerPlugin(
+        'RescueReports',
+        'Statistics',
+        'Rescue Reports: Jahresstatistik',
+        'rescue_reports_statistics'
+    );
+
+    $pluginSignatureStats = 'rescuereports_statistics';
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureStats] = 'pi_flexform';
+    ExtensionManagementUtility::addPiFlexFormValue(
+        $pluginSignatureStats,
+        'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml'
+    );
+
+    // Sidebar-Plugin
+    ExtensionUtility::registerPlugin(
         'RescueReports',
         'Sidebar',
         'Rescue Reports: Sidebar',
-        'rescue_reports_sidebar',
-        'plugins',
-        'Kompakte Übersicht für Seitenleisten'
+        'rescue_reports_sidebar'
     );
 
-    if ($typo3Version < 14) {
-        // v13: klassisches list_type System
-        $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureEventlist] = 'pi_flexform';
-        $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_excludelist'][$pluginSignatureEventlist] = 'recursive,select_key,pages';
-        $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureSidebar] = 'pi_flexform';
-        $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_excludelist'][$pluginSignatureSidebar] = 'recursive,select_key,pages';
+    $pluginSignatureSidebar = 'rescuereports_sidebar';
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureSidebar] = 'pi_flexform';
+    ExtensionManagementUtility::addPiFlexFormValue(
+        $pluginSignatureSidebar,
+        'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml'
+    );
 
-        ExtensionManagementUtility::addPiFlexFormValue(
-            $pluginSignatureEventlist,
-            'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml'
-        );
-        ExtensionManagementUtility::addPiFlexFormValue(
-            $pluginSignatureSidebar,
-            'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml'
-        );
-    } else {
-        // v14: neues CType-System mit explizitem showitem
-        $GLOBALS['TCA']['tt_content']['types'][$pluginSignatureEventlist]['showitem'] = '
-            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,
-            --palette--;;general,
-            pi_flexform,
-            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
-            --palette--;;hidden,
-            --palette--;;access
-        ';
+    // RSS-Feed-Plugin
+    ExtensionUtility::registerPlugin(
+        'RescueReports',
+        'Rss',
+        'Rescue Reports: RSS-Feed',
+        'rescue_reports_rss'
+    );
 
-        $GLOBALS['TCA']['tt_content']['types'][$pluginSignatureSidebar]['showitem'] = '
-            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,
-            --palette--;;general,
-            pi_flexform,
-            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
-            --palette--;;hidden,
-            --palette--;;access
-        ';
-
-        ExtensionManagementUtility::addPiFlexFormValue(
-            '*',
-            'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
-            $pluginSignatureEventlist
-        );
-        ExtensionManagementUtility::addPiFlexFormValue(
-            '*',
-            'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
-            $pluginSignatureSidebar
-        );
-    }
+    $pluginSignatureRss = 'rescuereports_rss';
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureRss] = 'pi_flexform';
+    ExtensionManagementUtility::addPiFlexFormValue(
+        $pluginSignatureRss,
+        'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml'
+    );
 
     ExtensionManagementUtility::addStaticFile(
         'rescue_reports',
         'Configuration/TypoScript',
         'Rescue Reports Setup'
     );
+
+    ExtensionManagementUtility::addLLrefForTCAdescr(
+        'tx_rescuereports_domain_model_event',
+        'EXT:rescue_reports/Resources/Private/Language/locallang_csh_tx_rescuereports_domain_model_event.xlf'
+    );
+
+    $versionInformation = new Typo3Version();
+    if ($versionInformation->getMajorVersion() < 12) {
+        ExtensionManagementUtility::allowTableOnStandardPages(
+            'tx_rescuereports_domain_model_event'
+        );
+    }
 })();

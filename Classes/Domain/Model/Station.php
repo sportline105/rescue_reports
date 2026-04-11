@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace nkfire\RescueReports\Domain\Model;
 
-use TYPO3\CMS\Extbase\Annotation\ORM\Cascade;
-use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
@@ -15,15 +13,11 @@ class Station extends AbstractEntity
     protected ?Brigade $brigade = null;
 
     /**
-     * @var ObjectStorage<Vehicle>
+     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\nkfire\RescueReports\Domain\Model\Vehicle>
+     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
+     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
      */
-    #[Lazy]
-    #[Cascade(['value' => 'remove'])]
     protected ObjectStorage $vehicles;
-
-    protected bool $isPrimary = false;
-
-    protected int $sorting = 9999;
 
     public function __construct()
     {
@@ -72,16 +66,7 @@ class Station extends AbstractEntity
     {
         $this->vehicles->detach($vehicle);
     }
-
-    public function isPrimary(): bool
-    {
-        return $this->isPrimary;
-    }
-
-    public function setIsPrimary(bool $isPrimary): void
-    {
-        $this->isPrimary = $isPrimary;
-    }
+    protected int $sorting = 9999;
 
     public function getSorting(): int
     {
@@ -91,5 +76,25 @@ class Station extends AbstractEntity
     public function setSorting(int $sorting): void
     {
         $this->sorting = $sorting;
+    }
+    protected string $prefix = '';
+
+    public function getPrefix(): string
+    {
+        return $this->prefix;
+    }
+
+    public function setPrefix(string $prefix): void
+    {
+        $this->prefix = $prefix;
+    }
+    protected bool $excludeFromFilter = false;
+    public function isExcludeFromFilter(): bool
+    {
+        return $this->excludeFromFilter;
+    }
+    public function setExcludeFromFilter(bool $excludeFromFilter): void
+    {
+        $this->excludeFromFilter = $excludeFromFilter;
     }
 }

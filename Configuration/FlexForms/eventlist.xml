@@ -1,89 +1,295 @@
 <?xml version="1.0" encoding="utf-8"?>
 <T3DataStructure>
-  <sheets>
-    <sDEF>
-      <ROOT>
-        <sheetTitle>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:sheet.general</sheetTitle>
-        <type>array</type>
-        <el>
+    <sheets>
+        <general>
+            <ROOT>
+                <TCEforms>
+                    <sheetTitle>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:sheet.general</sheetTitle>
+                </TCEforms>
+                <type>array</type>
+                <el>
 
-          <settings.templateVariant>
-            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:templateVariant</label>
-            <config>
-              <type>select</type>
-              <renderType>selectSingle</renderType>
-              <items>
-                <numIndex index="0">
-                  <label>Standard</label>
-                  <value>standard</value>
-                </numIndex>
-                <numIndex index="1">
-                  <label>Sidebar</label>
-                  <value>sidebar</value>
-                </numIndex>
-                <numIndex index="2">
-                  <label>NewDesign</label>
-                  <value>newdesign</value>
-                </numIndex>
-                <numIndex index="3">
-                  <label>NewDesignSidebar</label>
-                  <value>newdesignsidebar</value>
-                </numIndex>
-              </items>
-              <default>standard</default>
-            </config>
-          </settings.templateVariant>
+                    <settings.templateVariant>
+                        <TCEforms>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:templateVariant</label>
+                            <config>
+                                <type>select</type>
+                                <renderType>selectSingle</renderType>
+                                <items>
+                                    <numIndex index="0">
+                                        <numIndex index="0">Bootstrap</numIndex>
+                                        <numIndex index="1">bootstrap</numIndex>
+                                    </numIndex>
+                                    <numIndex index="1">
+                                        <numIndex index="0">Foundation</numIndex>
+                                        <numIndex index="1">foundation</numIndex>
+                                    </numIndex>
+                                </items>
+                                <default>bootstrap</default>
+                            </config>
+                        </TCEforms>
+                    </settings.templateVariant>
 
-          <settings.maxCount>
-            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:maxCount</label>
-            <config>
-              <type>number</type>
-              <size>5</size>
-              <default>0</default>
-            </config>
-          </settings.maxCount>
+                    <settings.defaultStation>
+                        <TCEforms>
+                            <label>Standard-Ortsfeuerwehr</label>
+                            <config>
+                                <type>select</type>
+                                <renderType>selectSingle</renderType>
+                                <itemsProcFunc>Nkfire\RescueReports\UserFunctions\FlexFormStationItems->addPrimaryStations</itemsProcFunc>
+                                <items>
+                                    <numIndex index="0">
+                                        <numIndex index="0">-- keine Auswahl --</numIndex>
+                                        <numIndex index="1">0</numIndex>
+                                    </numIndex>
+                                </items>
+                                <minitems>0</minitems>
+                                <maxitems>1</maxitems>
+                                <size>1</size>
+                            </config>
+                        </TCEforms>
+                    </settings.defaultStation>
 
-          <settings.dateFrom>
-            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:dateFrom</label>
-            <config>
-              <type>datetime</type>
-              <format>date</format>
-            </config>
-          </settings.dateFrom>
+                    <settings.showStationFilter>
+                        <TCEforms>
+                            <label>Auswahl der Ortsfeuerwehr im Frontend anzeigen</label>
+                            <config>
+                                <type>check</type>
+                                <items>
+                                    <numIndex index="0">
+                                        <numIndex index="0">Ja</numIndex>
+                                    </numIndex>
+                                </items>
+                                <default>1</default>
+                            </config>
+                        </TCEforms>
+                    </settings.showStationFilter>
 
-          <settings.dateTo>
-            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:dateTo</label>
-            <config>
-              <type>datetime</type>
-              <format>date</format>
-            </config>
-          </settings.dateTo>
+                    <settings.maxCount>
+                        <TCEforms>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:maxCount</label>
+                            <config>
+                                <type>input</type>
+                                <eval>int</eval>
+                                <size>5</size>
+                                <default>0</default>
+                            </config>
+                        </TCEforms>
+                    </settings.maxCount>
 
-          <settings.enableSearch>
-            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:enableSearch</label>
-            <config>
-              <type>check</type>
-              <items>
-                <numIndex index="0">
-                  <label>Ja</label>
-                </numIndex>
-              </items>
-            </config>
-          </settings.enableSearch>
+                    <settings.dateFrom>
+                        <TCEforms>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:dateFrom</label>
+                            <config>
+                                <type>input</type>
+                                <renderType>inputDateTime</renderType>
+                                <eval>date</eval>
+                            </config>
+                        </TCEforms>
+                    </settings.dateFrom>
 
-          <settings.detailPageUid>
-            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:detailPageUid</label>
-            <config>
-              <type>group</type>
-              <allowed>pages</allowed>
-              <size>1</size>
-              <maxitems>1</maxitems>
-              <minitems>0</minitems>
-            </config>
-          </settings.detailPageUid>
+                    <settings.dateTo>
+                        <TCEforms>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:dateTo</label>
+                            <config>
+                                <type>input</type>
+                                <renderType>inputDateTime</renderType>
+                                <eval>date</eval>
+                            </config>
+                        </TCEforms>
+                    </settings.dateTo>
 
-        </el>
-      </ROOT>
-    </sDEF>
-  </sheets>
+                    <settings.enableSearch>
+                        <TCEforms>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:enableSearch</label>
+                            <config>
+                                <type>check</type>
+                                <items>
+                                    <numIndex index="0">
+                                        <numIndex index="0">Ja</numIndex>
+                                    </numIndex>
+                                </items>
+                            </config>
+                        </TCEforms>
+                    </settings.enableSearch>
+
+                    <settings.detailPageUid>
+                        <TCEforms>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:detailPageUid</label>
+                            <config>
+                                <type>group</type>
+                                <internal_type>db</internal_type>
+                                <allowed>pages</allowed>
+                                <size>1</size>
+                                <minitems>1</minitems>
+                                <maxitems>1</maxitems>
+                            </config>
+                        </TCEforms>
+                    </settings.detailPageUid>
+
+                    <settings.enableDateFilter>
+                        <TCEforms>
+                            <label>Datumsfilter im Frontend anzeigen</label>
+                            <config>
+                                <type>check</type>
+                                <items>
+                                    <numIndex index="0">
+                                        <numIndex index="0">Ja</numIndex>
+                                    </numIndex>
+                                </items>
+                                <default>0</default>
+                            </config>
+                        </TCEforms>
+                    </settings.enableDateFilter>
+
+                    <settings.enableYearFilter>
+                        <TCEforms>
+                            <label>Jahresfilter anzeigen</label>
+                            <config>
+                                <type>check</type>
+                                <items>
+                                    <numIndex index="0">
+                                        <numIndex index="0">Ja</numIndex>
+                                    </numIndex>
+                                </items>
+                                <default>1</default>
+                            </config>
+                        </TCEforms>
+                    </settings.enableYearFilter>
+
+                    <settings.yearFilterDefault>
+                        <TCEforms>
+                            <label>Jahresfilter: Standardauswahl beim ersten Aufruf</label>
+                            <config>
+                                <type>select</type>
+                                <renderType>selectSingle</renderType>
+                                <items>
+                                    <numIndex index="0">
+                                        <numIndex index="0">Alle Jahre</numIndex>
+                                        <numIndex index="1">all</numIndex>
+                                    </numIndex>
+                                    <numIndex index="1">
+                                        <numIndex index="0">Aktuelles Jahr</numIndex>
+                                        <numIndex index="1">current</numIndex>
+                                    </numIndex>
+                                </items>
+                                <default>all</default>
+                            </config>
+                        </TCEforms>
+                    </settings.yearFilterDefault>
+
+                    <settings.statisticsYears>
+                        <TCEforms>
+                            <label>Statistik: Anzahl angezeigter Jahre (0 = alle)</label>
+                            <config>
+                                <type>input</type>
+                                <eval>int</eval>
+                                <size>5</size>
+                                <default>0</default>
+                                <placeholder>0 = alle Jahre</placeholder>
+                            </config>
+                        </TCEforms>
+                    </settings.statisticsYears>
+
+                    <settings.showStatistics>
+                        <TCEforms>
+                            <label>Statistik anzeigen</label>
+                            <config>
+                                <type>check</type>
+                                <items>
+                                    <numIndex index="0">
+                                        <numIndex index="0">Ja</numIndex>
+                                    </numIndex>
+                                </items>
+                                <default>0</default>
+                            </config>
+                        </TCEforms>
+                    </settings.showStatistics>
+
+                    <settings.statisticsPosition>
+                        <TCEforms>
+                            <label>Position der Statistik</label>
+                            <config>
+                                <type>select</type>
+                                <renderType>selectSingle</renderType>
+                                <items>
+                                    <numIndex index="0">
+                                        <numIndex index="0">Unterhalb der Einsatzliste</numIndex>
+                                        <numIndex index="1">below</numIndex>
+                                    </numIndex>
+                                    <numIndex index="1">
+                                        <numIndex index="0">Oberhalb der Einsatzliste</numIndex>
+                                        <numIndex index="1">above</numIndex>
+                                    </numIndex>
+                                </items>
+                                <default>below</default>
+                            </config>
+                        </TCEforms>
+                    </settings.statisticsPosition>
+
+                    <settings.showMapView>
+                        <TCEforms>
+                            <label>Kartenansicht anzeigen</label>
+                            <config>
+                                <type>check</type>
+                                <items>
+                                    <numIndex index="0">
+                                        <numIndex index="0">Ja</numIndex>
+                                    </numIndex>
+                                </items>
+                                <default>0</default>
+                            </config>
+                        </TCEforms>
+                    </settings.showMapView>
+
+                    <settings.mapHeight>
+                        <TCEforms>
+                            <label>Kartenhöhe in Pixeln</label>
+                            <config>
+                                <type>input</type>
+                                <eval>int</eval>
+                                <size>6</size>
+                                <default>400</default>
+                                <placeholder>400</placeholder>
+                            </config>
+                        </TCEforms>
+                    </settings.mapHeight>
+
+                    <settings.mapZoom>
+                        <TCEforms>
+                            <label>Standard-Zoomstufe (1–19)</label>
+                            <config>
+                                <type>input</type>
+                                <eval>int</eval>
+                                <size>4</size>
+                                <default>11</default>
+                            </config>
+                        </TCEforms>
+                    </settings.mapZoom>
+
+                    <settings.mapPosition>
+                        <TCEforms>
+                            <label>Position der Karte</label>
+                            <config>
+                                <type>select</type>
+                                <renderType>selectSingle</renderType>
+                                <items>
+                                    <numIndex index="0">
+                                        <numIndex index="0">Unterhalb der Einsatzliste</numIndex>
+                                        <numIndex index="1">below</numIndex>
+                                    </numIndex>
+                                    <numIndex index="1">
+                                        <numIndex index="0">Oberhalb der Einsatzliste</numIndex>
+                                        <numIndex index="1">above</numIndex>
+                                    </numIndex>
+                                </items>
+                                <default>below</default>
+                            </config>
+                        </TCEforms>
+                    </settings.mapPosition>
+
+                </el>
+            </ROOT>
+        </general>
+    </sheets>
 </T3DataStructure>

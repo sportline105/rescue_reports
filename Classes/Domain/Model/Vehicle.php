@@ -1,22 +1,32 @@
 <?php
 declare(strict_types=1);
-
 namespace nkfire\RescueReports\Domain\Model;
 
-use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 
 class Vehicle extends AbstractEntity
 {
     protected string $name = '';
 
-    protected ?Car $car = null;
+    /**
+     * @var \nkfire\RescueReports\Domain\Model\Car
+     */
+    protected $car;
 
-    protected ?Station $station = null;
+    /**
+     * @var \nkfire\RescueReports\Domain\Model\Station|null
+     */
+    protected $station = null;
 
     protected string $link = '';
 
-    protected ?FileReference $image = null;
+    /**
+     * @var FileReference|null
+     */
+    protected $image = null;
+
+    protected int $sorting = 9999;
 
     public function getName(): string
     {
@@ -66,5 +76,15 @@ class Vehicle extends AbstractEntity
     public function setImage(?FileReference $image): void
     {
         $this->image = $image;
+    }
+
+    public function getSorting(): int
+    {
+        return $this->sorting;
+    }
+
+    public function setSorting(int $sorting): void
+    {
+        $this->sorting = $sorting;
     }
 }

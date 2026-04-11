@@ -1,11 +1,10 @@
 <?php
 declare(strict_types=1);
-
 namespace nkfire\RescueReports\Domain\Model;
 
-use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 
 class Event extends AbstractEntity
 {
@@ -15,25 +14,26 @@ class Event extends AbstractEntity
     protected ?\DateTime $end = null;
     protected string $number = '';
     protected string $location = '';
+    protected ?float $latitude = null;
+    protected ?float $longitude = null;
 
     /**
-     * @var ObjectStorage<Vehicle>
-     */
+    * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\nkfire\RescueReports\Domain\Model\Vehicle>
+    */
     protected ObjectStorage $vehicles;
 
+
     /**
-     * @var ObjectStorage<Station>
+     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\nkfire\RescueReports\Domain\Model\Station>
+     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
+     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
      */
     protected ObjectStorage $stations;
 
-    /**
-     * @var ObjectStorage<FileReference>
-     */
+    /** @var ObjectStorage<FileReference> */
     protected ObjectStorage $images;
 
-    /**
-     * @var ObjectStorage<Type>
-     */
+    /** @var ObjectStorage<Type> */
     protected ObjectStorage $types;
 
     public function __construct()
@@ -112,9 +112,32 @@ class Event extends AbstractEntity
         $this->location = $location;
     }
 
-    /**
-     * @return ObjectStorage<Vehicle>
-     */
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?float $latitude): void
+    {
+        $this->latitude = $latitude;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?float $longitude): void
+    {
+        $this->longitude = $longitude;
+    }
+
+    public function hasCoordinates(): bool
+    {
+        return $this->latitude !== null && $this->longitude !== null;
+    }
+
+    /** @return ObjectStorage<Vehicle> */
     public function getVehicles(): ObjectStorage
     {
         return $this->vehicles;
@@ -158,9 +181,7 @@ class Event extends AbstractEntity
         $this->stations->detach($station);
     }
 
-    /**
-     * @return ObjectStorage<FileReference>
-     */
+    /** @return ObjectStorage<FileReference> */
     public function getImages(): ObjectStorage
     {
         return $this->images;
@@ -181,9 +202,7 @@ class Event extends AbstractEntity
         $this->images->detach($image);
     }
 
-    /**
-     * @return ObjectStorage<Type>
-     */
+    /** @return ObjectStorage<Type> */
     public function getTypes(): ObjectStorage
     {
         return $this->types;
@@ -220,5 +239,38 @@ class Event extends AbstractEntity
         }
 
         return sprintf('%d Min.', $minutes);
+    }
+
+    protected string $slug = '';
+
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): void
+    {
+        $this->slug = $slug;
+    }
+    protected string $internalNotes = '';
+
+    public function getInternalNotes(): string
+    {
+        return $this->internalNotes;
+    }
+
+    public function setInternalNotes(string $internalNotes): void
+    {
+        $this->internalNotes = $internalNotes;
+    }
+
+    protected bool $disableDetail = false;
+    public function isDisableDetail(): bool
+    {
+        return $this->disableDetail;
+    }
+    public function setDisableDetail(bool $disableDetail): void
+    {
+        $this->disableDetail = $disableDetail;
     }
 }

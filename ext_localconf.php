@@ -7,6 +7,8 @@ use nkfire\RescueReports\Controller\EventController;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 (function (): void {
+
+    // Hauptplugin
     ExtensionUtility::configurePlugin(
         'RescueReports',
         'Eventlist',
@@ -18,14 +20,44 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         ]
     );
 
+    // Statistik-Plugin
+    ExtensionUtility::configurePlugin(
+        'RescueReports',
+        'Statistics',
+        [
+            EventController::class => 'statistics',
+        ],
+        [
+            EventController::class => 'statistics',
+        ]
+    );
+
+    // Sidebar-Plugin
     ExtensionUtility::configurePlugin(
         'RescueReports',
         'Sidebar',
         [
             EventController::class => 'list',
         ],
-        []
+        [
+            EventController::class => '',
+        ]
     );
+
+    // RSS-Feed-Plugin
+    ExtensionUtility::configurePlugin(
+        'RescueReports',
+        'Rss',
+        [
+            EventController::class => 'rss',
+        ],
+        [
+            EventController::class => '',
+        ]
+    );
+
+    // RTE configuration removed - deprecated in TYPO3 13+
+
 })();
 
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][] = [
@@ -34,8 +66,4 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][] = [
     'class' => \nkfire\RescueReports\Form\Element\EventVehicleAssignmentElement::class,
 ];
 
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] =
-    \nkfire\RescueReports\Hooks\VehicleNameAutoFill::class;
-
-$GLOBALS['TYPO3_CONF_VARS']['BE']['stylesheets']['rescue_reports']
-    = 'EXT:rescue_reports/Resources/Public/Css/backend.css';
+// Hook registrations have been migrated to event listeners in Services.yaml

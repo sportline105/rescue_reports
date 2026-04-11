@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace nkfire\RescueReports\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
@@ -11,7 +10,10 @@ class Car extends AbstractEntity
 {
     protected string $name = '';
 
-    protected ?Organisation $organization = null;
+    /**
+     * @var Organisation|null
+     */
+    protected $organization = null;
 
     public function getName(): string
     {
