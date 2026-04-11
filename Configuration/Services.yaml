@@ -8,6 +8,13 @@ services:
     resource: '../Classes/*'
     exclude:
       - '../Classes/Domain/Model/*'
+      - '../Classes/Domain/Repository/*'
+
+  # Repositories are handled by Extbase, not Symfony DI
+  nkfire\RescueReports\Domain\Repository\:
+    resource: '../Classes/Domain/Repository/*'
+    autoconfigure: false
+    autowire: false
 
   nkfire\RescueReports\Updates\InitialDataWizard:
     tags:
