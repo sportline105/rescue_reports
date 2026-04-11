@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 defined('TYPO3') or die();
 
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
@@ -69,21 +68,6 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml'
     );
 
-    ExtensionManagementUtility::addStaticFile(
-        'rescue_reports',
-        'Configuration/TypoScript',
-        'Rescue Reports Setup'
-    );
-
-    ExtensionManagementUtility::addLLrefForTCAdescr(
-        'tx_rescuereports_domain_model_event',
-        'EXT:rescue_reports/Resources/Private/Language/locallang_csh_tx_rescuereports_domain_model_event.xlf'
-    );
-
-    $versionInformation = new Typo3Version();
-    if ($versionInformation->getMajorVersion() < 12) {
-        ExtensionManagementUtility::allowTableOnStandardPages(
-            'tx_rescuereports_domain_model_event'
-        );
-    }
+    // addStaticFile and CSH (Context-Sensitive Help) are deprecated in TYPO3 13+
+    // TypoScript configuration is now handled through Site Sets or extension configuration
 })();
