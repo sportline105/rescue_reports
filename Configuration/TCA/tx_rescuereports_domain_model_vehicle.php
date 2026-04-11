@@ -68,16 +68,14 @@ return [
         'image' => [
     'exclude' => true,
     'label' => 'Fahrzeugbild',
-    'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
-        'image',
-        [
-            'appearance' => [
-                'createNewRelationLinkTitle' => 'Bild hinzufügen',
-            ],
-            'maxitems' => 1,
+    'config' => [
+        'type' => 'file',
+        'allowed' => 'common-image-types',
+        'maxitems' => 1,
+        'appearance' => [
+            'createNewRelationLinkTitle' => 'Bild hinzufügen',
         ],
-        'jpg,jpeg,png,webp'
-    ),
+    ],
 ],
 
         'station' => [

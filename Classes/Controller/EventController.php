@@ -17,13 +17,11 @@ class EventController extends ActionController
     protected EventRepository $eventRepository;
     protected StationRepository $stationRepository;
 
-    public function __construct(EventRepository $eventRepository)
-    {
+    public function __construct(
+        EventRepository $eventRepository,
+        StationRepository $stationRepository
+    ) {
         $this->eventRepository = $eventRepository;
-    }
-
-    public function injectStationRepository(StationRepository $stationRepository): void
-    {
         $this->stationRepository = $stationRepository;
     }
 

@@ -109,7 +109,7 @@ return [
         ],
         'description' => [
             'label' => 'Einsatzbericht',
-            'config' => ['type' => 'text', 'enableRichtext' => true, 'richtextConfiguration' => 'rescue_reports', 'rows' => 5],
+            'config' => ['type' => 'text', 'enableRichtext' => true, 'rows' => 5],
         ],
 
         'internal_notes' => [
@@ -194,16 +194,14 @@ return [
         // Bilder
         'images' => [
             'label' => 'Bilder',
-            'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
-                'images',
-                [
-                    'maxitems' => 10,
-                    'appearance' => [
-                        'createNewRelationLinkTitle' => 'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:label.addFileReference',
-                    ],
+            'config' => [
+                'type' => 'file',
+                'allowed' => 'common-image-types',
+                'maxitems' => 10,
+                'appearance' => [
+                    'createNewRelationLinkTitle' => 'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:label.addFileReference',
                 ],
-                $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext']
-            ),
+            ],
         ],
         'disable_detail' => [
             'label' => 'Detailansicht deaktivieren',
