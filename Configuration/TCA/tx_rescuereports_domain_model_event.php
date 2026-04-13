@@ -146,7 +146,7 @@ return [
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectCheckBox',
-                'itemsProcFunc' => 'nkfire\\RescueReports\\Utility\\StationLabelUtility->addGroupedStations',
+                'itemsProcFunc' => \nkfire\RescueReports\Utility\StationLabelUtility::class . '->addGroupedStations',
                 'foreign_table' => 'tx_rescuereports_domain_model_station',
                 'foreign_table_where' => 'AND 1=0',
                 'MM' => 'tx_rescuereports_event_station_mm',
