@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace nkfire\RescueReports\Utility;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -55,7 +56,7 @@ class EventVehicleAssignmentUtility
             ->innerJoin('sc', 'tx_rescuereports_domain_model_station', 's', 's.uid = sc.uid_local')
             ->innerJoin('sc', 'tx_rescuereports_domain_model_car', 'c', 'c.uid = sc.uid_foreign')
             ->where(
-                $queryBuilder->expr()->in('sc.uid_local', $queryBuilder->createNamedParameter($stationUids, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
+                $queryBuilder->expr()->in('sc.uid_local', $queryBuilder->createNamedParameter($stationUids, ArrayParameterType::INT))
             )
             ->orderBy('s.name', 'ASC')
             ->addOrderBy('c.name', 'ASC')

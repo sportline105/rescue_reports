@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace nkfire\RescueReports\Utility;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -29,7 +30,7 @@ class CarFilterUtility
                 ->where(
                     $queryBuilder->expr()->in(
                         'uid_local',
-                        $queryBuilder->createNamedParameter($selectedStationUids, \TYPO3\CMS\Core\Database\Connection::PARAM_INT_ARRAY)
+                        $queryBuilder->createNamedParameter($selectedStationUids, \TYPO3\CMS\Core\Database\ArrayParameterType::INT)
                     )
                 )
                 ->executeQuery()

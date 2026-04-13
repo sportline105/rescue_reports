@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace nkfire\RescueReports\Utility;
 
+use Doctrine\DBAL\ArrayParameterType;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
@@ -35,7 +36,7 @@ class EventVehicleSelectionUtility
             ->innerJoin('v', 'tx_rescuereports_domain_model_station', 's', 'v.station = s.uid')
             ->leftJoin('s', 'tx_rescuereports_domain_model_brigade', 'b', 's.brigade = b.uid')
             ->where(
-                $queryBuilder->expr()->in('v.station', $queryBuilder->createNamedParameter($stationIds, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
+                $queryBuilder->expr()->in('v.station', $queryBuilder->createNamedParameter($stationIds, ArrayParameterType::INT))
             )
             ->orderBy('b.sorting')
             ->addOrderBy('station_sorting')
@@ -69,7 +70,7 @@ class EventVehicleSelectionUtility
                 ->innerJoin('v', 'tx_rescuereports_domain_model_station', 's', 'v.station = s.uid')
                 ->leftJoin('s', 'tx_rescuereports_domain_model_brigade', 'b', 's.brigade = b.uid')
                 ->where(
-                    $queryBuilder->expr()->in('v.uid', $queryBuilder->createNamedParameter($alreadySelectedIds, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
+                    $queryBuilder->expr()->in('v.uid', $queryBuilder->createNamedParameter($alreadySelectedIds, ArrayParameterType::INT))
                 )
                 ->executeQuery()
                 ->fetchAllAssociative();
