@@ -18,7 +18,7 @@ class EventVehicleSelectionUtility
         $stationField = $eventRow['stations'];
         $stationIds = is_array($stationField)
             ? array_map('intval', $stationField)
-            : GeneralUtility::intExplode(',', $stationField, true);
+            : GeneralUtility::intExplode(',', (string)$stationField, true);
 
         if (empty($stationIds)) {
             return;

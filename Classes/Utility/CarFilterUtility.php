@@ -12,7 +12,7 @@ class CarFilterUtility
     {
         $selectedStationUids = $config['row']['stations'] ?? [];
         if (!is_array($selectedStationUids)) {
-            $selectedStationUids = GeneralUtility::intExplode(',', $selectedStationUids, true);
+            $selectedStationUids = GeneralUtility::intExplode(',', (string)$selectedStationUids, true);
         }
 
         $config['items'] = [];
@@ -138,7 +138,7 @@ class CarFilterUtility
             if (is_array($config['row']['cars'])) {
                 $selectedCarUids = $config['row']['cars'];
             } else {
-                $selectedCarUids = GeneralUtility::intExplode(',', $config['row']['cars'], true);
+                $selectedCarUids = GeneralUtility::intExplode(',', (string)$config['row']['cars'], true);
             }
         }
 

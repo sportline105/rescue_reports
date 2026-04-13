@@ -10,7 +10,7 @@ class CarItemsProcessor
 {
     public function filterByStations(array &$config)
     {
-        $stationUids = GeneralUtility::intExplode(',', $config['row']['station'], true);
+        $stationUids = GeneralUtility::intExplode(',', (string)($config['row']['station'] ?? ''), true);
 
         if (!empty($stationUids)) {
             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
