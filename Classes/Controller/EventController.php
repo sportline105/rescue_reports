@@ -21,7 +21,6 @@ class EventController extends ActionController
         EventRepository $eventRepository,
         StationRepository $stationRepository
     ) {
-        parent::__construct();
         $this->eventRepository = $eventRepository;
         $this->stationRepository = $stationRepository;
     }
