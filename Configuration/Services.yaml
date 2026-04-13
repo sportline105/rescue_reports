@@ -11,11 +11,12 @@ services:
       - '../Classes/Domain/Repository/*'
       - '../Classes/Controller/Backend/*'
 
-  # Repositories: enabled autowiring for DI since controllers inject them via constructor
+  # Repositories are handled by Extbase, not Symfony DI (TYPO3 14+ compatibility)
   nkfire\RescueReports\Domain\Repository\:
     resource: '../Classes/Domain/Repository/*'
-    autoconfigure: true
-    autowire: true
+    autoconfigure: false
+    autowire: false
+    public: true
 
   nkfire\RescueReports\Updates\InitialDataWizard:
     tags:
