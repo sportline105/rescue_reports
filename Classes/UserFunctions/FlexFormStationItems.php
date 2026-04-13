@@ -14,8 +14,6 @@ class FlexFormStationItems
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_station');
 
-        $queryBuilder->getRestrictions()->removeAll();
-
         $queryBuilder->expr()->eq(
             'station.exclude_from_filter',
             $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)

@@ -117,8 +117,6 @@ class DataHandlerEventListener
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_type');
 
-        $queryBuilder->getRestrictions()->removeAll();
-
         $row = $queryBuilder
             ->select('title')
             ->from('tx_rescuereports_domain_model_type')
