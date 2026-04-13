@@ -2,10 +2,8 @@
 declare(strict_types=1);
 namespace nkfire\RescueReports\Utility;
 
-use Doctrine\DBAL\ArrayParameterType;
-use Doctrine\DBAL\ParameterType;
-use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 
 class EventVehicleAssignmentUtility
 {
@@ -18,7 +16,7 @@ class EventVehicleAssignmentUtility
 
         $utility = new self();
         $stationUids = $utility->getRelatedStationUids($eventUid);
-        if ($stationUids === []) {
+        if (empty($stationUids)) {
             return;
         }
 
@@ -26,7 +24,7 @@ class EventVehicleAssignmentUtility
 
         foreach ($vehicles as $vehicle) {
             $label = $vehicle['station_name'] . ' – ' . $vehicle['car_name'];
-            $config['items'][] = [$label, (int)$vehicle['car_uid']];
+            $config['items'][] = [$label, $vehicle['car_uid']];
         }
     }
 
@@ -39,7 +37,7 @@ class EventVehicleAssignmentUtility
             ->select('uid_foreign')
             ->from('tx_rescuereports_event_station_mm')
             ->where('uid_local = :uid')
-            ->setParameter('uid', $eventUid, \Doctrine\DBAL\ParameterType::INTEGER)
+            ->setParameter(':uid', $eventUid, \PDO::PARAM_INT)
             ->executeQuery()
             ->fetchFirstColumn();
     }
@@ -50,21 +48,19 @@ class EventVehicleAssignmentUtility
             ->getConnectionForTable('tx_rescuereports_station_car_mm');
 
         $queryBuilder = $connection->createQueryBuilder();
-
-        return $queryBuilder
+        $rows = $queryBuilder
             ->select('c.uid AS car_uid', 's.name AS station_name', 'c.name AS car_name')
             ->from('tx_rescuereports_station_car_mm', 'sc')
             ->innerJoin('sc', 'tx_rescuereports_domain_model_station', 's', 's.uid = sc.uid_local')
             ->innerJoin('sc', 'tx_rescuereports_domain_model_car', 'c', 'c.uid = sc.uid_foreign')
             ->where(
-                $queryBuilder->expr()->in(
-                    'sc.uid_local',
-                    $queryBuilder->createNamedParameter($stationUids, ArrayParameterType::INTEGER)
-                )
+                $queryBuilder->expr()->in('sc.uid_local', $queryBuilder->createNamedParameter($stationUids, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
             )
             ->orderBy('s.name', 'ASC')
             ->addOrderBy('c.name', 'ASC')
             ->executeQuery()
             ->fetchAllAssociative();
+
+        return $rows;
     }
 }

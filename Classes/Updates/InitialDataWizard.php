@@ -8,15 +8,14 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Install\Attribute\UpgradeWizard;
 use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 
-#[UpgradeWizard('rescueReportsInitialData')]
 final class InitialDataWizard implements UpgradeWizardInterface
 {
-    public function __construct(
-        private readonly LanguageServiceFactory $languageServiceFactory,
-    ) {}
+    public function getIdentifier(): string
+    {
+        return 'rescueReportsInitialData';
+    }
 
     public function getTitle(): string
     {
@@ -73,9 +72,11 @@ final class InitialDataWizard implements UpgradeWizardInterface
 
     private function getLanguageService(): LanguageService
     {
+        $factory = GeneralUtility::makeInstance(LanguageServiceFactory::class);
+
         return isset($GLOBALS['BE_USER']) && $GLOBALS['BE_USER'] instanceof BackendUserAuthentication
-            ? $this->languageServiceFactory->createFromUserPreferences($GLOBALS['BE_USER'])
-            : $this->languageServiceFactory->create('default');
+            ? $factory->createFromUserPreferences($GLOBALS['BE_USER'])
+            : $factory->create('default');
     }
 
     private function tableExists(string $tableName): bool
@@ -92,7 +93,6 @@ final class InitialDataWizard implements UpgradeWizardInterface
 
     private function countRecords(string $tableName): int
     {
-        // Use unrestricted connection so hidden/deleted records are included
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable($tableName);
 
@@ -105,18 +105,17 @@ final class InitialDataWizard implements UpgradeWizardInterface
 
     private function getOrCreateSysFolder(): int
     {
-        // Use unrestricted connection so the folder is found even if hidden
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable('pages');
 
-        $qb = $connection->createQueryBuilder();
-        $existingUid = $qb
+        $queryBuilder = $connection->createQueryBuilder();
+        $existingUid = $queryBuilder
             ->select('uid')
             ->from('pages')
             ->where(
-                $qb->expr()->eq('doktype', $qb->createNamedParameter(254, \Doctrine\DBAL\ParameterType::INTEGER)),
-                $qb->expr()->eq('deleted', $qb->createNamedParameter(0, \Doctrine\DBAL\ParameterType::INTEGER)),
-                $qb->expr()->like('title', $qb->createNamedParameter('Rescue Reports%'))
+                $queryBuilder->expr()->eq('doktype', $queryBuilder->createNamedParameter(254, \Doctrine\DBAL\ParameterType::INTEGER)),
+                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, \Doctrine\DBAL\ParameterType::INTEGER)),
+                $queryBuilder->expr()->like('title', $queryBuilder->createNamedParameter('Rescue Reports%'))
             )
             ->setMaxResults(1)
             ->executeQuery()
@@ -133,6 +132,7 @@ final class InitialDataWizard implements UpgradeWizardInterface
             $folderTitle = 'Rescue Reports Data';
         }
 
+        $now = time();
         $connection->insert('pages', [
             'pid' => 0,
             'title' => $folderTitle,
@@ -140,8 +140,8 @@ final class InitialDataWizard implements UpgradeWizardInterface
             'doktype' => 254,
             'hidden' => 0,
             'deleted' => 0,
-            'tstamp' => time(),
-            'crdate' => time(),
+            'tstamp' => $now,
+            'crdate' => $now,
             'sorting' => 9999,
             'sys_language_uid' => 0,
             'perms_userid' => 1,
@@ -152,8 +152,6 @@ final class InitialDataWizard implements UpgradeWizardInterface
         ]);
 
         $newUid = (int)$connection->lastInsertId();
-
-        // If insert succeeded, set the slug from the UID
         if ($newUid > 0) {
             $connection->update('pages', ['slug' => '/' . $newUid], ['uid' => $newUid]);
         }
@@ -187,15 +185,12 @@ final class InitialDataWizard implements UpgradeWizardInterface
         $map = [];
 
         foreach ($seedData as $organisation) {
-            $qb = $connection->createQueryBuilder();
-            $existingUid = $qb
+            $queryBuilder = $connection->createQueryBuilder();
+            $existingUid = $queryBuilder
                 ->select('uid')
                 ->from('tx_rescuereports_domain_model_organisation')
                 ->where(
-                    $qb->expr()->eq(
-                        'abbreviation',
-                        $qb->createNamedParameter($organisation['abbreviation'])
-                    )
+                    $queryBuilder->expr()->eq('abbreviation', $queryBuilder->createNamedParameter($organisation['abbreviation']))
                 )
                 ->setMaxResults(1)
                 ->executeQuery()
@@ -206,12 +201,13 @@ final class InitialDataWizard implements UpgradeWizardInterface
                 continue;
             }
 
+            $now = time();
             $connection->insert('tx_rescuereports_domain_model_organisation', [
                 'pid' => $pid,
                 'name' => $organisation['name'],
                 'abbreviation' => $organisation['abbreviation'],
-                'tstamp' => time(),
-                'crdate' => time(),
+                'tstamp' => $now,
+                'crdate' => $now,
                 'hidden' => 0,
                 'deleted' => 0,
             ]);
@@ -281,6 +277,10 @@ final class InitialDataWizard implements UpgradeWizardInterface
             ['name' => 'DLK 23/12', 'organisation' => 'FFW'],
         ];
 
+        usort($seedData, static function (array $a, array $b): int {
+            return strcasecmp((string)$a['name'], (string)$b['name']);
+        });
+
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable('tx_rescuereports_domain_model_car');
 
@@ -290,18 +290,15 @@ final class InitialDataWizard implements UpgradeWizardInterface
                 continue;
             }
 
-            $qb = $connection->createQueryBuilder();
-            $existingUid = $qb
+            $queryBuilder = $connection->createQueryBuilder();
+            $existingUid = $queryBuilder
                 ->select('uid')
                 ->from('tx_rescuereports_domain_model_car')
                 ->where(
-                    $qb->expr()->eq(
-                        'name',
-                        $qb->createNamedParameter($car['name'])
-                    ),
-                    $qb->expr()->eq(
+                    $queryBuilder->expr()->eq('name', $queryBuilder->createNamedParameter($car['name'])),
+                    $queryBuilder->expr()->eq(
                         'organization',
-                        $qb->createNamedParameter($organisationUid, \Doctrine\DBAL\ParameterType::INTEGER)
+                        $queryBuilder->createNamedParameter($organisationUid, \Doctrine\DBAL\ParameterType::INTEGER)
                     )
                 )
                 ->setMaxResults(1)
@@ -312,12 +309,13 @@ final class InitialDataWizard implements UpgradeWizardInterface
                 continue;
             }
 
+            $now = time();
             $connection->insert('tx_rescuereports_domain_model_car', [
                 'pid' => $pid,
                 'name' => $car['name'],
                 'organization' => $organisationUid,
-                'tstamp' => time(),
-                'crdate' => time(),
+                'tstamp' => $now,
+                'crdate' => $now,
                 'hidden' => 0,
                 'deleted' => 0,
             ]);

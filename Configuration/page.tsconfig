@@ -1,0 +1,5 @@
+# Page-level TSconfig for Rescue Reports Extension
+# Auto-loaded by TYPO3 13+
+
+@import 'EXT:rescue_reports/Configuration/TSconfig/NewContentElementWizard.tsconfig'
+@import 'EXT:rescue_reports/Configuration/TSconfig/__Page/Mod/Wizards/NewContentElement.tsconfig'

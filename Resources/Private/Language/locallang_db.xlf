@@ -3,211 +3,99 @@
   <file source-language="en" datatype="plaintext" original="messages" date="2024-01-01T00:00:00Z">
     <header/>
     <body>
-
-      <!-- Model titles -->
-      <trans-unit id="tx_rescuereports_domain_model_event" xml:space="preserve">
-        <source>Event</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_brigade" xml:space="preserve">
-        <source>City fire department</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_car" xml:space="preserve">
-        <source>Vehicle type</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_type" xml:space="preserve">
-        <source>Incident type</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_station" xml:space="preserve">
-        <source>Local fire station</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_image" xml:space="preserve">
-        <source>Images</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_vehicle" xml:space="preserve">
-        <source>Vehicle</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_organisation" xml:space="preserve">
-        <source>Organisation</source>
-      </trans-unit>
-
-      <!-- Event fields -->
       <trans-unit id="tx_rescuereports_domain_model_event.title" xml:space="preserve">
-        <source>Incident title</source>
+        <source>Titel</source>
       </trans-unit>
       <trans-unit id="tx_rescuereports_domain_model_event.description" xml:space="preserve">
-        <source>Incident report</source>
+        <source>Beschreibung</source>
       </trans-unit>
       <trans-unit id="tx_rescuereports_domain_model_event.date" xml:space="preserve">
-        <source>Date</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_event.number" xml:space="preserve">
-        <source>Incident number</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_event.location" xml:space="preserve">
-        <source>Location</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_event.start" xml:space="preserve">
-        <source>Start</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_event.end" xml:space="preserve">
-        <source>End</source>
+        <source>Datum</source>
       </trans-unit>
       <trans-unit id="tx_rescuereports_domain_model_event.cars" xml:space="preserve">
-        <source>Vehicles</source>
+        <source>Fahrzeuge</source>
       </trans-unit>
       <trans-unit id="tx_rescuereports_domain_model_event.types" xml:space="preserve">
-        <source>Incident type</source>
+        <source>Typen</source>
       </trans-unit>
       <trans-unit id="tx_rescuereports_domain_model_event.stations" xml:space="preserve">
-        <source>Deployed units</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_event.vehicles" xml:space="preserve">
-        <source>Deployed vehicles</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_event.images" xml:space="preserve">
-        <source>Images</source>
+        <source>Eingesetzte Feuerwehren</source>
       </trans-unit>
       <trans-unit id="tx_rescuereports_domain_model_event.brigade" xml:space="preserve">
-        <source>Fire department</source>
+        <source>Feuerwehr</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_event.fahrzeugeinsatz" xml:space="preserve">
-        <source>Vehicle assignment</source>
+      <trans-unit id="tx_rescuereports_domain_model_brigade" xml:space="preserve">
+        <source>Stadtfeuerwehr</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_event.palette.times" xml:space="preserve">
-        <source>Incident time</source>
+      <trans-unit id="tx_rescuereports_domain_model_car" xml:space="preserve">
+        <source>Fahrzeugtyp</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_event.tab.units" xml:space="preserve">
-        <source>Deployed units</source>
+      <trans-unit id="tx_rescuereports_domain_model_event" xml:space="preserve">
+        <source>Einsatz</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_event.tab.vehicles" xml:space="preserve">
-        <source>Vehicles</source>
+      <trans-unit id="tx_rescuereports_domain_model_type" xml:space="preserve">
+        <source>Einsatzstichwort</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_event.tab.images" xml:space="preserve">
-        <source>Images</source>
+      <trans-unit id="tx_rescuereports_domain_model_station" xml:space="preserve">
+        <source>Ortsfeuerwehr</source>
       </trans-unit>
-
-      <!-- Brigade fields -->
-      <trans-unit id="tx_rescuereports_domain_model_brigade.name" xml:space="preserve">
-        <source>Name</source>
+      <trans-unit id="tx_rescuereports_domain_model_deployment" xml:space="preserve">
+        <source>Deployment</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_brigade.stations" xml:space="preserve">
-        <source>Local fire stations</source>
+      <trans-unit id="tx_rescuereports_domain_model_image" xml:space="preserve">
+        <source>Bilder</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_brigade.organization" xml:space="preserve">
-        <source>Organisation</source>
+      <trans-unit id="tx_rescuereports_domain_model_event.location">
+        <source>Einsatzort</source>
       </trans-unit>
-
-      <!-- Station fields -->
-      <trans-unit id="tx_rescuereports_domain_model_station.name" xml:space="preserve">
-        <source>Name</source>
+      <trans-unit id="tx_rescuereports_domain_model_type.deprecated">
+        <source>Veraltet</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_station.is_primary" xml:space="preserve">
-        <source>Primary station</source>
+      <trans-unit id="maxCount">
+        <source>Max. Anzahl (0=alle)</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_station.is_primary.item" xml:space="preserve">
-        <source>Mark as primary station (always shown first)</source>
+      <trans-unit id="dateFrom">
+        <source>Von Datum</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_station.vehicles" xml:space="preserve">
-        <source>Vehicles of this station</source>
+      <trans-unit id="dateTo">
+        <source>Bis Datum</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_station.brigade" xml:space="preserve">
-        <source>Fire department</source>
+      <trans-unit id="templateVariant">
+        <source>Template-Variante</source>
       </trans-unit>
-
-      <!-- Car (vehicle type) fields -->
-      <trans-unit id="tx_rescuereports_domain_model_car.name" xml:space="preserve">
-        <source>Name</source>
+      <trans-unit id="sheet.general">
+        <source>Erweiterungsoptionen</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_car.organization" xml:space="preserve">
-        <source>Organisation</source>
+      <trans-unit id="enableSearch">
+        <source>Suche anzeigen (Nur bei Standard-Template)</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_car.pleaseSelect" xml:space="preserve">
-        <source>Please select</source>
+      <trans-unit id="detailPageUid">
+        <source>Detailansicht auf Seite</source>
       </trans-unit>
-
-      <!-- Vehicle fields -->
-      <trans-unit id="tx_rescuereports_domain_model_vehicle.hidden" xml:space="preserve">
-        <source>Hidden</source>
+      <trans-unit id="plugin.eventlist">
+        <source>Detaillierte Einsatzberichte für Feuerwehren und BOS</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_vehicle.name" xml:space="preserve">
-        <source>Vehicle name (pre-filled from type selection, use only for custom names)</source>
+      <trans-unit id="tx_rescuereports_domain_model_snippet" xml:space="preserve">
+        <source>Textbaustein</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_vehicle.link" xml:space="preserve">
-        <source>Further link</source>
+      <trans-unit id="tx_rescuereports_domain_model_snippet.title" xml:space="preserve">
+        <source>Bezeichnung</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_vehicle.car" xml:space="preserve">
-        <source>Vehicle type (select type, name will be auto-generated on save)</source>
+      <trans-unit id="tx_rescuereports_domain_model_snippet.category" xml:space="preserve">
+        <source>Kategorie</source>
       </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_vehicle.image" xml:space="preserve">
-        <source>Vehicle image</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_vehicle.image.addNew" xml:space="preserve">
-        <source>Add image</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_vehicle.station" xml:space="preserve">
-        <source>Fire department / Station</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_vehicle.tab.access" xml:space="preserve">
-        <source>Access</source>
+      <trans-unit id="tx_rescuereports_domain_model_snippet.content" xml:space="preserve">
+        <source>Inhalt</source>
       </trans-unit>
 
-      <!-- Organisation fields -->
-      <trans-unit id="tx_rescuereports_domain_model_organisation.name" xml:space="preserve">
-        <source>Name</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_organisation.abbreviation" xml:space="preserve">
-        <source>Abbreviation</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_organisation.icon" xml:space="preserve">
-        <source>Symbol (Emoji)</source>
-      </trans-unit>
-
-      <!-- Type fields -->
-      <trans-unit id="tx_rescuereports_domain_model_type.title" xml:space="preserve">
-        <source>Title</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_type.deprecated" xml:space="preserve">
-        <source>Deprecated</source>
-      </trans-unit>
-      <trans-unit id="tx_rescuereports_domain_model_type.deprecated.item" xml:space="preserve">
-        <source>No longer show for new events (still shown for existing events)</source>
-      </trans-unit>
-
-      <!-- Plugin FlexForm -->
-      <trans-unit id="maxCount" xml:space="preserve">
-        <source>Max. count (0 = all)</source>
-      </trans-unit>
-      <trans-unit id="dateFrom" xml:space="preserve">
-        <source>Date from</source>
-      </trans-unit>
-      <trans-unit id="dateTo" xml:space="preserve">
-        <source>Date to</source>
-      </trans-unit>
-      <trans-unit id="templateVariant" xml:space="preserve">
-        <source>Template variant</source>
-      </trans-unit>
-      <trans-unit id="sheet.general" xml:space="preserve">
-        <source>Extension options</source>
-      </trans-unit>
-      <trans-unit id="enableSearch" xml:space="preserve">
-        <source>Show search (standard template only)</source>
-      </trans-unit>
-      <trans-unit id="detailPageUid" xml:space="preserve">
-        <source>Detail view on page</source>
-      </trans-unit>
-      <trans-unit id="plugin.eventlist" xml:space="preserve">
-        <source>Detailed incident reports for fire departments and emergency services</source>
-      </trans-unit>
-
-      <!-- Upgrade wizard -->
-      <trans-unit id="wizard.initialData.sysfolderTitle" xml:space="preserve">
-        <source>Rescue Reports Data</source>
-      </trans-unit>
       <trans-unit id="wizard.initialData.title" xml:space="preserve">
-        <source>Create Rescue Reports default data</source>
+        <source>Rescue Reports Initialdaten</source>
       </trans-unit>
       <trans-unit id="wizard.initialData.description" xml:space="preserve">
-        <source>Creates a sysfolder and imports default organisations and vehicle types if they do not exist yet.</source>
+        <source>Legt einen Daten-SysOrdner an und befüllt Standard-Organisationen sowie Fahrzeugtypen.</source>
+      </trans-unit>
+      <trans-unit id="wizard.initialData.sysfolderTitle" xml:space="preserve">
+        <source>Rescue Reports Daten</source>
       </trans-unit>
 
     </body>

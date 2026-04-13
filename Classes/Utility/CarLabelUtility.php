@@ -2,9 +2,8 @@
 declare(strict_types=1);
 namespace nkfire\RescueReports\Utility;
 
-use Doctrine\DBAL\ParameterType;
-use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 
 class CarLabelUtility
 {
@@ -15,16 +14,7 @@ class CarLabelUtility
         $carName = $row['name'] ?? '';
         $orgAbbr = '';
 
-        $organization = $row['organization'] ?? 0;
-
-        // TYPO3 FormEngine liefert bei neuen Datensätzen manchmal Arrays
-        if (is_array($organization)) {
-            $organization = (int)($organization[0] ?? 0);
-        } else {
-            $organization = (int)$organization;
-        }
-
-        if ($organization > 0) {
+        if (!empty($row['organization'])) {
             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
                 ->getConnectionForTable('tx_rescuereports_domain_model_organisation')
                 ->createQueryBuilder();
@@ -33,10 +23,7 @@ class CarLabelUtility
                 ->select('abbreviation')
                 ->from('tx_rescuereports_domain_model_organisation')
                 ->where(
-                    $queryBuilder->expr()->eq(
-                        'uid',
-                        $queryBuilder->createNamedParameter($organization, ParameterType::INTEGER)
-                    )
+                    $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter((int)$row['organization'], \PDO::PARAM_INT))
                 )
                 ->executeQuery()
                 ->fetchAssociative();

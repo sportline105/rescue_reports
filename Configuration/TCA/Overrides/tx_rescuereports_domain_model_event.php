@@ -1,15 +1,12 @@
 <?php
-
 declare(strict_types=1);
 
 defined('TYPO3') or die();
 
-$lll = 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:';
-
 $tmpColumns = [
     'fahrzeugeinsatz' => [
         'exclude' => 1,
-        'label' => $lll . 'tx_rescuereports_domain_model_event.fahrzeugeinsatz',
+        'label' => 'Fahrzeugeinsatz',
         'config' => [
             'type' => 'user',
             'renderType' => 'eventVehicleAssignment',
@@ -22,6 +19,7 @@ $tmpColumns = [
     $tmpColumns
 );
 
+// Hier wird das Feld eingebunden:
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
     'tx_rescuereports_domain_model_event',
     'fahrzeugeinsatz',

@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
-
 namespace nkfire\RescueReports\Utility;
 
-use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -16,7 +14,6 @@ class CarLabelItemsProcFunc
             ->createQueryBuilder();
 
         foreach ($config['items'] as &$item) {
-
             // Skip empty and default items
             if (empty($item[1]) || !is_numeric($item[1])) {
                 continue;
@@ -28,16 +25,12 @@ class CarLabelItemsProcFunc
                 ->select('name', 'organization')
                 ->from('tx_rescuereports_domain_model_car')
                 ->where(
-                    $queryBuilder->expr()->eq(
-                        'uid',
-                        $queryBuilder->createNamedParameter($carUid, ParameterType::INTEGER)
-                    )
+                    $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($carUid, \PDO::PARAM_INT))
                 )
                 ->executeQuery()
                 ->fetchAssociative();
 
             if (!empty($carRow['organization'])) {
-
                 $orgQueryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
                     ->getConnectionForTable('tx_rescuereports_domain_model_organisation')
                     ->createQueryBuilder();
@@ -48,10 +41,7 @@ class CarLabelItemsProcFunc
                     ->where(
                         $orgQueryBuilder->expr()->eq(
                             'uid',
-                            $orgQueryBuilder->createNamedParameter(
-                                (int)$carRow['organization'],
-                                ParameterType::INTEGER
-                            )
+                            $orgQueryBuilder->createNamedParameter((int)$carRow['organization'], \PDO::PARAM_INT)
                         )
                     )
                     ->andWhere($orgQueryBuilder->expr()->eq('deleted', 0))

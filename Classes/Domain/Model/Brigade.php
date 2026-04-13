@@ -5,15 +5,16 @@ namespace nkfire\RescueReports\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use TYPO3\CMS\Extbase\Annotation\ORM\Transient;
 
 class Brigade extends AbstractEntity
 {
     protected string $name = '';
-
-    protected int $sorting = 0;
+    protected int $sorting = 9999;
 
     /**
-     * @var ObjectStorage<Station>
+     * @var ObjectStorage<\nkfire\RescueReports\Domain\Model\Station>
+     * @Transient
      */
     protected ObjectStorage $stations;
 
@@ -42,9 +43,6 @@ class Brigade extends AbstractEntity
         $this->sorting = $sorting;
     }
 
-    /**
-     * @return ObjectStorage<Station>
-     */
     public function getStations(): ObjectStorage
     {
         return $this->stations;
@@ -54,4 +52,16 @@ class Brigade extends AbstractEntity
     {
         $this->stations = $stations;
     }
+    protected bool $isPrimary = false;
+
+    public function isPrimary(): bool
+    {
+        return $this->isPrimary;
+    }
+
+    public function setIsPrimary(bool $isPrimary): void
+    {
+        $this->isPrimary = $isPrimary;
+    }
+    
 }

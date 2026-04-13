@@ -8,3 +8,26 @@ services:
     resource: '../Classes/*'
     exclude:
       - '../Classes/Domain/Model/*'
+      - '../Classes/Domain/Repository/*'
+
+  # Repositories are handled by Extbase, not Symfony DI
+  nkfire\RescueReports\Domain\Repository\:
+    resource: '../Classes/Domain/Repository/*'
+    autoconfigure: false
+    autowire: false
+
+  nkfire\RescueReports\Updates\InitialDataWizard:
+    tags:
+      - name: install.upgradewizard
+
+  nkfire\RescueReports\EventListener\VehicleNameAutoFillListener:
+    tags:
+      - name: event.listener
+        event: 'TYPO3\CMS\Core\DataHandling\Event\AfterRecordCreatedEvent'
+
+  nkfire\RescueReports\EventListener\DataHandlerEventListener:
+    tags:
+      - name: event.listener
+        event: 'TYPO3\CMS\Core\DataHandling\Event\BeforeRecordCreatedEvent'
+      - name: event.listener
+        event: 'TYPO3\CMS\Core\DataHandling\Event\BeforeRecordUpdatedEvent'

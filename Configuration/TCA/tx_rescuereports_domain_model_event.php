@@ -1,17 +1,13 @@
 <?php
-
 declare(strict_types=1);
-
-defined('TYPO3') or die();
-
-$lll = 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:';
 
 return [
     'ctrl' => [
-        'title' => $lll . 'tx_rescuereports_domain_model_event',
+        'title' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescuereports_domain_model_event',
         'label' => 'title',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
+        'cruser_id' => 'cruser_id',
         'languageField' => 'sys_language_uid',
         'transOrigPointerField' => 'l10n_parent',
         'transOrigDiffSourceField' => 'l10n_diffsource',
@@ -22,131 +18,131 @@ return [
         'security' => [
             'ignorePageTypeRestriction' => true,
         ],
+        'searchFields' => 'title,description',
         'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_event.png',
+        'default_sortby' => 'ORDER BY start DESC',
     ],
     'types' => [
         '1' => [
-            'showitem' => 'hidden, title, --palette--;;times, number, types, location, description, --div--;' . $lll . 'tx_rescuereports_domain_model_event.tab.units, stations, --div--;' . $lll . 'tx_rescuereports_domain_model_event.tab.vehicles, vehicles, --div--;' . $lll . 'tx_rescuereports_domain_model_event.tab.images, images',
+            'showitem' => 'hidden, title, --palette--;;times, number, types, location, --palette--;;coordinates, disable_detail, description, slug, --div--;Eingesetzte Einheiten, stations, --div--;Fahrzeuge, vehicles, --div--;Bilder, images, --div--;Intern, internal_notes'
         ],
     ],
 
     'palettes' => [
         'times' => [
             'showitem' => 'start, end',
-            'label' => $lll . 'tx_rescuereports_domain_model_event.palette.times',
+            'label' => 'Einsatzzeit',
+        ],
+        'coordinates' => [
+            'showitem' => 'latitude, longitude',
+            'label' => 'GPS-Koordinaten (optional)',
         ],
     ],
 
     'columns' => [
 
-        // System fields
+        // Systemfelder
         'sys_language_uid' => [
             'exclude' => true,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
-            'config' => [
-                'type' => 'language',
-            ],
+            'config' => ['type' => 'language'],
         ],
-        'l10n_parent' => [
+        'l18n_parent' => [
             'displayCond' => 'FIELD:sys_language_uid:>:0',
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'items' => [
-                    ['label' => '', 'value' => 0],
-                ],
+                'items' => [['', 0]],
                 'foreign_table' => 'tx_rescuereports_domain_model_event',
                 'foreign_table_where' => 'AND {#tx_rescuereports_domain_model_event}.{#pid}=###CURRENT_PID###',
                 'default' => 0,
             ],
         ],
-        'l10n_diffsource' => [
-            'config' => [
-                'type' => 'passthrough',
-            ],
-        ],
+        'l18n_diffsource' => ['config' => ['type' => 'passthrough']],
         'hidden' => [
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden',
-            'config' => [
-                'type' => 'check',
-                'default' => 1,
-            ],
+            'config' => ['type' => 'check', 'default' => 1],
         ],
 
-        // Date/time
+        // Einsatzzeit
         'start' => [
-            'label' => $lll . 'tx_rescuereports_domain_model_event.start',
-            'config' => [
-                'type' => 'datetime',
-                'dbType' => 'datetime',
-                'default' => null,
-            ],
+            'label' => 'Einsatzbeginn',
+            'config' => ['type' => 'input', 'renderType' => 'inputDateTime', 'eval' => 'datetime', 'dbType' => 'datetime', 'default' => null],
         ],
         'end' => [
-            'label' => $lll . 'tx_rescuereports_domain_model_event.end',
+            'label' => 'Einsatzende',
+            'config' => ['type' => 'input', 'renderType' => 'inputDateTime', 'eval' => 'datetime', 'dbType' => 'datetime', 'default' => null],
+        ],
+
+        // Inhaltliche Felder
+        'title' => [
+            'label' => 'Einsatztitel',
+            'config' => ['type' => 'input', 'eval' => 'trim,required'],
+        ],
+        'location' => [
+            'label' => 'Einsatzort',
+            'config' => ['type' => 'input', 'eval' => 'trim', 'default' => "Stadt, Straße // BAB 9, Richtung ...",],
+        ],
+        'latitude' => [
+            'label' => 'Breitengrad (Latitude)',
             'config' => [
-                'type' => 'datetime',
-                'dbType' => 'datetime',
+                'type' => 'input',
+                'eval' => 'trim,null',
+                'placeholder' => '51.12345678',
+                'size' => 20,
                 'default' => null,
             ],
         ],
-
-        // Content fields
-        'title' => [
-            'label' => $lll . 'tx_rescuereports_domain_model_event.title',
+        'longitude' => [
+            'label' => 'Längengrad (Longitude)',
             'config' => [
                 'type' => 'input',
-                'eval' => 'trim', 'required' => true,
-            ],
-        ],
-        'location' => [
-            'label' => $lll . 'tx_rescuereports_domain_model_event.location',
-            'config' => [
-                'type' => 'input',
-                'eval' => 'trim',
-                'default' => 'Stadt, Straße // BAB X, Richtung ...',
+                'eval' => 'trim,null',
+                'placeholder' => '10.12345678',
+                'size' => 20,
+                'default' => null,
             ],
         ],
         'number' => [
-            'label' => $lll . 'tx_rescuereports_domain_model_event.number',
-            'config' => [
-                'type' => 'input',
-                'eval' => 'trim', 'required' => true,
-                'placeholder' => '26/123',
-                'max' => 6,
-                'default' => '26/',
-            ],
+            'label' => 'Einsatznummer',
+            'config' => ['type' => 'input', 'eval' => 'trim', 'placeholder' => 'ZÖ/123', 'max' => 6, 'default' => 'ZÖ/'],
         ],
         'description' => [
-            'label' => $lll . 'tx_rescuereports_domain_model_event.description',
-            'config' => [
+            'label' => 'Einsatzbericht',
+            'config' => ['type' => 'text', 'enableRichtext' => true, 'rows' => 5],
+        ],
+
+        'internal_notes' => [
+            'exclude' => true,
+            'label'   => 'Interne Notizen',
+            'config'  => [
                 'type' => 'text',
-                'enableRichtext' => true,
-                'rows' => 5,
+                'rows' => 6,
+                'cols' => 48,
             ],
         ],
 
-        // Types
+        // Typen
         'types' => [
-            'label' => $lll . 'tx_rescuereports_domain_model_event.types',
+            'label' => 'Einsatzart',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'foreign_table' => 'tx_rescuereports_domain_model_type',
                 'foreign_table_where' => '
-                    AND tx_rescuereports_domain_model_type.deprecated = 0
                     ORDER BY tx_rescuereports_domain_model_type.title
                 ',
+                'itemsProcFunc' => \nkfire\RescueReports\UserFunctions\TypeItemsProcFunc::class . '->filterDeprecatedTypes',
                 'MM' => 'tx_rescuereports_event_type_mm',
                 'minitems' => 0,
                 'maxitems' => 1,
             ],
         ],
 
-        // Stations
+        // Stationen
         'stations' => [
-            'label' => $lll . 'tx_rescuereports_domain_model_event.stations',
+            'label' => 'Eingesetzte Einheiten',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectCheckBox',
@@ -158,23 +154,47 @@ return [
                 'maxitems' => 9999,
             ],
         ],
-
-        'vehicles' => [
+       'vehicles' => [
             'exclude' => true,
-            'label' => $lll . 'tx_rescuereports_domain_model_event.vehicles',
+            'label' => 'Eingesetzte Fahrzeuge',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectMultipleSideBySide',
+                //'foreign_table' => 'tx_rescuereports_domain_model_vehicle',
                 'itemsProcFunc' => \nkfire\RescueReports\Utility\EventVehicleSelectionUtility::class . '->getAvailableVehicles',
+                //'foreign_table_where' => '', // ← wichtig, NICHT setzen!
                 'size' => 15,
                 'maxitems' => 999,
                 'multiple' => true,
+                'eval' => 'int',
             ],
         ],
-
-        // Images
+        'slug_source' => [
+            'exclude' => true,
+            'label' => 'Slug Source',
+            'config' => [
+                'type' => 'input',
+                'readOnly' => true,
+            ],
+        ],
+        'slug' => [
+            'exclude' => true,
+            'label' => 'Slug',
+            'config' => [
+                'type' => 'slug',
+                'size' => 50,
+                'generatorOptions' => [
+                    'fields' => ['slug_source'],
+                    'fieldSeparator' => '/',
+                ],
+                'fallbackCharacter' => '-',
+                'eval' => 'uniqueInSite',
+                'default' => '',
+            ],
+        ],
+        // Bilder
         'images' => [
-            'label' => $lll . 'tx_rescuereports_domain_model_event.images',
+            'label' => 'Bilder',
             'config' => [
                 'type' => 'file',
                 'allowed' => 'common-image-types',
@@ -182,6 +202,16 @@ return [
                 'appearance' => [
                     'createNewRelationLinkTitle' => 'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:label.addFileReference',
                 ],
+            ],
+        ],
+        'disable_detail' => [
+            'label' => 'Detailansicht deaktivieren',
+            'config' => [
+                'type' => 'check',
+                'items' => [
+                    ['Keinen Link zur Detailansicht anzeigen', 1],
+                ],
+                'default' => 0,
             ],
         ],
     ],
