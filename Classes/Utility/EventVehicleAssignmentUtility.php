@@ -35,11 +35,13 @@ class EventVehicleAssignmentUtility
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable('tx_rescuereports_event_station_mm');
 
-        return $connection->createQueryBuilder()
+        $queryBuilder = $connection->createQueryBuilder();
+        return $queryBuilder
             ->select('uid_foreign')
             ->from('tx_rescuereports_event_station_mm')
-            ->where('uid_local = :uid')
-            ->setParameter(':uid', $eventUid, ParameterType::INTEGER)
+            ->where(
+                $queryBuilder->expr()->eq('uid_local', $queryBuilder->createNamedParameter($eventUid, ParameterType::INTEGER))
+            )
             ->executeQuery()
             ->fetchFirstColumn();
     }
