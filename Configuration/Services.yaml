@@ -33,5 +33,7 @@ services:
     tags:
       - name: event.listener
         event: 'TYPO3\CMS\Core\DataHandling\Event\BeforeRecordCreatedEvent'
+        method: beforeRecordCreated
       - name: event.listener
         event: 'TYPO3\CMS\Core\DataHandling\Event\BeforeRecordUpdatedEvent'
+        method: beforeRecordUpdated
