@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 return [
     'ctrl' => [
         'title' => 'LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:tx_rescuereports_domain_model_car',

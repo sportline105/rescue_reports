@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 // Backend module registration via registerModule() is deprecated in TYPO3 13+
 // Backend modules require the new TYPO3 13+ module registration API
 // See: https://docs.typo3.org/m/typo3/reference-coreapi/13.0/en-us/ApiOverview/Backend/ModuleAPI/

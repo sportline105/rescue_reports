@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 // === Configuration/TCA/tx_rescuereports_domain_model_type.php ===
 return [
