@@ -17,12 +17,8 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
     );
 
     $pluginSignature = 'rescuereports_eventlist';
-    ExtensionManagementUtility::addToAllTCAtypes(
-        'tt_content',
-        'pi_flexform',
-        $pluginSignature,
-        'after:subheader'
-    );
+    // For TYPO3 13+, use both approaches to ensure FlexForm works
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignature] = 'pi_flexform';
     ExtensionManagementUtility::addPiFlexFormValue(
         $pluginSignature,
         'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml'
@@ -37,12 +33,7 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
     );
 
     $pluginSignatureStats = 'rescuereports_statistics';
-    ExtensionManagementUtility::addToAllTCAtypes(
-        'tt_content',
-        'pi_flexform',
-        $pluginSignatureStats,
-        'after:subheader'
-    );
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureStats] = 'pi_flexform';
     ExtensionManagementUtility::addPiFlexFormValue(
         $pluginSignatureStats,
         'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml'
@@ -57,12 +48,7 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
     );
 
     $pluginSignatureSidebar = 'rescuereports_sidebar';
-    ExtensionManagementUtility::addToAllTCAtypes(
-        'tt_content',
-        'pi_flexform',
-        $pluginSignatureSidebar,
-        'after:subheader'
-    );
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureSidebar] = 'pi_flexform';
     ExtensionManagementUtility::addPiFlexFormValue(
         $pluginSignatureSidebar,
         'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml'
@@ -77,17 +63,10 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
     );
 
     $pluginSignatureRss = 'rescuereports_rss';
-    ExtensionManagementUtility::addToAllTCAtypes(
-        'tt_content',
-        'pi_flexform',
-        $pluginSignatureRss,
-        'after:subheader'
-    );
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureRss] = 'pi_flexform';
     ExtensionManagementUtility::addPiFlexFormValue(
         $pluginSignatureRss,
         'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml'
     );
 
-    // addStaticFile and CSH (Context-Sensitive Help) are deprecated in TYPO3 13+
-    // TypoScript configuration is now handled through Site Sets or extension configuration
 })();
