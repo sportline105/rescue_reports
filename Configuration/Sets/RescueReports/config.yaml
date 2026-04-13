@@ -1,13 +1,3 @@
-name: rescue_reports/rescue-reports
+name: nkfire/rescue-reports
 label: Rescue Reports Setup
-description: Einsatzberichtsverwaltung für Feuerwehren und BOS mit Event-Verwaltung, Jahresstatistiken und RSS-Feeds
-
-# Dependencies on other sets
 dependencies: []
-
-# Provider for the set
-provider: TYPO3\CMS\Core\Configuration\SiteSet\DefaultSetProvider
-
-# Include TypoScript configuration
-imports:
-  - resource: setup.typoscript
