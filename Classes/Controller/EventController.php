@@ -7,7 +7,6 @@ use nkfire\RescueReports\Domain\Repository\EventRepository;
 use nkfire\RescueReports\Domain\Repository\StationRepository;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Page\PageRenderer;
@@ -18,30 +17,24 @@ class EventController extends ActionController
     protected ?EventRepository $eventRepository = null;
     protected ?StationRepository $stationRepository = null;
 
-    public function __construct(
-        protected ObjectManager $objectManager
-    ) {
-        parent::__construct();
-    }
-
     /**
-     * Lazy-load event repository
+     * Lazy-load event repository via GeneralUtility (TYPO3 14 compatible)
      */
     protected function getEventRepository(): EventRepository
     {
         if ($this->eventRepository === null) {
-            $this->eventRepository = $this->objectManager->get(EventRepository::class);
+            $this->eventRepository = GeneralUtility::makeInstance(EventRepository::class);
         }
         return $this->eventRepository;
     }
 
     /**
-     * Lazy-load station repository
+     * Lazy-load station repository via GeneralUtility (TYPO3 14 compatible)
      */
     protected function getStationRepository(): StationRepository
     {
         if ($this->stationRepository === null) {
-            $this->stationRepository = $this->objectManager->get(StationRepository::class);
+            $this->stationRepository = GeneralUtility::makeInstance(StationRepository::class);
         }
         return $this->stationRepository;
     }
