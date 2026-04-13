@@ -24,7 +24,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'name, prefix, exclude_from_filter, cars, vehicles, --div--;Access, hidden, starttime, endtime'
+            'showitem' => 'name, prefix, exclude_from_filter, vehicles, --div--;Access, hidden, starttime, endtime'
         ],
     ],
     'columns' => [
