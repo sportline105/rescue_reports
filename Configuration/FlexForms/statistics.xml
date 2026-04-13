@@ -3,12 +3,12 @@
     <sheets>
         <general>
             <ROOT>
-                    <sheetTitle>Statistik</sheetTitle>
+                    <sheetTitle>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:sheet.statistics</sheetTitle>
                 <type>array</type>
                 <el>
 
                     <settings.station>
-                            <label>Ortsfeuerwehr (Filter)</label>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:statisticsStation</label>
                             <config>
                                 <type>select</type>
                                 <renderType>selectSingle</renderType>
@@ -26,7 +26,7 @@
                     </settings.station>
 
                     <settings.showStationFilter>
-                            <label>Auswahl der Ortsfeuerwehr im Frontend anzeigen</label>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:showStationFilterStats</label>
                             <config>
                                 <type>check</type>
                                 <items>
@@ -39,7 +39,7 @@
                     </settings.showStationFilter>
 
                     <settings.statisticsYears>
-                            <label>Anzahl angezeigter Jahre (0 = alle)</label>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:statisticsYears</label>
                             <config>
                                 <type>input</type>
                                 <eval>int</eval>
@@ -50,7 +50,7 @@
                     </settings.statisticsYears>
 
                     <settings.showMonthlyChart>
-                            <label>Monatsdiagramm anzeigen (Mehrjahresvergleich)</label>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:showMonthlyChart</label>
                             <config>
                                 <type>check</type>
                                 <default>1</default>
