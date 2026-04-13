@@ -31,7 +31,7 @@
                         <config>
                             <type>select</type>
                             <renderType>selectSingle</renderType>
-                            <itemsProcFunc>nkfire\RescueReports\UserFunctions\FlexFormStationItems->addPrimaryStations</itemsProcFunc>
+                            <itemsProcFunc class="nkfire\RescueReports\UserFunctions\FlexFormStationItems" method="addPrimaryStations" />
                             <items>
                                 <numIndex index="0">
                                     <label>-- keine Auswahl --</label>
