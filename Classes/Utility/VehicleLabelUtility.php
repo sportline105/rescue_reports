@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace nkfire\RescueReports\Utility;
+use Doctrine\DBAL\ParameterType;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -23,7 +24,7 @@ class VehicleLabelUtility
                 ->select('organization', 'name')
                 ->from('tx_rescuereports_domain_model_car')
                 ->where(
-                    $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter((int)$row['car'], \PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter((int)$row['car'], ParameterType::INTEGER))
                 )
                 ->executeQuery()
                 ->fetchAssociative();
@@ -37,7 +38,7 @@ class VehicleLabelUtility
                     ->select('abbreviation')
                     ->from('tx_rescuereports_domain_model_organisation')
                     ->where(
-                        $orgQuery->expr()->eq('uid', $orgQuery->createNamedParameter((int)$carRow['organization'], \PDO::PARAM_INT))
+                        $orgQuery->expr()->eq('uid', $orgQuery->createNamedParameter((int)$carRow['organization'], ParameterType::INTEGER))
                     )
                     ->executeQuery()
                     ->fetchAssociative();

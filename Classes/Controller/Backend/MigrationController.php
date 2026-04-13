@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace nkfire\RescueReports\Controller\Backend;
+use Doctrine\DBAL\ParameterType;
 
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -105,8 +106,8 @@ class MigrationController extends ActionController
             ->select('uid', 'name', 'abbreviation')
             ->from('tx_rescuereports_domain_model_organisation')
             ->where(
-                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid, \PDO::PARAM_INT))
+                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid, ParameterType::INTEGER))
             )
             ->executeQuery()
             ->fetchAllAssociative();
@@ -189,10 +190,10 @@ class MigrationController extends ActionController
             ->count('uid')
             ->from('tx_rescuereports_domain_model_car')
             ->where(
-                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid, \PDO::PARAM_INT)),
+                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid, ParameterType::INTEGER)),
                 $queryBuilder->expr()->eq('name', $queryBuilder->createNamedParameter($name)),
-                $queryBuilder->expr()->eq('organization', $queryBuilder->createNamedParameter($organisationUid, \PDO::PARAM_INT))
+                $queryBuilder->expr()->eq('organization', $queryBuilder->createNamedParameter($organisationUid, ParameterType::INTEGER))
             )
             ->executeQuery()
             ->fetchOne();

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace nkfire\RescueReports\EventListener;
 
-use PDO;
+use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\DataHandling\Event\BeforeRecordCreatedEvent;
 use TYPO3\CMS\Core\DataHandling\Event\BeforeRecordUpdatedEvent;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -102,7 +102,7 @@ class DataHandlerEventListener
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid_local',
-                    $queryBuilder->createNamedParameter($eventUid, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($eventUid, ParameterType::INTEGER)
                 )
             )
             ->setMaxResults(1)
@@ -125,11 +125,11 @@ class DataHandlerEventListener
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid',
-                    $queryBuilder->createNamedParameter($typeUid, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($typeUid, ParameterType::INTEGER)
                 ),
                 $queryBuilder->expr()->eq(
                     'deleted',
-                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
                 )
             )
             ->setMaxResults(1)

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace nkfire\RescueReports\Hooks;
 
-use PDO;
+use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -88,7 +88,7 @@ class DataHandlerHook
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid_local',
-                    $queryBuilder->createNamedParameter($eventUid, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($eventUid, ParameterType::INTEGER)
                 )
             )
             ->setMaxResults(1)
@@ -111,11 +111,11 @@ class DataHandlerHook
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid',
-                    $queryBuilder->createNamedParameter($typeUid, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($typeUid, ParameterType::INTEGER)
                 ),
                 $queryBuilder->expr()->eq(
                     'deleted',
-                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
                 )
             )
             ->setMaxResults(1)

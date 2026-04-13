@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace nkfire\RescueReports\UserFunctions;
 
-use PDO;
+use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -69,7 +69,7 @@ class TypeItemsProcFunc
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid_local',
-                    $queryBuilder->createNamedParameter($eventUid, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($eventUid, ParameterType::INTEGER)
                 )
             )
             ->executeQuery()
@@ -98,11 +98,11 @@ class TypeItemsProcFunc
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid',
-                    $queryBuilder->createNamedParameter($uid, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($uid, ParameterType::INTEGER)
                 ),
                 $queryBuilder->expr()->eq(
                     'deleted',
-                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
                 )
             )
             ->executeQuery()
