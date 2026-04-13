@@ -1,63 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <T3DataStructure>
     <sheets>
-        <general>
+        <sDEF>
             <ROOT>
-                    <sheetTitle>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:sheet.rss</sheetTitle>
+                <sheetTitle>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:sheet.rss</sheetTitle>
                 <type>array</type>
                 <el>
 
                     <settings.feedTitle>
-                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:feedTitle</label>
-                            <config>
-                                <type>input</type>
-                                <eval>trim</eval>
-                                <placeholder>Einsatzberichte – Ortsfeuerwehr …</placeholder>
-                            </config>
+                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:feedTitle</label>
+                        <config>
+                            <type>input</type>
+                            <placeholder>Einsatzberichte – Ortsfeuerwehr …</placeholder>
+                        </config>
                     </settings.feedTitle>
 
                     <settings.station>
-                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:statisticsStation</label>
-                            <config>
-                                <type>select</type>
-                                <renderType>selectSingle</renderType>
-                                <itemsProcFunc>nkfire\RescueReports\UserFunctions\FlexFormStationItems->addPrimaryStations</itemsProcFunc>
-                                <items>
-                                    <numIndex index="0">
-                                        <numIndex index="0">– Alle Ortsfeuerwehren –</numIndex>
-                                        <numIndex index="1">0</numIndex>
-                                    </numIndex>
-                                </items>
-                                <minitems>0</minitems>
-                                <maxitems>1</maxitems>
-                                <size>1</size>
-                            </config>
+                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:statisticsStation</label>
+                        <config>
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <itemsProcFunc>nkfire\RescueReports\UserFunctions\FlexFormStationItems->addPrimaryStations</itemsProcFunc>
+                            <items>
+                                <numIndex index="0">
+                                    <label>– Alle Ortsfeuerwehren –</label>
+                                    <value>0</value>
+                                </numIndex>
+                            </items>
+                            <minitems>0</minitems>
+                            <maxitems>1</maxitems>
+                            <size>1</size>
+                        </config>
                     </settings.station>
 
                     <settings.maxCount>
-                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:maxCountRss</label>
-                            <config>
-                                <type>input</type>
-                                <eval>int</eval>
-                                <size>5</size>
-                                <default>20</default>
-                            </config>
+                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:maxCountRss</label>
+                        <config>
+                            <type>number</type>
+                            <size>5</size>
+                            <default>20</default>
+                        </config>
                     </settings.maxCount>
 
                     <settings.detailPageUid>
-                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:detailPageUidRss</label>
-                            <config>
-                                <type>group</type>
-                                <internal_type>db</internal_type>
-                                <allowed>pages</allowed>
-                                <size>1</size>
-                                <minitems>0</minitems>
-                                <maxitems>1</maxitems>
-                            </config>
+                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:detailPageUidRss</label>
+                        <config>
+                            <type>group</type>
+                            <internal_type>db</internal_type>
+                            <allowed>pages</allowed>
+                            <size>1</size>
+                            <minitems>0</minitems>
+                            <maxitems>1</maxitems>
+                        </config>
                     </settings.detailPageUid>
 
                 </el>
             </ROOT>
-        </general>
+        </sDEF>
     </sheets>
 </T3DataStructure>
