@@ -35,50 +35,49 @@ return [
             ],
         ],
         'name' => [
-    'exclude' => false,
-    'label' => 'Fahrzeugname (wird bei Auswahl des Typs vorbelegt, nur für abweichende Bezeichnungen)',
-    'config' => [
-        'type' => 'input',
-        'size' => 30,
-        'eval' => 'trim',
-    ],
-],
-'link' => [
-    'exclude' => true,
-    'label' => 'Weiterführender Link',
-    'config' => [
-        'type' => 'input',
-        'renderType' => 'inputLink',
-        'size' => 50,
-        'eval' => 'trim',
-    ],
-],
-'car' => [
-    'exclude' => true,
-    'label' => 'Fahrzeugtyp (Fahrzeugtyp auswählen, Fahrzeugname wird nach Speichern automatisch generiert)',
-    'config' => [
-        'type' => 'select',
-        'renderType' => 'selectSingle',
-        'foreign_table' => 'tx_rescuereports_domain_model_car',
-        'foreign_table_where' => 'ORDER BY name ASC',
-        'itemsProcFunc' => \nkfire\RescueReports\Utility\CarLabelItemsProcFunc::class . '->addOrganisationToLabel',
-        'minitems' => 1,
-        'maxitems' => 1,
-    ],
-],
-        'image' => [
-    'exclude' => true,
-    'label' => 'Fahrzeugbild',
-    'config' => [
-        'type' => 'file',
-        'allowed' => 'common-image-types',
-        'maxitems' => 1,
-        'appearance' => [
-            'createNewRelationLinkTitle' => 'Bild hinzufügen',
+            'exclude' => false,
+            'label' => 'Fahrzeugname (wird bei Auswahl des Typs vorbelegt, nur für abweichende Bezeichnungen)',
+            'config' => [
+                'type' => 'input',
+                'size' => 30,
+                'eval' => 'trim',
+            ],
         ],
-    ],
-],
-
+        'link' => [
+            'exclude' => true,
+            'label' => 'Weiterführender Link',
+            'config' => [
+                'type' => 'input',
+                'renderType' => 'inputLink',
+                'size' => 50,
+                'eval' => 'trim',
+            ],
+        ],
+        'car' => [
+            'exclude' => true,
+            'label' => 'Fahrzeugtyp (Fahrzeugtyp auswählen, Fahrzeugname wird nach Speichern automatisch generiert)',
+            'config' => [
+                'type' => 'select',
+                'renderType' => 'selectSingle',
+                'foreign_table' => 'tx_rescuereports_domain_model_car',
+                'foreign_table_where' => 'ORDER BY name ASC',
+                'itemsProcFunc' => \nkfire\RescueReports\Utility\CarLabelItemsProcFunc::class . '->addOrganisationToLabel',
+                'minitems' => 1,
+                'maxitems' => 1,
+            ],
+        ],
+        'image' => [
+            'exclude' => true,
+            'label' => 'Fahrzeugbild',
+            'config' => [
+                'type' => 'file',
+                'allowed' => 'common-image-types',
+                'maxitems' => 1,
+                'appearance' => [
+                    'createNewRelationLinkTitle' => 'Bild hinzufügen',
+                ],
+            ],
+        ],
         'station' => [
             'exclude' => true,
             'label' => 'Feuerwehr / Station',

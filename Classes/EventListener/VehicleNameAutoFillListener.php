@@ -77,12 +77,14 @@ class VehicleNameAutoFillListener
             return;
         }
 
-        // Update vehicle name
+        // Update vehicle name and timestamp
         $vehicleConnection->update(
             'tx_rescuereports_domain_model_vehicle',
-            ['name' => $carRow['name']],
-            ['uid' => $recordUid],
-            [ParameterType::STRING, ParameterType::INTEGER]
+            [
+                'name' => $carRow['name'],
+                'tstamp' => time(),
+            ],
+            ['uid' => $recordUid]
         );
     }
 }
