@@ -14,29 +14,16 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class EventController extends ActionController
 {
-    protected ?EventRepository $eventRepository = null;
-    protected ?StationRepository $stationRepository = null;
+    protected EventRepository $eventRepository;
+    protected StationRepository $stationRepository;
 
-    /**
-     * Lazy-load event repository via GeneralUtility (TYPO3 14 compatible)
-     */
-    protected function getEventRepository(): EventRepository
-    {
-        if ($this->eventRepository === null) {
-            $this->eventRepository = GeneralUtility::makeInstance(EventRepository::class);
-        }
-        return $this->eventRepository;
-    }
-
-    /**
-     * Lazy-load station repository via GeneralUtility (TYPO3 14 compatible)
-     */
-    protected function getStationRepository(): StationRepository
-    {
-        if ($this->stationRepository === null) {
-            $this->stationRepository = GeneralUtility::makeInstance(StationRepository::class);
-        }
-        return $this->stationRepository;
+    public function __construct(
+        EventRepository $eventRepository,
+        StationRepository $stationRepository
+    ) {
+        parent::__construct();
+        $this->eventRepository = $eventRepository;
+        $this->stationRepository = $stationRepository;
     }
 
     /**
@@ -95,7 +82,7 @@ class EventController extends ActionController
         $activeStationUid = $selectedStationUid > 0 ? $selectedStationUid : $defaultStationUid;
 
         if ($activeStationUid === 0) {
-            $firstStation = $this->getStationRepository()->findPrimaryBrigadeStations()->getFirst();
+            $firstStation = $this->stationRepository->findPrimaryBrigadeStations()->getFirst();
             if ($firstStation) {
                 $activeStationUid = (int)$firstStation->getUid();
             }
@@ -103,7 +90,7 @@ class EventController extends ActionController
 
         $activeStationName = '';
         if ($activeStationUid > 0) {
-            $activeStation = $this->getStationRepository()->findByUid($activeStationUid);
+            $activeStation = $this->stationRepository->findByUid($activeStationUid);
             if ($activeStation) {
                 $activeStationName = $activeStation->getName();
             }
@@ -147,12 +134,12 @@ class EventController extends ActionController
         }
 
         $availableYears = $enableYearFilter
-            ? $this->getEventRepository()->getAvailableYears($activeStationUid)
+            ? $this->eventRepository->getAvailableYears($activeStationUid)
             : [];
 
         if ($activeStationUid > 0) {
             if ($enableSearch && $searchWord !== '') {
-                $events = $this->getEventRepository()->searchByStation(
+                $events = $this->eventRepository->searchByStation(
                     $activeStationUid,
                     $searchWord,
                     $dateFrom,
@@ -160,7 +147,7 @@ class EventController extends ActionController
                     $maxCount
                 );
             } else {
-                $events = $this->getEventRepository()->findFilteredByStation(
+                $events = $this->eventRepository->findFilteredByStation(
                     $activeStationUid,
                     $dateFrom,
                     $dateTo,
@@ -169,9 +156,9 @@ class EventController extends ActionController
             }
         } else {
             if ($enableSearch && $searchWord !== '') {
-                $events = $this->getEventRepository()->search($searchWord, $dateFrom, $dateTo, $maxCount);
+                $events = $this->eventRepository->search($searchWord, $dateFrom, $dateTo, $maxCount);
             } else {
-                $events = $this->getEventRepository()->findFiltered($dateFrom, $dateTo, $maxCount);
+                $events = $this->eventRepository->findFiltered($dateFrom, $dateTo, $maxCount);
             }
         }
 
@@ -180,11 +167,11 @@ class EventController extends ActionController
         $eventItemsByYear = ($selectedYear === 0)
             ? $this->groupEventItemsByYear($eventItems)
             : [];
-        $stations = $this->getStationRepository()->findPrimaryBrigadeStations();
+        $stations = $this->stationRepository->findPrimaryBrigadeStations();
 
         $statistics = [];
         if ($showStatistics && in_array($templateVariant, ['bootstrap', 'foundation'], true)) {
-            $statistics = $this->getEventRepository()->getYearlyStatistics($activeStationUid, $statisticsYears);
+            $statistics = $this->eventRepository->getYearlyStatistics($activeStationUid, $statisticsYears);
             // Wenn ein konkretes Jahr ausgewählt ist, nur dieses Jahr in der Statistik anzeigen
             if ($selectedYear > 0 && !empty($statistics)) {
                 $statistics = array_intersect_key($statistics, [$selectedYear => null]);
@@ -337,12 +324,12 @@ class EventController extends ActionController
         $feedTitle     = trim((string)($this->settings['feedTitle'] ?? ''));
 
         $events = $stationUid > 0
-            ? $this->getEventRepository()->findFilteredByStation($stationUid, null, null, $maxCount)
-            : $this->getEventRepository()->findFiltered(null, null, $maxCount);
+            ? $this->eventRepository->findFilteredByStation($stationUid, null, null, $maxCount)
+            : $this->eventRepository->findFiltered(null, null, $maxCount);
 
         $stationName = '';
         if ($stationUid > 0) {
-            $station = $this->getStationRepository()->findByUid($stationUid);
+            $station = $this->stationRepository->findByUid($stationUid);
             if ($station) {
                 $stationName = $station->getName();
             }
@@ -366,7 +353,7 @@ class EventController extends ActionController
     {
         $defaultStationUid = (int)($this->settings['station'] ?? 0);
         $selectedStationUid = $this->normalizeRecordUid($station);
-        $stations = $this->getStationRepository()->findPrimaryBrigadeStations();
+        $stations = $this->stationRepository->findPrimaryBrigadeStations();
         $allowedStationUids = [];
         foreach ($stations as $stationRecord) {
             $allowedStationUids[] = (int)$stationRecord->getUid();
@@ -386,14 +373,14 @@ class EventController extends ActionController
         $statisticsYears  = (int)($this->settings['statisticsYears'] ?? 0);
         $showMonthlyChart = (bool)($this->settings['showMonthlyChart'] ?? true);
         $showStationFilter = (bool)($this->settings['showStationFilter'] ?? true);
-        $statistics       = $this->getEventRepository()->getYearlyStatistics($stationUid, $statisticsYears);
+        $statistics       = $this->eventRepository->getYearlyStatistics($stationUid, $statisticsYears);
         $monthlyStatistics = $showMonthlyChart
-            ? $this->getEventRepository()->getMonthlyStatistics($stationUid, $statisticsYears)
+            ? $this->eventRepository->getMonthlyStatistics($stationUid, $statisticsYears)
             : [];
 
         $stationName = '';
         if ($stationUid > 0) {
-            $station = $this->getStationRepository()->findByUid($stationUid);
+            $station = $this->stationRepository->findByUid($stationUid);
             if ($station) {
                 $stationName = $station->getName();
             }
@@ -526,7 +513,7 @@ class EventController extends ActionController
      */
     public function showAction(Event $event, ?string $station = null): ResponseInterface
     {
-        $event = $this->getEventRepository()->findByUid($event->getUid());
+        $event = $this->eventRepository->findByUid($event->getUid());
         $groupedVehicleData = $this->groupVehiclesByBrigadeAndStation($event);
         $templateVariant = (string)($this->settings['templateVariant'] ?? 'bootstrap');
         $templateVariantCompat = [
@@ -551,7 +538,7 @@ class EventController extends ActionController
         $activeStationUid = $selectedStationUid > 0 ? $selectedStationUid : $defaultStationUid;
 
         if ($activeStationUid === 0) {
-            $firstStation = $this->getStationRepository()->findPrimaryBrigadeStations()->getFirst();
+            $firstStation = $this->stationRepository->findPrimaryBrigadeStations()->getFirst();
             if ($firstStation) {
                 $activeStationUid = (int)$firstStation->getUid();
             }
@@ -569,7 +556,7 @@ class EventController extends ActionController
                     continue;
                 }
 
-                $runningNumber = $this->getEventRepository()->countByStationAndYearUntil(
+                $runningNumber = $this->eventRepository->countByStationAndYearUntil(
                     $event->getStart(),
                     $stationUid,
                     (int)$event->getUid()
@@ -655,7 +642,7 @@ class EventController extends ActionController
                         continue;
                     }
 
-                    $runningNumber = $this->getEventRepository()->countByStationAndYearUntil(
+                    $runningNumber = $this->eventRepository->countByStationAndYearUntil(
                         $start,
                         $stationUid,
                         (int)$event->getUid()
