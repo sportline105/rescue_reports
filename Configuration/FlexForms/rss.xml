@@ -3,25 +3,20 @@
     <sheets>
         <general>
             <ROOT>
-                <TCEforms>
                     <sheetTitle>RSS-Feed</sheetTitle>
-                </TCEforms>
                 <type>array</type>
                 <el>
 
                     <settings.feedTitle>
-                        <TCEforms>
                             <label>Feed-Titel (leer = Standard)</label>
                             <config>
                                 <type>input</type>
                                 <eval>trim</eval>
                                 <placeholder>Einsatzberichte – Ortsfeuerwehr …</placeholder>
                             </config>
-                        </TCEforms>
                     </settings.feedTitle>
 
                     <settings.station>
-                        <TCEforms>
                             <label>Ortsfeuerwehr (Filter)</label>
                             <config>
                                 <type>select</type>
@@ -37,11 +32,9 @@
                                 <maxitems>1</maxitems>
                                 <size>1</size>
                             </config>
-                        </TCEforms>
                     </settings.station>
 
                     <maxCount>
-                        <TCEforms>
                             <label>Max. Anzahl Einträge</label>
                             <config>
                                 <type>input</type>
@@ -49,11 +42,9 @@
                                 <size>5</size>
                                 <default>20</default>
                             </config>
-                        </TCEforms>
                     </maxCount>
 
                     <detailPageUid>
-                        <TCEforms>
                             <label>Seite für Einsatz-Detailansicht</label>
                             <config>
                                 <type>group</type>
@@ -63,7 +54,6 @@
                                 <minitems>0</minitems>
                                 <maxitems>1</maxitems>
                             </config>
-                        </TCEforms>
                     </detailPageUid>
 
                 </el>

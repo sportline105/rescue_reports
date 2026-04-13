@@ -3,14 +3,11 @@
     <sheets>
         <general>
             <ROOT>
-                <TCEforms>
                     <sheetTitle>Statistik</sheetTitle>
-                </TCEforms>
                 <type>array</type>
                 <el>
 
                     <settings.station>
-                        <TCEforms>
                             <label>Ortsfeuerwehr (Filter)</label>
                             <config>
                                 <type>select</type>
@@ -26,11 +23,9 @@
                                 <maxitems>1</maxitems>
                                 <size>1</size>
                             </config>
-                        </TCEforms>
                     </settings.station>
 
                     <settings.showStationFilter>
-                        <TCEforms>
                             <label>Auswahl der Ortsfeuerwehr im Frontend anzeigen</label>
                             <config>
                                 <type>check</type>
@@ -41,11 +36,9 @@
                                 </items>
                                 <default>1</default>
                             </config>
-                        </TCEforms>
                     </settings.showStationFilter>
 
                     <settings.statisticsYears>
-                        <TCEforms>
                             <label>Anzahl angezeigter Jahre (0 = alle)</label>
                             <config>
                                 <type>input</type>
@@ -54,11 +47,9 @@
                                 <default>0</default>
                                 <placeholder>0 = alle Jahre</placeholder>
                             </config>
-                        </TCEforms>
                     </settings.statisticsYears>
 
                     <settings.showMonthlyChart>
-                        <TCEforms>
                             <label>Monatsdiagramm anzeigen (Mehrjahresvergleich)</label>
                             <config>
                                 <type>check</type>
@@ -70,7 +61,6 @@
                                     </numIndex>
                                 </items>
                             </config>
-                        </TCEforms>
                     </settings.showMonthlyChart>
 
                 </el>
