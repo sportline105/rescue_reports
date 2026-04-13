@@ -3,12 +3,12 @@
     <sheets>
         <general>
             <ROOT>
-                    <sheetTitle>Sidebar-Widget</sheetTitle>
+                    <sheetTitle>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:sheet.sidebar</sheetTitle>
                 <type>array</type>
                 <el>
 
                     <settings.widgetTitle>
-                            <label>Widget-Überschrift</label>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:widgetTitle</label>
                             <config>
                                 <type>input</type>
                                 <eval>trim</eval>
@@ -17,7 +17,7 @@
                     </settings.widgetTitle>
 
                     <settings.defaultStation>
-                            <label>Standard-Ortsfeuerwehr</label>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:defaultStationSidebar</label>
                             <config>
                                 <type>select</type>
                                 <renderType>selectSingle</renderType>
@@ -35,7 +35,7 @@
                     </settings.defaultStation>
 
                     <settings.maxCount>
-                            <label>Anzahl der angezeigten Einsätze</label>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:maxCountSidebar</label>
                             <config>
                                 <type>input</type>
                                 <eval>int</eval>
@@ -46,7 +46,7 @@
                     </settings.maxCount>
 
                     <settings.templateVariant>
-                            <label>Design</label>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:templateVariantSidebar</label>
                             <config>
                                 <type>select</type>
                                 <renderType>selectSingle</renderType>
@@ -65,7 +65,7 @@
                     </settings.templateVariant>
 
                     <settings.detailPageUid>
-                            <label>Seite für Einsatz-Detailansicht</label>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:detailPageUidSidebar</label>
                             <config>
                                 <type>group</type>
                                 <internal_type>db</internal_type>
@@ -77,7 +77,7 @@
                     </settings.detailPageUid>
 
                     <settings.listPageUid>
-                            <label>Seite der vollständigen Einsatzliste (für „Alle Einsätze"-Link)</label>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:listPageUidSidebar</label>
                             <config>
                                 <type>group</type>
                                 <internal_type>db</internal_type>

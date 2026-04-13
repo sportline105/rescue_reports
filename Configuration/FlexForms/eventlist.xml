@@ -27,7 +27,7 @@
                     </settings.templateVariant>
 
                     <settings.defaultStation>
-                            <label>Standard-Ortsfeuerwehr</label>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:defaultStation</label>
                             <config>
                                 <type>select</type>
                                 <renderType>selectSingle</renderType>
@@ -45,7 +45,7 @@
                     </settings.defaultStation>
 
                     <settings.showStationFilter>
-                            <label>Auswahl der Ortsfeuerwehr im Frontend anzeigen</label>
+                            <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:showStationFilter</label>
                             <config>
                                 <type>check</type>
                                 <items>
