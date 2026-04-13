@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace nkfire\RescueReports\Utility;
+use Doctrine\DBAL\ParameterType;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -45,7 +46,7 @@ class CarFilterUtility
                     ->select('uid', 'name', 'brigade', 'sorting')
                     ->from('tx_rescuereports_domain_model_station')
                     ->where(
-                        $stationQuery->expr()->eq('uid', $stationQuery->createNamedParameter($stationUid, \PDO::PARAM_INT))
+                        $stationQuery->expr()->eq('uid', $stationQuery->createNamedParameter($stationUid, ParameterType::INTEGER))
                     )
                     ->executeQuery()
                     ->fetchAssociative();
@@ -60,7 +61,7 @@ class CarFilterUtility
                         ->select('uid', 'name', 'sorting')
                         ->from('tx_rescuereports_domain_model_brigade')
                         ->where(
-                            $brigadeQuery->expr()->eq('uid', $brigadeQuery->createNamedParameter($station['brigade'], \PDO::PARAM_INT))
+                            $brigadeQuery->expr()->eq('uid', $brigadeQuery->createNamedParameter($station['brigade'], ParameterType::INTEGER))
                         )
                         ->executeQuery()
                         ->fetchAssociative();
@@ -75,7 +76,7 @@ class CarFilterUtility
                     ->select('uid', 'name')
                     ->from('tx_rescuereports_domain_model_car')
                     ->where(
-                        $carQuery->expr()->eq('uid', $carQuery->createNamedParameter($carUid, \PDO::PARAM_INT))
+                        $carQuery->expr()->eq('uid', $carQuery->createNamedParameter($carUid, ParameterType::INTEGER))
                     )
                     ->executeQuery()
                     ->fetchAssociative();
@@ -151,7 +152,7 @@ class CarFilterUtility
                     ->select('uid', 'name')
                     ->from('tx_rescuereports_domain_model_car')
                     ->where(
-                        $carQuery->expr()->eq('uid', $carQuery->createNamedParameter($carUid, \PDO::PARAM_INT))
+                        $carQuery->expr()->eq('uid', $carQuery->createNamedParameter($carUid, ParameterType::INTEGER))
                     )
                     ->executeQuery()
                     ->fetchAssociative();

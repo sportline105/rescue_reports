@@ -7,7 +7,7 @@ use nkfire\RescueReports\Domain\Repository\EventRepository;
 use nkfire\RescueReports\Domain\Repository\StationRepository;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use PDO;
+use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -826,15 +826,15 @@ class EventController extends ActionController
             ->where(
                 $queryBuilder->expr()->eq(
                     'station',
-                    $queryBuilder->createNamedParameter($stationUid, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($stationUid, ParameterType::INTEGER)
                 ),
                 $queryBuilder->expr()->eq(
                     'deleted',
-                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
                 ),
                 $queryBuilder->expr()->eq(
                     'hidden',
-                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
                 )
             )
             ->orderBy('sorting', 'ASC')

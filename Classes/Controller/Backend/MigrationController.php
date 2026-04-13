@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace nkfire\RescueReports\Controller\Backend;
+use Doctrine\DBAL\ParameterType;
 
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -94,64 +95,6 @@ class MigrationController extends ActionController
         $this->redirect('index');
     }
 
-    public function runAction(): void
-    {
-        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable('tx_rescuereports_einsatz');
-
-        $rows = $connection->select(['uid', 'cars', 'type', 'station'], 'tx_rescuereports_einsatz')->fetchAllAssociative();
-
-        $mmTables = [
-            'cars' => 'tx_rescuereports_event_car_mm',
-            'type' => 'tx_rescuereports_event_type_mm',
-            'station' => 'tx_rescuereports_event_station_mm',
-        ];
-
-        $relationCount = ['cars' => 0, 'type' => 0, 'station' => 0];
-
-        foreach ($rows as $row) {
-            foreach (['cars', 'type', 'station'] as $field) {
-                $values = GeneralUtility::trimExplode(',', (string)$row[$field], true);
-                $sorting = 0;
-                foreach ($values as $foreignUid) {
-                    GeneralUtility::makeInstance(ConnectionPool::class)
-                        ->getConnectionForTable($mmTables[$field])
-                        ->insert($mmTables[$field], [
-                            'uid_local' => (int)$row['uid'],
-                            'uid_foreign' => (int)$foreignUid,
-                            'tablenames' => '',
-                            'sorting' => $sorting++,
-                        ]);
-                    $relationCount[$field]++;
-                }
-            }
-        }
-
-        $this->addFlashMessage('Migration abgeschlossen:<br>' .
-            'Fahrzeuge: ' . $relationCount['cars'] . '<br>' .
-            'Typen: ' . $relationCount['type'] . '<br>' .
-            'Stationen: ' . $relationCount['station']);
-
-        $this->redirect('index');
-    }
-
-    public function resetConfirmAction(): void {}
-
-    public function resetAction(): void
-    {
-        foreach ([
-            'tx_rescuereports_event_car_mm',
-            'tx_rescuereports_event_type_mm',
-            'tx_rescuereports_event_station_mm',
-        ] as $table) {
-            GeneralUtility::makeInstance(ConnectionPool::class)
-                ->getConnectionForTable($table)
-                ->truncate($table);
-        }
-
-        $this->addFlashMessage('Alle MM-Einträge wurden zurückgesetzt.');
-        $this->redirect('index');
-    }
 
     /**
      * @return array<string,int>
@@ -163,8 +106,8 @@ class MigrationController extends ActionController
             ->select('uid', 'name', 'abbreviation')
             ->from('tx_rescuereports_domain_model_organisation')
             ->where(
-                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid, \PDO::PARAM_INT))
+                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid, ParameterType::INTEGER))
             )
             ->executeQuery()
             ->fetchAllAssociative();
@@ -247,10 +190,10 @@ class MigrationController extends ActionController
             ->count('uid')
             ->from('tx_rescuereports_domain_model_car')
             ->where(
-                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid, \PDO::PARAM_INT)),
+                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid, ParameterType::INTEGER)),
                 $queryBuilder->expr()->eq('name', $queryBuilder->createNamedParameter($name)),
-                $queryBuilder->expr()->eq('organization', $queryBuilder->createNamedParameter($organisationUid, \PDO::PARAM_INT))
+                $queryBuilder->expr()->eq('organization', $queryBuilder->createNamedParameter($organisationUid, ParameterType::INTEGER))
             )
             ->executeQuery()
             ->fetchOne();

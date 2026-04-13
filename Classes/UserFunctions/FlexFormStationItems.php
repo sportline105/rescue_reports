@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace nkfire\RescueReports\UserFunctions;
+use Doctrine\DBAL\ParameterType;
 
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -17,7 +18,7 @@ class FlexFormStationItems
 
         $queryBuilder->expr()->eq(
             'station.exclude_from_filter',
-            $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+            $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
         );
 
         $rows = $queryBuilder
@@ -39,23 +40,23 @@ class FlexFormStationItems
             ->where(
                 $queryBuilder->expr()->eq(
                     'station.deleted',
-                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
                 ),
                 $queryBuilder->expr()->eq(
                     'station.hidden',
-                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
                 ),
                 $queryBuilder->expr()->eq(
                     'brigade.deleted',
-                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
                 ),
                 $queryBuilder->expr()->eq(
                     'brigade.hidden',
-                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
                 ),
                 $queryBuilder->expr()->eq(
                     'brigade.is_primary',
-                    $queryBuilder->createNamedParameter(1, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(1, ParameterType::INTEGER)
                 )
             )
             ->orderBy('brigade.name', 'ASC')

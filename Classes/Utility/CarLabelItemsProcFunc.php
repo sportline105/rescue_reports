@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace nkfire\RescueReports\Utility;
+use Doctrine\DBAL\ParameterType;
 
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -25,7 +26,7 @@ class CarLabelItemsProcFunc
                 ->select('name', 'organization')
                 ->from('tx_rescuereports_domain_model_car')
                 ->where(
-                    $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($carUid, \PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($carUid, ParameterType::INTEGER))
                 )
                 ->executeQuery()
                 ->fetchAssociative();
@@ -41,7 +42,7 @@ class CarLabelItemsProcFunc
                     ->where(
                         $orgQueryBuilder->expr()->eq(
                             'uid',
-                            $orgQueryBuilder->createNamedParameter((int)$carRow['organization'], \PDO::PARAM_INT)
+                            $orgQueryBuilder->createNamedParameter((int)$carRow['organization'], ParameterType::INTEGER)
                         )
                     )
                     ->andWhere($orgQueryBuilder->expr()->eq('deleted', 0))

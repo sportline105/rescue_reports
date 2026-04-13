@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace nkfire\RescueReports\Utility;
+use Doctrine\DBAL\ParameterType;
 
 use TYPO3\CMS\Backend\Form\FormDataProvider\TcaSelectItems;
 
@@ -17,7 +18,7 @@ class StationItemsProcessor
                 ->select('uid', 'name')
                 ->from('tx_rescuereports_domain_model_station')
                 ->where(
-                    $queryBuilder->expr()->eq('brigade', $queryBuilder->createNamedParameter($brigadeUid, \PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq('brigade', $queryBuilder->createNamedParameter($brigadeUid, ParameterType::INTEGER))
                 )
                 ->executeQuery();
 

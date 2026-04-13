@@ -1,23 +1,27 @@
 # rescue_reports – TYPO3-Extension für Feuerwehr-Einsatzberichte
 
-Detaillierte Einsatzberichte für Feuerwehren und BOS. Die Extension stellt Frontend-Plugins für Einsatzlisten, Statistiken, ein Sidebar-Widget und einen RSS-Feed bereit.
+Detaillierte Einsatzberichte für Feuerwehren und BOS mit modernem Event-System. Die Extension stellt Frontend-Plugins für Einsatzlisten, Statistiken, ein Sidebar-Widget und einen RSS-Feed bereit. Vollständig optimiert für TYPO3 13 und 14.
 
 **Extension-Key:** `rescue_reports`  
-**TYPO3:** 11.5+  
-**PHP:** 7.4 – 8.2  
+**TYPO3:** 13.0 – 14.99  
+**PHP:** 8.2 – 8.99  
 **Lizenz:** GPL-2.0-or-later
 
 ---
 
 ## Installation & Ersteinrichtung
 
-Nach der Installation wird empfohlen, den **Upgrade Wizard** in der TYPO3-Backend-Systemwartung auszuführen. Dieser richtet folgendes ein:
+Nach der Installation wird empfohlen, den **Initialierungs-Wizard** in der TYPO3-Backend-Systemwartung (`Wartung` → `Upgrade Wizards`) auszuführen. Dieser richtet folgendes ein:
 
 - Einen Speicherordner für die Extension-Datensätze
 - Gängige deutsche BOS-Organisationen (Behörden und Organisationen mit Sicherheitsaufgaben)
 - Typische Fahrzeugtypen
 
 Der Wizard ist optional; alle Datensätze lassen sich auch manuell anlegen.
+
+### Site Set
+
+Diese Extension bietet ein vorkonfiguriertes Site Set (`rescue_reports/rescue-reports`) mit allen notwendigen TypoScript-Einstellungen. Bei der Site-Erstellung kann dieses Set automatisch angewendet werden.
 
 ---
 
@@ -176,6 +180,13 @@ Die Suche durchsucht folgende Felder: Titel, Beschreibung, Einsatzort, Einsatzar
 ## Technische Hinweise
 
 - **Einsatznummern** werden dynamisch per Station und Jahr berechnet (laufende Nummer `001`, `002`, …) und können stationsspezifische Präfixe tragen.
-- **Slug-Routing** für sprechende URLs der Detailansicht ist vorbereitet.
+- **Slug-Routing** für sprechende URLs der Detailansicht ist vorbereitet (mit `slug` und `slug_source` Feldern).
 - **RSS-Feed** wird über einen eigenen `typeNum = 100` ausgeliefert; Content-Type `application/rss+xml`.
-- **TypoScript-Einbindung** über `Configuration/TypoScript/setup.typoscript`.
+- **TypoScript-Konfiguration** wird automatisch über TYPO3 13+ Site Sets geladen (`Configuration/Sets/RescueReports/`).
+- **Event-basierte Architektur**: Moderne TYPO3 13/14 Event Listener ersetzen alte Hook-Patterns
+  - Fahrzeugnamen werden automatisch beim Erstellen eines Events generiert
+  - Slug-Quellen werden automatisch bei Datenerstellung/-änderung aktualisiert
+- **Datenbankschema**: Vollständig kompatibel mit TYPO3 13 und 14, mit Unterstützung für:
+  - Versionierung (Workspace-Management)
+  - Mehrsprachigkeit (L10n)
+  - Zeitbasierte Zugriffskontrolle (starttime/endtime)

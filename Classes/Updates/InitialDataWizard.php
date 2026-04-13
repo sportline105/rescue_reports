@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace nkfire\RescueReports\Updates;
+use Doctrine\DBAL\ParameterType;
 
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Database\ConnectionPool;

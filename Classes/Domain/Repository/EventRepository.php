@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace nkfire\RescueReports\Domain\Repository;
 
-use PDO;
+use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -229,15 +229,15 @@ class EventRepository extends Repository
             ->where(
                 $queryBuilder->expr()->eq(
                     'e.deleted',
-                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
                 ),
                 $queryBuilder->expr()->eq(
                     'e.hidden',
-                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
                 ),
                 $queryBuilder->expr()->eq(
                     'mm.uid_foreign',
-                    $queryBuilder->createNamedParameter($stationUid, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($stationUid, ParameterType::INTEGER)
                 )
             );
 
@@ -354,15 +354,15 @@ class EventRepository extends Repository
             ->where(
                 $queryBuilder->expr()->eq(
                     'e.deleted',
-                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
                 ),
                 $queryBuilder->expr()->eq(
                     'e.hidden',
-                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
                 ),
                 $queryBuilder->expr()->eq(
                     'mm.uid_foreign',
-                    $queryBuilder->createNamedParameter($stationUid, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($stationUid, ParameterType::INTEGER)
                 ),
                 $queryBuilder->expr()->gte(
                     'e.start',
@@ -380,7 +380,7 @@ class EventRepository extends Repository
                         ),
                         $queryBuilder->expr()->lte(
                             'e.uid',
-                            $queryBuilder->createNamedParameter($currentEventUid, PDO::PARAM_INT)
+                            $queryBuilder->createNamedParameter($currentEventUid, ParameterType::INTEGER)
                         )
                     )
                 )
@@ -426,8 +426,8 @@ class EventRepository extends Repository
             ->leftJoin('tmm', 'tx_rescuereports_domain_model_type', 't', 'tmm.uid_foreign = t.uid')
             ->leftJoin('t', 'tx_rescuereports_domain_model_category', 'cat', 't.category = cat.uid')
             ->where(
-                $queryBuilder->expr()->eq('e.deleted', $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('e.hidden', $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)),
+                $queryBuilder->expr()->eq('e.deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
+                $queryBuilder->expr()->eq('e.hidden', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
                 $queryBuilder->expr()->isNotNull('e.start')
             );
 
@@ -435,7 +435,7 @@ class EventRepository extends Repository
             $queryBuilder
                 ->innerJoin('e', 'tx_rescuereports_event_station_mm', 'smm', 'e.uid = smm.uid_local')
                 ->andWhere(
-                    $queryBuilder->expr()->eq('smm.uid_foreign', $queryBuilder->createNamedParameter($stationUid, PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq('smm.uid_foreign', $queryBuilder->createNamedParameter($stationUid, ParameterType::INTEGER))
                 );
         }
 
@@ -594,8 +594,8 @@ class EventRepository extends Repository
             )
             ->from('tx_rescuereports_domain_model_event', 'e')
             ->where(
-                $queryBuilder->expr()->eq('e.deleted', $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('e.hidden', $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)),
+                $queryBuilder->expr()->eq('e.deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
+                $queryBuilder->expr()->eq('e.hidden', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
                 $queryBuilder->expr()->isNotNull('e.start')
             );
 
@@ -603,7 +603,7 @@ class EventRepository extends Repository
             $queryBuilder
                 ->innerJoin('e', 'tx_rescuereports_event_station_mm', 'smm', 'e.uid = smm.uid_local')
                 ->andWhere(
-                    $queryBuilder->expr()->eq('smm.uid_foreign', $queryBuilder->createNamedParameter($stationUid, PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq('smm.uid_foreign', $queryBuilder->createNamedParameter($stationUid, ParameterType::INTEGER))
                 );
         }
 
@@ -782,8 +782,8 @@ class EventRepository extends Repository
             )
             ->from('tx_rescuereports_domain_model_event', 'e')
             ->where(
-                $queryBuilder->expr()->eq('e.deleted', $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('e.hidden', $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)),
+                $queryBuilder->expr()->eq('e.deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
+                $queryBuilder->expr()->eq('e.hidden', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
                 $queryBuilder->expr()->isNotNull('e.start'),
                 $queryBuilder->expr()->isNotNull('e.end')
             );
@@ -792,7 +792,7 @@ class EventRepository extends Repository
             $queryBuilder
                 ->innerJoin('e', 'tx_rescuereports_event_station_mm', 'smm', 'e.uid = smm.uid_local')
                 ->andWhere(
-                    $queryBuilder->expr()->eq('smm.uid_foreign', $queryBuilder->createNamedParameter($stationUid, PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq('smm.uid_foreign', $queryBuilder->createNamedParameter($stationUid, ParameterType::INTEGER))
                 );
         }
 
@@ -828,8 +828,8 @@ class EventRepository extends Repository
             ->addSelectLiteral('YEAR(e.start) AS year')
             ->from('tx_rescuereports_domain_model_event', 'e')
             ->where(
-                $queryBuilder->expr()->eq('e.deleted', $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)),
-                $queryBuilder->expr()->eq('e.hidden', $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)),
+                $queryBuilder->expr()->eq('e.deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
+                $queryBuilder->expr()->eq('e.hidden', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
                 $queryBuilder->expr()->isNotNull('e.start')
             );
 
@@ -837,7 +837,7 @@ class EventRepository extends Repository
             $queryBuilder
                 ->innerJoin('e', 'tx_rescuereports_event_station_mm', 'smm', 'e.uid = smm.uid_local')
                 ->andWhere(
-                    $queryBuilder->expr()->eq('smm.uid_foreign', $queryBuilder->createNamedParameter($stationUid, PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq('smm.uid_foreign', $queryBuilder->createNamedParameter($stationUid, ParameterType::INTEGER))
                 );
         }
 
@@ -880,10 +880,10 @@ class EventRepository extends Repository
             ->innerJoin('tmm', 'tx_rescuereports_domain_model_type', 't', 'tmm.uid_foreign = t.uid')
             ->leftJoin('t', 'tx_rescuereports_domain_model_category', 'cat', 't.category = cat.uid')
             ->where(
-                $qb->expr()->eq('e.deleted', $qb->createNamedParameter(0, \PDO::PARAM_INT)),
-                $qb->expr()->eq('e.hidden', $qb->createNamedParameter(0, \PDO::PARAM_INT)),
-                $qb->expr()->eq('t.deleted', $qb->createNamedParameter(0, \PDO::PARAM_INT)),
-                $qb->expr()->eq('t.hidden', $qb->createNamedParameter(0, \PDO::PARAM_INT)),
+                $qb->expr()->eq('e.deleted', $qb->createNamedParameter(0, ParameterType::INTEGER)),
+                $qb->expr()->eq('e.hidden', $qb->createNamedParameter(0, ParameterType::INTEGER)),
+                $qb->expr()->eq('t.deleted', $qb->createNamedParameter(0, ParameterType::INTEGER)),
+                $qb->expr()->eq('t.hidden', $qb->createNamedParameter(0, ParameterType::INTEGER)),
                 $qb->expr()->isNotNull('e.start')
             )
             ->groupBy('year', 'cat.uid', 't.uid', 't.title')
@@ -895,7 +895,7 @@ class EventRepository extends Repository
         if ($stationUid > 0) {
             $qb->innerJoin('e', 'tx_rescuereports_event_station_mm', 'smm', 'e.uid = smm.uid_local')
                 ->andWhere(
-                    $qb->expr()->eq('smm.uid_foreign', $qb->createNamedParameter($stationUid, \PDO::PARAM_INT))
+                    $qb->expr()->eq('smm.uid_foreign', $qb->createNamedParameter($stationUid, ParameterType::INTEGER))
                 );
         }
 
