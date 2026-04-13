@@ -212,8 +212,6 @@ class EventRepository extends Repository
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
 
-        $queryBuilder->getRestrictions()->removeAll();
-
         $queryBuilder
             ->select('e.uid')
             ->from('tx_rescuereports_domain_model_event', 'e')
@@ -335,8 +333,6 @@ class EventRepository extends Repository
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
 
-        $queryBuilder->getRestrictions()->removeAll();
-
         $yearStart = new \DateTime($date->format('Y-01-01 00:00:00'));
 
         $count = $queryBuilder
@@ -411,8 +407,6 @@ class EventRepository extends Repository
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
-
-        $queryBuilder->getRestrictions()->removeAll();
 
         $queryBuilder
             ->select('cat.uid AS cat_uid', 'cat.title AS cat_title', 'cat.color AS cat_color')
@@ -583,8 +577,6 @@ class EventRepository extends Repository
 
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
-
-        $queryBuilder->getRestrictions()->removeAll();
 
         $queryBuilder
             ->addSelectLiteral(
@@ -773,8 +765,6 @@ class EventRepository extends Repository
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
 
-        $queryBuilder->getRestrictions()->removeAll();
-
         $queryBuilder
             ->addSelectLiteral(
                 'YEAR(e.start) AS year',
@@ -821,8 +811,6 @@ class EventRepository extends Repository
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
-
-        $queryBuilder->getRestrictions()->removeAll();
 
         $queryBuilder
             ->addSelectLiteral('YEAR(e.start) AS year')
@@ -871,7 +859,6 @@ class EventRepository extends Repository
     {
         $qb = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
-        $qb->getRestrictions()->removeAll();
 
         $qb->select('cat.uid AS cat_uid', 't.title AS type_title')
             ->addSelectLiteral('YEAR(e.start) AS year', 'COUNT(DISTINCT e.uid) AS cnt')

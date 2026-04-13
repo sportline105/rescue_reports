@@ -817,8 +817,6 @@ class EventController extends ActionController
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_vehicle');
 
-        $queryBuilder->getRestrictions()->removeAll();
-
         $rows = $queryBuilder
             ->select('uid')
             ->from('tx_rescuereports_domain_model_vehicle')
