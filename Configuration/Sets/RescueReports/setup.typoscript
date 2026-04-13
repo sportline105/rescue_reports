@@ -1,0 +1,4 @@
+# Rescue Reports Site Set TypoScript Configuration
+# Import main extension TypoScript setup
+
+@import 'EXT:rescue_reports/Configuration/TypoScript/setup.typoscript'
