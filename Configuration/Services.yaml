@@ -9,6 +9,7 @@ services:
     exclude:
       - '../Classes/Domain/Model/*'
       - '../Classes/Domain/Repository/*'
+      - '../Classes/Controller/Backend/*'
 
   # Repositories are handled by Extbase, not Symfony DI
   nkfire\RescueReports\Domain\Repository\:
