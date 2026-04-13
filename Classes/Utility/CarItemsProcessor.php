@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace nkfire\RescueReports\Utility;
+use Doctrine\DBAL\ArrayParameterType;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -10,7 +11,7 @@ class CarItemsProcessor
 {
     public function filterByStations(array &$config)
     {
-        $stationUids = GeneralUtility::intExplode(',', $config['row']['station'], true);
+        $stationUids = GeneralUtility::intExplode(',', (string)($config['row']['station'] ?? ''), true);
 
         if (!empty($stationUids)) {
             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
@@ -19,7 +20,7 @@ class CarItemsProcessor
                 ->select('uid_foreign')
                 ->from('tx_rescuereports_domain_model_car_station_mm')
                 ->where(
-                    $queryBuilder->expr()->in('uid_local', $queryBuilder->createNamedParameter($stationUids, Connection::PARAM_INT_ARRAY))
+                    $queryBuilder->expr()->in('uid_local', $queryBuilder->createNamedParameter($stationUids, ArrayParameterType::INT))
                 )
                 ->executeQuery();
 
@@ -32,7 +33,7 @@ class CarItemsProcessor
                     ->select('uid', 'title')
                     ->from('tx_rescuereports_domain_model_car')
                     ->where(
-                        $carQueryBuilder->expr()->in('uid', $carQueryBuilder->createNamedParameter($carUids, Connection::PARAM_INT_ARRAY))
+                        $carQueryBuilder->expr()->in('uid', $carQueryBuilder->createNamedParameter($carUids, ArrayParameterType::INT))
                     )
                     ->executeQuery();
 

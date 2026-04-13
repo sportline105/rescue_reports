@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace nkfire\RescueReports\Utility;
 
+use Doctrine\DBAL\ArrayParameterType;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
@@ -18,7 +19,7 @@ class EventVehicleSelectionUtility
         $stationField = $eventRow['stations'];
         $stationIds = is_array($stationField)
             ? array_map('intval', $stationField)
-            : GeneralUtility::intExplode(',', $stationField, true);
+            : GeneralUtility::intExplode(',', (string)$stationField, true);
 
         if (empty($stationIds)) {
             return;
@@ -35,7 +36,7 @@ class EventVehicleSelectionUtility
             ->innerJoin('v', 'tx_rescuereports_domain_model_station', 's', 'v.station = s.uid')
             ->leftJoin('s', 'tx_rescuereports_domain_model_brigade', 'b', 's.brigade = b.uid')
             ->where(
-                $queryBuilder->expr()->in('v.station', $queryBuilder->createNamedParameter($stationIds, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
+                $queryBuilder->expr()->in('v.station', $queryBuilder->createNamedParameter($stationIds, ArrayParameterType::INT))
             )
             ->orderBy('b.sorting')
             ->addOrderBy('station_sorting')
@@ -46,7 +47,7 @@ class EventVehicleSelectionUtility
         $grouped = [];
 
         foreach ($vehicles as $vehicle) {
-            $groupLabel = str_pad((int)$vehicle['brigade_sorting'], 6, '0', STR_PAD_LEFT) . '_' . ($vehicle['brigade_name'] ?? 'Unbekannt');
+            $groupLabel = str_pad((string)($vehicle['brigade_sorting'] ?? 0), 6, '0', STR_PAD_LEFT) . '_' . ($vehicle['brigade_name'] ?? 'Unbekannt');
             $itemLabel = $vehicle['station_name'] . ' – ' . $vehicle['name'];
             $grouped[$groupLabel][] = [$itemLabel, (int)$vehicle['uid']];
         }
@@ -69,7 +70,7 @@ class EventVehicleSelectionUtility
                 ->innerJoin('v', 'tx_rescuereports_domain_model_station', 's', 'v.station = s.uid')
                 ->leftJoin('s', 'tx_rescuereports_domain_model_brigade', 'b', 's.brigade = b.uid')
                 ->where(
-                    $queryBuilder->expr()->in('v.uid', $queryBuilder->createNamedParameter($alreadySelectedIds, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
+                    $queryBuilder->expr()->in('v.uid', $queryBuilder->createNamedParameter($alreadySelectedIds, ArrayParameterType::INT))
                 )
                 ->executeQuery()
                 ->fetchAllAssociative();

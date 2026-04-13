@@ -24,6 +24,10 @@ services:
     tags:
       - name: event.listener
         event: 'TYPO3\CMS\Core\DataHandling\Event\AfterRecordCreatedEvent'
+        method: onAfterRecordCreated
+      - name: event.listener
+        event: 'TYPO3\CMS\Core\DataHandling\Event\AfterRecordUpdatedEvent'
+        method: onAfterRecordUpdated
 
   nkfire\RescueReports\EventListener\DataHandlerEventListener:
     tags:

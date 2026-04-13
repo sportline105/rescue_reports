@@ -17,7 +17,12 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
     );
 
     $pluginSignature = 'rescuereports_eventlist';
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignature] = 'pi_flexform';
+    ExtensionManagementUtility::addToAllTCAtypes(
+        'tt_content',
+        'pi_flexform',
+        $pluginSignature,
+        'after:subheader'
+    );
     ExtensionManagementUtility::addPiFlexFormValue(
         $pluginSignature,
         'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml'
@@ -32,7 +37,12 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
     );
 
     $pluginSignatureStats = 'rescuereports_statistics';
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureStats] = 'pi_flexform';
+    ExtensionManagementUtility::addToAllTCAtypes(
+        'tt_content',
+        'pi_flexform',
+        $pluginSignatureStats,
+        'after:subheader'
+    );
     ExtensionManagementUtility::addPiFlexFormValue(
         $pluginSignatureStats,
         'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml'
@@ -47,7 +57,12 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
     );
 
     $pluginSignatureSidebar = 'rescuereports_sidebar';
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureSidebar] = 'pi_flexform';
+    ExtensionManagementUtility::addToAllTCAtypes(
+        'tt_content',
+        'pi_flexform',
+        $pluginSignatureSidebar,
+        'after:subheader'
+    );
     ExtensionManagementUtility::addPiFlexFormValue(
         $pluginSignatureSidebar,
         'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml'
@@ -62,7 +77,12 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
     );
 
     $pluginSignatureRss = 'rescuereports_rss';
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureRss] = 'pi_flexform';
+    ExtensionManagementUtility::addToAllTCAtypes(
+        'tt_content',
+        'pi_flexform',
+        $pluginSignatureRss,
+        'after:subheader'
+    );
     ExtensionManagementUtility::addPiFlexFormValue(
         $pluginSignatureRss,
         'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml'

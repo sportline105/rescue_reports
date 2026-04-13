@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace nkfire\RescueReports\Utility;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -12,7 +13,7 @@ class CarFilterUtility
     {
         $selectedStationUids = $config['row']['stations'] ?? [];
         if (!is_array($selectedStationUids)) {
-            $selectedStationUids = GeneralUtility::intExplode(',', $selectedStationUids, true);
+            $selectedStationUids = GeneralUtility::intExplode(',', (string)$selectedStationUids, true);
         }
 
         $config['items'] = [];
@@ -29,7 +30,7 @@ class CarFilterUtility
                 ->where(
                     $queryBuilder->expr()->in(
                         'uid_local',
-                        $queryBuilder->createNamedParameter($selectedStationUids, \TYPO3\CMS\Core\Database\Connection::PARAM_INT_ARRAY)
+                        $queryBuilder->createNamedParameter($selectedStationUids, \TYPO3\CMS\Core\Database\ArrayParameterType::INT)
                     )
                 )
                 ->executeQuery()
@@ -138,7 +139,7 @@ class CarFilterUtility
             if (is_array($config['row']['cars'])) {
                 $selectedCarUids = $config['row']['cars'];
             } else {
-                $selectedCarUids = GeneralUtility::intExplode(',', $config['row']['cars'], true);
+                $selectedCarUids = GeneralUtility::intExplode(',', (string)$config['row']['cars'], true);
             }
         }
 

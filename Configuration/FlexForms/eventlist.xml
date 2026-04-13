@@ -3,14 +3,11 @@
     <sheets>
         <general>
             <ROOT>
-                <TCEforms>
                     <sheetTitle>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:sheet.general</sheetTitle>
-                </TCEforms>
                 <type>array</type>
                 <el>
 
                     <settings.templateVariant>
-                        <TCEforms>
                             <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:templateVariant</label>
                             <config>
                                 <type>select</type>
@@ -27,16 +24,14 @@
                                 </items>
                                 <default>bootstrap</default>
                             </config>
-                        </TCEforms>
                     </settings.templateVariant>
 
                     <settings.defaultStation>
-                        <TCEforms>
                             <label>Standard-Ortsfeuerwehr</label>
                             <config>
                                 <type>select</type>
                                 <renderType>selectSingle</renderType>
-                                <itemsProcFunc>Nkfire\RescueReports\UserFunctions\FlexFormStationItems->addPrimaryStations</itemsProcFunc>
+                                <itemsProcFunc>nkfire\RescueReports\UserFunctions\FlexFormStationItems->addPrimaryStations</itemsProcFunc>
                                 <items>
                                     <numIndex index="0">
                                         <numIndex index="0">-- keine Auswahl --</numIndex>
@@ -47,11 +42,9 @@
                                 <maxitems>1</maxitems>
                                 <size>1</size>
                             </config>
-                        </TCEforms>
                     </settings.defaultStation>
 
                     <settings.showStationFilter>
-                        <TCEforms>
                             <label>Auswahl der Ortsfeuerwehr im Frontend anzeigen</label>
                             <config>
                                 <type>check</type>
@@ -62,11 +55,9 @@
                                 </items>
                                 <default>1</default>
                             </config>
-                        </TCEforms>
                     </settings.showStationFilter>
 
                     <settings.maxCount>
-                        <TCEforms>
                             <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:maxCount</label>
                             <config>
                                 <type>input</type>
@@ -74,33 +65,27 @@
                                 <size>5</size>
                                 <default>0</default>
                             </config>
-                        </TCEforms>
                     </settings.maxCount>
 
                     <settings.dateFrom>
-                        <TCEforms>
                             <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:dateFrom</label>
                             <config>
                                 <type>input</type>
                                 <renderType>inputDateTime</renderType>
                                 <eval>date</eval>
                             </config>
-                        </TCEforms>
                     </settings.dateFrom>
 
                     <settings.dateTo>
-                        <TCEforms>
                             <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:dateTo</label>
                             <config>
                                 <type>input</type>
                                 <renderType>inputDateTime</renderType>
                                 <eval>date</eval>
                             </config>
-                        </TCEforms>
                     </settings.dateTo>
 
                     <settings.enableSearch>
-                        <TCEforms>
                             <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:enableSearch</label>
                             <config>
                                 <type>check</type>
@@ -110,11 +95,9 @@
                                     </numIndex>
                                 </items>
                             </config>
-                        </TCEforms>
                     </settings.enableSearch>
 
                     <settings.detailPageUid>
-                        <TCEforms>
                             <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:detailPageUid</label>
                             <config>
                                 <type>group</type>
@@ -124,11 +107,9 @@
                                 <minitems>1</minitems>
                                 <maxitems>1</maxitems>
                             </config>
-                        </TCEforms>
                     </settings.detailPageUid>
 
                     <settings.enableDateFilter>
-                        <TCEforms>
                             <label>Datumsfilter im Frontend anzeigen</label>
                             <config>
                                 <type>check</type>
@@ -139,11 +120,9 @@
                                 </items>
                                 <default>0</default>
                             </config>
-                        </TCEforms>
                     </settings.enableDateFilter>
 
                     <settings.enableYearFilter>
-                        <TCEforms>
                             <label>Jahresfilter anzeigen</label>
                             <config>
                                 <type>check</type>
@@ -154,11 +133,9 @@
                                 </items>
                                 <default>1</default>
                             </config>
-                        </TCEforms>
                     </settings.enableYearFilter>
 
                     <settings.yearFilterDefault>
-                        <TCEforms>
                             <label>Jahresfilter: Standardauswahl beim ersten Aufruf</label>
                             <config>
                                 <type>select</type>
@@ -175,11 +152,9 @@
                                 </items>
                                 <default>all</default>
                             </config>
-                        </TCEforms>
                     </settings.yearFilterDefault>
 
                     <settings.statisticsYears>
-                        <TCEforms>
                             <label>Statistik: Anzahl angezeigter Jahre (0 = alle)</label>
                             <config>
                                 <type>input</type>
@@ -188,11 +163,9 @@
                                 <default>0</default>
                                 <placeholder>0 = alle Jahre</placeholder>
                             </config>
-                        </TCEforms>
                     </settings.statisticsYears>
 
                     <settings.showStatistics>
-                        <TCEforms>
                             <label>Statistik anzeigen</label>
                             <config>
                                 <type>check</type>
@@ -203,11 +176,9 @@
                                 </items>
                                 <default>0</default>
                             </config>
-                        </TCEforms>
                     </settings.showStatistics>
 
                     <settings.statisticsPosition>
-                        <TCEforms>
                             <label>Position der Statistik</label>
                             <config>
                                 <type>select</type>
@@ -224,11 +195,9 @@
                                 </items>
                                 <default>below</default>
                             </config>
-                        </TCEforms>
                     </settings.statisticsPosition>
 
                     <settings.showMapView>
-                        <TCEforms>
                             <label>Kartenansicht anzeigen</label>
                             <config>
                                 <type>check</type>
@@ -239,11 +208,9 @@
                                 </items>
                                 <default>0</default>
                             </config>
-                        </TCEforms>
                     </settings.showMapView>
 
                     <settings.mapHeight>
-                        <TCEforms>
                             <label>Kartenhöhe in Pixeln</label>
                             <config>
                                 <type>input</type>
@@ -252,11 +219,9 @@
                                 <default>400</default>
                                 <placeholder>400</placeholder>
                             </config>
-                        </TCEforms>
                     </settings.mapHeight>
 
                     <settings.mapZoom>
-                        <TCEforms>
                             <label>Standard-Zoomstufe (1–19)</label>
                             <config>
                                 <type>input</type>
@@ -264,11 +229,9 @@
                                 <size>4</size>
                                 <default>11</default>
                             </config>
-                        </TCEforms>
                     </settings.mapZoom>
 
                     <settings.mapPosition>
-                        <TCEforms>
                             <label>Position der Karte</label>
                             <config>
                                 <type>select</type>
@@ -285,7 +248,6 @@
                                 </items>
                                 <default>below</default>
                             </config>
-                        </TCEforms>
                     </settings.mapPosition>
 
                 </el>

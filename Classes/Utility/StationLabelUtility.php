@@ -29,7 +29,7 @@ class StationLabelUtility
             $brigadeName = $brigadeData[$brigadeId]['name'] ?? 'Unbekannt';
             $sorting = $brigadeData[$brigadeId]['sorting'] ?? 9999;
 
-            $key = str_pad($sorting, 6, '0', STR_PAD_LEFT) . '_' . $brigadeName;
+            $key = str_pad((string)$sorting, 6, '0', STR_PAD_LEFT) . '_' . $brigadeName;
             $grouped[$key][] = [$station['name'], $station['uid']];
         }
 

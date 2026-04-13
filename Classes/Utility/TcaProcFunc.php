@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace nkfire\RescueReports\Utility;
+use Doctrine\DBAL\ArrayParameterType;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -35,7 +36,7 @@ class TcaProcFunc
             ->from('tx_rescuereports_station_car_mm', 'mm')
             ->innerJoin('mm', 'tx_rescuereports_domain_model_car', 'car', 'car.uid = mm.uid_foreign')
             ->where(
-                $queryBuilder->expr()->in('mm.uid_local', $queryBuilder->createNamedParameter($stationIds, Connection::PARAM_INT_ARRAY))
+                $queryBuilder->expr()->in('mm.uid_local', $queryBuilder->createNamedParameter($stationIds, ArrayParameterType::INT))
             )
             ->groupBy('car.uid')
             ->orderBy('car.name');
