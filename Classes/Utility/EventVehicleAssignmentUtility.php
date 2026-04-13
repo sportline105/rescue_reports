@@ -56,7 +56,7 @@ class EventVehicleAssignmentUtility
             ->innerJoin('sc', 'tx_rescuereports_domain_model_station', 's', 's.uid = sc.uid_local')
             ->innerJoin('sc', 'tx_rescuereports_domain_model_car', 'c', 'c.uid = sc.uid_foreign')
             ->where(
-                $queryBuilder->expr()->in('sc.uid_local', $queryBuilder->createNamedParameter($stationUids, ArrayParameterType::INT))
+                $queryBuilder->expr()->in('sc.uid_local', $queryBuilder->createNamedParameter($stationUids, ArrayParameterType::INTEGER))
             )
             ->orderBy('s.name', 'ASC')
             ->addOrderBy('c.name', 'ASC')

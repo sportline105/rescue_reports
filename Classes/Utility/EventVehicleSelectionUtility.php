@@ -36,7 +36,7 @@ class EventVehicleSelectionUtility
             ->innerJoin('v', 'tx_rescuereports_domain_model_station', 's', 'v.station = s.uid')
             ->leftJoin('s', 'tx_rescuereports_domain_model_brigade', 'b', 's.brigade = b.uid')
             ->where(
-                $queryBuilder->expr()->in('v.station', $queryBuilder->createNamedParameter($stationIds, ArrayParameterType::INT))
+                $queryBuilder->expr()->in('v.station', $queryBuilder->createNamedParameter($stationIds, ArrayParameterType::INTEGER))
             )
             ->orderBy('b.sorting')
             ->addOrderBy('station_sorting')
@@ -64,13 +64,14 @@ class EventVehicleSelectionUtility
         // Bereits gewählte Fahrzeuge zusätzlich einfügen
         $alreadySelectedIds = array_unique(array_column($config['itemArray'] ?? [], 1));
         if (!empty($alreadySelectedIds)) {
-            $existing = $connection->createQueryBuilder()
+            $existingQueryBuilder = $connection->createQueryBuilder();
+            $existing = $existingQueryBuilder
                 ->select('v.uid', 'v.name', 's.name AS station_name', 'b.name AS brigade_name')
                 ->from('tx_rescuereports_domain_model_vehicle', 'v')
                 ->innerJoin('v', 'tx_rescuereports_domain_model_station', 's', 'v.station = s.uid')
                 ->leftJoin('s', 'tx_rescuereports_domain_model_brigade', 'b', 's.brigade = b.uid')
                 ->where(
-                    $queryBuilder->expr()->in('v.uid', $queryBuilder->createNamedParameter($alreadySelectedIds, ArrayParameterType::INT))
+                    $existingQueryBuilder->expr()->in('v.uid', $existingQueryBuilder->createNamedParameter($alreadySelectedIds, ArrayParameterType::INTEGER))
                 )
                 ->executeQuery()
                 ->fetchAllAssociative();

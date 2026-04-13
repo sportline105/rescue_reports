@@ -36,7 +36,7 @@ class TcaProcFunc
             ->from('tx_rescuereports_station_car_mm', 'mm')
             ->innerJoin('mm', 'tx_rescuereports_domain_model_car', 'car', 'car.uid = mm.uid_foreign')
             ->where(
-                $queryBuilder->expr()->in('mm.uid_local', $queryBuilder->createNamedParameter($stationIds, ArrayParameterType::INT))
+                $queryBuilder->expr()->in('mm.uid_local', $queryBuilder->createNamedParameter($stationIds, ArrayParameterType::INTEGER))
             )
             ->groupBy('car.uid')
             ->orderBy('car.name');

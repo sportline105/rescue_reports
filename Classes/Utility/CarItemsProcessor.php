@@ -20,7 +20,7 @@ class CarItemsProcessor
                 ->select('uid_foreign')
                 ->from('tx_rescuereports_domain_model_car_station_mm')
                 ->where(
-                    $queryBuilder->expr()->in('uid_local', $queryBuilder->createNamedParameter($stationUids, ArrayParameterType::INT))
+                    $queryBuilder->expr()->in('uid_local', $queryBuilder->createNamedParameter($stationUids, ArrayParameterType::INTEGER))
                 )
                 ->executeQuery();
 
@@ -33,7 +33,7 @@ class CarItemsProcessor
                     ->select('uid', 'title')
                     ->from('tx_rescuereports_domain_model_car')
                     ->where(
-                        $carQueryBuilder->expr()->in('uid', $carQueryBuilder->createNamedParameter($carUids, ArrayParameterType::INT))
+                        $carQueryBuilder->expr()->in('uid', $carQueryBuilder->createNamedParameter($carUids, ArrayParameterType::INTEGER))
                     )
                     ->executeQuery();
 
