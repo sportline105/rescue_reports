@@ -82,7 +82,10 @@ $GLOBALS['TCA']['tt_content']['columns']['pi_flexform'] = [
         'type' => 'flex',
         'ds_pointerField' => 'list_type,CType',
         'ds' => [
-            'default' => 'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
+            'list,rescuereports_eventlist' => 'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
+            'list,rescuereports_statistics' => 'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml',
+            'list,rescuereports_sidebar' => 'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml',
+            'list,rescuereports_rss' => 'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml',
         ],
     ],
 ];
