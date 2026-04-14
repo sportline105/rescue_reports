@@ -75,3 +75,16 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 })();
 
+// Configure pi_flexform field for all list type plugins (required for FlexForm to display)
+$GLOBALS['TCA']['tt_content']['columns']['pi_flexform'] = [
+    'label' => 'Plugin Configuration',
+    'config' => [
+        'type' => 'flex',
+        'ds_pointerField' => 'list_type,CType',
+        'ds' => [
+            'default' => 'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
+        ],
+    ],
+];
+
+
