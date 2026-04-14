@@ -5,8 +5,7 @@ mod.wizards.newContentElement.wizardItems.common {
             title = Rescue Reports: Einsatzübersicht
             description = Vollständige Einsatzliste mit Detailansicht
             tt_content_defValues {
-                CType = list
-                list_type = rescuereports_eventlist
+                CType = rescuereports_eventlist
             }
         }
 
@@ -15,8 +14,7 @@ mod.wizards.newContentElement.wizardItems.common {
             title = Rescue Reports: Sidebar
             description = Kompakte Übersicht für Seitenleisten
             tt_content_defValues {
-                CType = list
-                list_type = rescuereports_sidebar
+                CType = rescuereports_sidebar
             }
         }
     }
