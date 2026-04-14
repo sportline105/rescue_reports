@@ -3,91 +3,93 @@ declare(strict_types=1);
 
 defined('TYPO3') or die();
 
-use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 (function (): void {
 
-    // Hauptplugin
-    $pluginSignatureEventlist = ExtensionUtility::registerPlugin(
+    // Hauptplugin: Eventlist
+    $ctypeEventlist = ExtensionUtility::registerPlugin(
         'RescueReports',
         'Eventlist',
         'Rescue Reports: Einsatzübersicht',
-        'rescue_reports_eventlist',
-        'common',
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml'
+        'rescue_reports_eventlist'
     );
 
-    // Register FlexForm using the returned plugin signature
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureEventlist] = 'pi_flexform';
+    ExtensionManagementUtility::addToAllTCAtypes(
+        'tt_content',
+        '--div--;Konfiguration,pi_flexform,pages,recursive,',
+        $ctypeEventlist,
+        'after:subheader'
+    );
+
     ExtensionManagementUtility::addPiFlexFormValue(
-        $pluginSignatureEventlist,
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml'
+        '*',
+        'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
+        $ctypeEventlist
     );
 
     // Statistik-Plugin
-    $pluginSignatureStatistics = ExtensionUtility::registerPlugin(
+    $ctypeStatistics = ExtensionUtility::registerPlugin(
         'RescueReports',
         'Statistics',
         'Rescue Reports: Jahresstatistik',
-        'rescue_reports_statistics',
-        'common',
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml'
+        'rescue_reports_statistics'
     );
 
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureStatistics] = 'pi_flexform';
+    ExtensionManagementUtility::addToAllTCAtypes(
+        'tt_content',
+        '--div--;Konfiguration,pi_flexform,pages,recursive,',
+        $ctypeStatistics,
+        'after:subheader'
+    );
+
     ExtensionManagementUtility::addPiFlexFormValue(
-        $pluginSignatureStatistics,
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml'
+        '*',
+        'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml',
+        $ctypeStatistics
     );
 
     // Sidebar-Plugin
-    $pluginSignatureSidebar = ExtensionUtility::registerPlugin(
+    $ctypeSidebar = ExtensionUtility::registerPlugin(
         'RescueReports',
         'Sidebar',
         'Rescue Reports: Sidebar',
-        'rescue_reports_sidebar',
-        'common',
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml'
+        'rescue_reports_sidebar'
     );
 
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureSidebar] = 'pi_flexform';
+    ExtensionManagementUtility::addToAllTCAtypes(
+        'tt_content',
+        '--div--;Konfiguration,pi_flexform,pages,recursive,',
+        $ctypeSidebar,
+        'after:subheader'
+    );
+
     ExtensionManagementUtility::addPiFlexFormValue(
-        $pluginSignatureSidebar,
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml'
+        '*',
+        'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml',
+        $ctypeSidebar
     );
 
     // RSS-Feed-Plugin
-    $pluginSignatureRss = ExtensionUtility::registerPlugin(
+    $ctypeRss = ExtensionUtility::registerPlugin(
         'RescueReports',
         'Rss',
         'Rescue Reports: RSS-Feed',
-        'rescue_reports_rss',
-        'common',
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml'
+        'rescue_reports_rss'
     );
 
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignatureRss] = 'pi_flexform';
+    ExtensionManagementUtility::addToAllTCAtypes(
+        'tt_content',
+        '--div--;Konfiguration,pi_flexform,pages,recursive,',
+        $ctypeRss,
+        'after:subheader'
+    );
+
     ExtensionManagementUtility::addPiFlexFormValue(
-        $pluginSignatureRss,
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml'
+        '*',
+        'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml',
+        $ctypeRss
     );
 
 })();
-
-// Configure pi_flexform field for all list type plugins (required for FlexForm to display)
-$GLOBALS['TCA']['tt_content']['columns']['pi_flexform'] = [
-    'label' => 'Plugin Configuration',
-    'config' => [
-        'type' => 'flex',
-        'ds_pointerField' => 'list_type,CType',
-        'ds' => [
-            'list,rescuereports_eventlist' => 'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
-            'list,rescuereports_statistics' => 'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml',
-            'list,rescuereports_sidebar' => 'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml',
-            'list,rescuereports_rss' => 'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml',
-        ],
-    ],
-];
-
-

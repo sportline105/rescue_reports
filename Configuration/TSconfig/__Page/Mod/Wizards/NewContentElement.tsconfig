@@ -6,8 +6,7 @@ mod.wizards.newContentElement.wizardItems {
         title = Rescue Reports: Detaillierte Einsatzberichte für Feuerwehren und BOS
         description = Zeigt eine Liste von Einsätzen an
         tt_content_defValues {
-          CType = list
-          list_type = rescuereports_eventlist
+          CType = rescuereports_eventlist
         }
       }
     }
