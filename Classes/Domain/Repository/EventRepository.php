@@ -67,7 +67,7 @@ class EventRepository extends Repository
         }
 
         if (!empty($constraints)) {
-            $query->matching($query->logicalAnd($constraints));
+            $query->matching($query->logicalAnd(...$constraints));
         }
 
         if ($limit > 0) {
@@ -104,7 +104,7 @@ class EventRepository extends Repository
         $constraints = $this->buildDateConstraints($query, $dateFrom, $dateTo);
 
         if (!empty($constraints)) {
-            $query->matching($query->logicalAnd($constraints));
+            $query->matching($query->logicalAnd(...$constraints));
         }
 
         if ($limit > 0) {
