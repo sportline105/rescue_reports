@@ -10,6 +10,7 @@ class StationRepository extends Repository
     public function findPrimaryBrigadeStations()
     {
         $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectStoragePage(false);
 
         $query->matching(
             $query->logicalAnd(

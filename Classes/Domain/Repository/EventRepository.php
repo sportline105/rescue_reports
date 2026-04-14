@@ -18,6 +18,7 @@ class EventRepository extends Repository
     public function findByUid($uid)
     {
         $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectStoragePage(false);
         $query->matching($query->equals('uid', (int)$uid));
         $query->setLimit(1);
 
@@ -37,6 +38,7 @@ class EventRepository extends Repository
     public function findAllWithRelations(): QueryResultInterface
     {
         $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectStoragePage(false);
         $query->setOrderings($this->getDefaultOrderings());
 
         return $query->execute();
@@ -48,6 +50,7 @@ class EventRepository extends Repository
     public function search(string $searchWord = '', $dateFrom = null, $dateTo = null, int $limit = 0): QueryResultInterface
     {
         $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectStoragePage(false);
 
         $constraints = [];
 
@@ -100,6 +103,7 @@ class EventRepository extends Repository
     public function findFiltered($dateFrom = null, $dateTo = null, int $limit = 0): QueryResultInterface
     {
         $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectStoragePage(false);
 
         $constraints = $this->buildDateConstraints($query, $dateFrom, $dateTo);
 
@@ -303,6 +307,7 @@ class EventRepository extends Repository
     protected function findByUids(array $uids): QueryResultInterface
     {
         $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectStoragePage(false);
 
         if ($uids === []) {
             $query->matching($query->equals('uid', 0));
