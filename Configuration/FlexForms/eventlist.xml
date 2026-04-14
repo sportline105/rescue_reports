@@ -157,11 +157,11 @@
                             <renderType>selectSingle</renderType>
                             <items>
                                 <numIndex index="0">
-                                    <label>Oben</label>
+                                    <label>Oberhalb der Einsatzliste</label>
                                     <value>above</value>
                                 </numIndex>
                                 <numIndex index="1">
-                                    <label>Unten</label>
+                                    <label>Unterhalb der Einsatzliste</label>
                                     <value>below</value>
                                 </numIndex>
                             </items>
@@ -199,11 +199,11 @@
                             <renderType>selectSingle</renderType>
                             <items>
                                 <numIndex index="0">
-                                    <label>Oben</label>
+                                    <label>Oberhalb der Einsatzliste</label>
                                     <value>above</value>
                                 </numIndex>
                                 <numIndex index="1">
-                                    <label>Unten</label>
+                                    <label>Unterhalb der Einsatzliste</label>
                                     <value>below</value>
                                 </numIndex>
                             </items>
