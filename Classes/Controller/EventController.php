@@ -10,6 +10,7 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Page\AssetCollector;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class EventController extends ActionController
@@ -177,7 +178,7 @@ class EventController extends ActionController
             }
             if (!empty($statistics)) {
                 $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-                $pageRenderer->addCssInlineBlock(
+                GeneralUtility::makeInstance(AssetCollector::class)->addInlineStyleSheet(
                     'rescueStatisticsLayout',
                     '.rescue-statistics__layout{display:flex;gap:2rem;align-items:flex-start;flex-wrap:wrap;margin:1rem 0 2rem;}'
                     . '.rescue-statistics__chart-wrap{flex:0 0 220px;}'
@@ -190,14 +191,14 @@ class EventController extends ActionController
                     . '.rescue-statistics__year-title{margin-bottom:.25rem;}'
                     . '.rescue-statistics__compare{font-size:.85em;color:#666;margin-top:.5rem;}'
                 );
-                $pageRenderer->addCssInlineBlock(
+                GeneralUtility::makeInstance(AssetCollector::class)->addInlineStyleSheet(
                     'rescueStatisticsPie',
                     '.rescue-statistics svg path,.rescue-statistics svg circle{'
                     . 'transition:transform .15s ease-out;cursor:pointer;transform-origin:110px 110px;}'
                     . '.rescue-statistics svg path:hover,.rescue-statistics svg circle:hover{'
                     . 'transform:scale(1.08);}'
                 );
-                $pageRenderer->addCssInlineBlock(
+                GeneralUtility::makeInstance(AssetCollector::class)->addInlineStyleSheet(
                     'rescueStatisticsPieTooltip',
                     '.pie-wrap{position:relative;display:inline-block;}'
                     . '.pie-tooltip{display:none;position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);'
@@ -216,14 +217,14 @@ class EventController extends ActionController
                         $uid = (int)$cat['uid'];
                         if ($uid > 0 && !in_array($uid, $seenTooltipUids, true)) {
                             $seenTooltipUids[] = $uid;
-                            $pageRenderer->addCssInlineBlock(
+                            GeneralUtility::makeInstance(AssetCollector::class)->addInlineStyleSheet(
                                 'rescueStatisticsPieTooltipFallback' . $uid,
                                 "html:not(.rescue-pie-tooltip--enhanced) .pie-wrap:has(.pie-slice--{$uid}:hover) .pie-tooltip--{$uid}{display:block;}"
                             );
                         }
                     }
                 }
-                $pageRenderer->addJsInlineCode(
+                GeneralUtility::makeInstance(AssetCollector::class)->addInlineJavaScript(
                     'rescueStatisticsPieTooltip',
                     '(function(){'
                     . 'if(window.__rescuePieTooltipInit){return;}window.__rescuePieTooltipInit=true;'
@@ -387,7 +388,7 @@ class EventController extends ActionController
 
         if (!empty($statistics)) {
             $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-            $pageRenderer->addCssInlineBlock(
+            GeneralUtility::makeInstance(AssetCollector::class)->addInlineStyleSheet(
                 'rescueStatisticsLayout',
                 '.rescue-statistics__station-filter{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.25rem 0 1rem;}'
                 . '.rescue-statistics__station-filter .form-select{min-width:220px;}'
@@ -402,14 +403,14 @@ class EventController extends ActionController
                 . '.rescue-statistics__year-title{margin-bottom:.25rem;}'
                 . '.rescue-statistics__compare{font-size:.85em;color:#666;margin-top:.5rem;}'
             );
-            $pageRenderer->addCssInlineBlock(
+            GeneralUtility::makeInstance(AssetCollector::class)->addInlineStyleSheet(
                 'rescueStatisticsPie',
                 '.rescue-statistics svg path,.rescue-statistics svg circle{'
                 . 'transition:transform .15s ease-out;cursor:pointer;transform-origin:110px 110px;}'
                 . '.rescue-statistics svg path:hover,.rescue-statistics svg circle:hover{'
                 . 'transform:scale(1.08);}'
             );
-            $pageRenderer->addCssInlineBlock(
+            GeneralUtility::makeInstance(AssetCollector::class)->addInlineStyleSheet(
                 'rescueStatisticsPieTooltip',
                 '.pie-wrap{position:relative;display:inline-block;}'
                 . '.pie-tooltip{display:none;position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);'
@@ -428,14 +429,14 @@ class EventController extends ActionController
                     $uid = (int)$cat['uid'];
                     if ($uid > 0 && !in_array($uid, $seenTooltipUids, true)) {
                         $seenTooltipUids[] = $uid;
-                        $pageRenderer->addCssInlineBlock(
+                        GeneralUtility::makeInstance(AssetCollector::class)->addInlineStyleSheet(
                             'rescueStatisticsPieTooltipFallback' . $uid,
                             "html:not(.rescue-pie-tooltip--enhanced) .pie-wrap:has(.pie-slice--{$uid}:hover) .pie-tooltip--{$uid}{display:block;}"
                         );
                     }
                 }
             }
-            $pageRenderer->addJsInlineCode(
+            GeneralUtility::makeInstance(AssetCollector::class)->addInlineJavaScript(
                 'rescueStatisticsPieTooltip',
                 '(function(){'
                 . 'if(window.__rescuePieTooltipInit){return;}window.__rescuePieTooltipInit=true;'
@@ -472,7 +473,7 @@ class EventController extends ActionController
                 . '});'
                 . '})();'
             );
-            $pageRenderer->addCssInlineBlock(
+            GeneralUtility::makeInstance(AssetCollector::class)->addInlineStyleSheet(
                 'rescueStatisticsBar',
                 '.rescue-statistics__bar-chart{margin:2rem 0 1rem;}'
                 . '.rescue-statistics__bar-chart-desktop{display:block;}'
