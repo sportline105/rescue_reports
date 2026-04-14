@@ -13,15 +13,13 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
         'RescueReports',
         'Eventlist',
         'Rescue Reports: Einsatzübersicht',
-        'rescue_reports_eventlist',
-        '',
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml'
+        'rescue_reports_eventlist'
     );
 
     // Register FlexForm (addPiFlexFormValue is still functional in TYPO3 v13+ despite deprecation)
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['rescue_reports_eventlist'] = 'pi_flexform';
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['rescuereports_eventlist'] = 'pi_flexform';
     ExtensionManagementUtility::addPiFlexFormValue(
-        'rescue_reports_eventlist',
+        'rescuereports_eventlist',
         'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml'
     );
 
@@ -30,14 +28,12 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
         'RescueReports',
         'Statistics',
         'Rescue Reports: Jahresstatistik',
-        'rescue_reports_statistics',
-        '',
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml'
+        'rescue_reports_statistics'
     );
 
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['rescue_reports_statistics'] = 'pi_flexform';
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['rescuereports_statistics'] = 'pi_flexform';
     ExtensionManagementUtility::addPiFlexFormValue(
-        'rescue_reports_statistics',
+        'rescuereports_statistics',
         'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml'
     );
 
@@ -46,14 +42,12 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
         'RescueReports',
         'Sidebar',
         'Rescue Reports: Sidebar',
-        'rescue_reports_sidebar',
-        '',
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml'
+        'rescue_reports_sidebar'
     );
 
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['rescue_reports_sidebar'] = 'pi_flexform';
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['rescuereports_sidebar'] = 'pi_flexform';
     ExtensionManagementUtility::addPiFlexFormValue(
-        'rescue_reports_sidebar',
+        'rescuereports_sidebar',
         'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml'
     );
 
@@ -62,14 +56,12 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
         'RescueReports',
         'Rss',
         'Rescue Reports: RSS-Feed',
-        'rescue_reports_rss',
-        '',
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml'
+        'rescue_reports_rss'
     );
 
-    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['rescue_reports_rss'] = 'pi_flexform';
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['rescuereports_rss'] = 'pi_flexform';
     ExtensionManagementUtility::addPiFlexFormValue(
-        'rescue_reports_rss',
+        'rescuereports_rss',
         'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml'
     );
 
