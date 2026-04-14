@@ -66,4 +66,6 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][] = [
     'class' => \nkfire\RescueReports\Form\Element\EventVehicleAssignmentElement::class,
 ];
 
-// Hook registrations have been migrated to event listeners in Services.yaml
+// DataHandler hook for VehicleNameAutoFill
+// Still using hook system instead of events because it has direct access to fieldArray with unsaved data
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] = \nkfire\RescueReports\Hooks\VehicleNameAutoFill::class;

@@ -64,7 +64,7 @@ class FlexFormStationItems
             ->fetchAllAssociative();
 
         foreach ($rows as $row) {
-            $label = $row['station.name'] ?? $row['name'] ?? '';
+            $label = $row['name'] ?? '';
             $brigadeName = $row['brigade_name'] ?? '';
 
             if ($brigadeName !== '') {
@@ -72,8 +72,8 @@ class FlexFormStationItems
             }
 
             $config['items'][] = [
-                $label,
-                (int)$row['uid'],
+                'label' => $label,
+                'value' => (int)$row['uid'],
             ];
         }
     }

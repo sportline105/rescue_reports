@@ -20,7 +20,7 @@
                         <config>
                             <type>select</type>
                             <renderType>selectSingle</renderType>
-                            <itemsProcFunc class="nkfire\RescueReports\UserFunctions\FlexFormStationItems" method="addPrimaryStations" />
+                            <itemsProcFunc>nkfire\RescueReports\UserFunctions\FlexFormStationItems->addPrimaryStations</itemsProcFunc>
                             <items>
                                 <numIndex index="0">
                                     <label>-- alle Ortsfeuerwehren --</label>

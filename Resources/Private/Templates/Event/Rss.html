@@ -5,7 +5,7 @@
     <link>{f:uri.page(absolute: '1')}</link>
     <description>Aktuelle Einsatzberichte der Feuerwehr</description>
     <language>de</language>
-    <atom:link href="{f:uri.page(typeNum: 100, absolute: '1')}" rel="self" type="application/rss+xml" />
+    <atom:link href="{f:uri.page(pageType: 100, absolute: '1')}" rel="self" type="application/rss+xml" />
     <f:for each="{events}" as="event">
         <item>
             <title>{event.title}</title>
