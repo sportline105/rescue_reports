@@ -27,16 +27,20 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             $ctypeEventlist,
             'after:subheader'
         );
+        ExtensionManagementUtility::addPiFlexFormValue(
+            '*',
+            'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
+            $ctypeEventlist
+        );
     } else {
         // TYPO3 v13: Use old approach with addPiFlexFormValue
         $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeEventlist] = 'pi_flexform';
+        ExtensionManagementUtility::addPiFlexFormValue(
+            '',
+            'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
+            $ctypeEventlist
+        );
     }
-
-    ExtensionManagementUtility::addPiFlexFormValue(
-        '*',
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
-        $ctypeEventlist
-    );
 
     // Statistik-Plugin
     $ctypeStatistics = ExtensionUtility::registerPlugin(
@@ -53,15 +57,19 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             $ctypeStatistics,
             'after:subheader'
         );
+        ExtensionManagementUtility::addPiFlexFormValue(
+            '*',
+            'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml',
+            $ctypeStatistics
+        );
     } else {
         $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeStatistics] = 'pi_flexform';
+        ExtensionManagementUtility::addPiFlexFormValue(
+            '',
+            'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml',
+            $ctypeStatistics
+        );
     }
-
-    ExtensionManagementUtility::addPiFlexFormValue(
-        '*',
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml',
-        $ctypeStatistics
-    );
 
     // Sidebar-Plugin
     $ctypeSidebar = ExtensionUtility::registerPlugin(
@@ -78,15 +86,19 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             $ctypeSidebar,
             'after:subheader'
         );
+        ExtensionManagementUtility::addPiFlexFormValue(
+            '*',
+            'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml',
+            $ctypeSidebar
+        );
     } else {
         $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeSidebar] = 'pi_flexform';
+        ExtensionManagementUtility::addPiFlexFormValue(
+            '',
+            'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml',
+            $ctypeSidebar
+        );
     }
-
-    ExtensionManagementUtility::addPiFlexFormValue(
-        '*',
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml',
-        $ctypeSidebar
-    );
 
     // RSS-Feed-Plugin
     $ctypeRss = ExtensionUtility::registerPlugin(
@@ -103,14 +115,18 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             $ctypeRss,
             'after:subheader'
         );
+        ExtensionManagementUtility::addPiFlexFormValue(
+            '*',
+            'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml',
+            $ctypeRss
+        );
     } else {
         $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeRss] = 'pi_flexform';
+        ExtensionManagementUtility::addPiFlexFormValue(
+            '',
+            'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml',
+            $ctypeRss
+        );
     }
-
-    ExtensionManagementUtility::addPiFlexFormValue(
-        '*',
-        'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml',
-        $ctypeRss
-    );
 
 })();
