@@ -151,6 +151,38 @@
         <source>Seite der vollständigen Einsatzliste (für „Alle Einsätze"-Link)</source>
       </trans-unit>
 
+      <!-- EventList Additional Fields -->
+      <trans-unit id="enableDateFilter">
+        <source>Datumsfilter im Frontend anzeigen</source>
+      </trans-unit>
+      <trans-unit id="enableYearFilter">
+        <source>Jahresfilter anzeigen</source>
+      </trans-unit>
+      <trans-unit id="showStatistics">
+        <source>Statistik anzeigen</source>
+      </trans-unit>
+      <trans-unit id="statisticsPosition">
+        <source>Position der Statistik</source>
+      </trans-unit>
+      <trans-unit id="statisticsYearsEventlist">
+        <source>Statistik: Anzahl angezeigter Jahre (0 = alle)</source>
+      </trans-unit>
+      <trans-unit id="showMapView">
+        <source>Kartenansicht anzeigen</source>
+      </trans-unit>
+      <trans-unit id="mapHeight">
+        <source>Kartenhöhe in Pixeln</source>
+      </trans-unit>
+      <trans-unit id="mapZoom">
+        <source>Standard-Zoomstufe (1–19)</source>
+      </trans-unit>
+      <trans-unit id="mapPosition">
+        <source>Position der Karte</source>
+      </trans-unit>
+      <trans-unit id="yearFilterDefault">
+        <source>Jahresfilter: Standardauswahl beim ersten Aufruf</source>
+      </trans-unit>
+
       <!-- RSS FlexForm Fields -->
       <trans-unit id="feedTitle">
         <source>Feed-Titel (leer = Standard)</source>

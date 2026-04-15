@@ -136,6 +136,34 @@
                         </config>
                     </settings.enableYearFilter>
 
+                    <settings.yearFilterDefault>
+                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:yearFilterDefault</label>
+                        <config>
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <items>
+                                <numIndex index="0">
+                                    <label>Alle Jahre</label>
+                                    <value>all</value>
+                                </numIndex>
+                                <numIndex index="1">
+                                    <label>Aktuelles Jahr</label>
+                                    <value>current</value>
+                                </numIndex>
+                            </items>
+                            <default>all</default>
+                        </config>
+                    </settings.yearFilterDefault>
+
+                    <settings.statisticsYears>
+                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:statisticsYearsEventlist</label>
+                        <config>
+                            <type>number</type>
+                            <size>5</size>
+                            <default>0</default>
+                        </config>
+                    </settings.statisticsYears>
+
                     <settings.showStatistics>
                         <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:showStatistics</label>
                         <config>
@@ -157,26 +185,17 @@
                             <renderType>selectSingle</renderType>
                             <items>
                                 <numIndex index="0">
-                                    <label>Oben</label>
-                                    <value>above</value>
+                                    <label>Unterhalb der Einsatzliste</label>
+                                    <value>below</value>
                                 </numIndex>
                                 <numIndex index="1">
-                                    <label>Unten</label>
-                                    <value>below</value>
+                                    <label>Oberhalb der Einsatzliste</label>
+                                    <value>above</value>
                                 </numIndex>
                             </items>
                             <default>below</default>
                         </config>
                     </settings.statisticsPosition>
-
-                    <settings.statisticsYears>
-                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:statisticsYears</label>
-                        <config>
-                            <type>number</type>
-                            <size>5</size>
-                            <default>0</default>
-                        </config>
-                    </settings.statisticsYears>
 
                     <settings.showMapView>
                         <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:showMapView</label>
@@ -192,6 +211,24 @@
                         </config>
                     </settings.showMapView>
 
+                    <settings.mapHeight>
+                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:mapHeight</label>
+                        <config>
+                            <type>number</type>
+                            <size>6</size>
+                            <default>400</default>
+                        </config>
+                    </settings.mapHeight>
+
+                    <settings.mapZoom>
+                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:mapZoom</label>
+                        <config>
+                            <type>number</type>
+                            <size>4</size>
+                            <default>11</default>
+                        </config>
+                    </settings.mapZoom>
+
                     <settings.mapPosition>
                         <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:mapPosition</label>
                         <config>
@@ -199,96 +236,17 @@
                             <renderType>selectSingle</renderType>
                             <items>
                                 <numIndex index="0">
-                                    <label>Oben</label>
-                                    <value>above</value>
+                                    <label>Unterhalb der Einsatzliste</label>
+                                    <value>below</value>
                                 </numIndex>
                                 <numIndex index="1">
-                                    <label>Unten</label>
-                                    <value>below</value>
+                                    <label>Oberhalb der Einsatzliste</label>
+                                    <value>above</value>
                                 </numIndex>
                             </items>
                             <default>below</default>
                         </config>
                     </settings.mapPosition>
-
-                    <settings.yearFilterDefault>
-                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:yearFilterDefault</label>
-                        <config>
-                            <type>select</type>
-                            <renderType>selectSingle</renderType>
-                            <items>
-                                <numIndex index="0">
-                                    <label>Aktuelles Jahr</label>
-                                    <value>current</value>
-                                </numIndex>
-                                <numIndex index="1">
-                                    <label>Alle Jahre</label>
-                                    <value>all</value>
-                                </numIndex>
-                            </items>
-                            <default>current</default>
-                        </config>
-                    </settings.yearFilterDefault>
-
-                    <settings.listPageUid>
-                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:listPageUid</label>
-                        <config>
-                            <type>group</type>
-                            <internal_type>db</internal_type>
-                            <allowed>pages</allowed>
-                            <size>1</size>
-                            <minitems>0</minitems>
-                            <maxitems>1</maxitems>
-                        </config>
-                    </settings.listPageUid>
-
-                    <settings.widgetTitle>
-                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:widgetTitle</label>
-                        <config>
-                            <type>input</type>
-                            <eval>trim</eval>
-                        </config>
-                    </settings.widgetTitle>
-
-                    <settings.feedTitle>
-                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:feedTitle</label>
-                        <config>
-                            <type>input</type>
-                            <eval>trim</eval>
-                        </config>
-                    </settings.feedTitle>
-
-                    <settings.station>
-                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:station</label>
-                        <config>
-                            <type>select</type>
-                            <renderType>selectSingle</renderType>
-                            <itemsProcFunc>nkfire\RescueReports\UserFunctions\FlexFormStationItems->addPrimaryStations</itemsProcFunc>
-                            <items>
-                                <numIndex index="0">
-                                    <label>-- keine Auswahl --</label>
-                                    <value>0</value>
-                                </numIndex>
-                            </items>
-                            <minitems>0</minitems>
-                            <maxitems>1</maxitems>
-                            <size>1</size>
-                        </config>
-                    </settings.station>
-
-                    <settings.showMonthlyChart>
-                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:showMonthlyChart</label>
-                        <config>
-                            <type>check</type>
-                            <items>
-                                <numIndex index="0">
-                                    <label>Ja</label>
-                                    <value>1</value>
-                                </numIndex>
-                            </items>
-                            <default>0</default>
-                        </config>
-                    </settings.showMonthlyChart>
 
                 </el>
             </ROOT>
