@@ -33,10 +33,15 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             $ctypeEventlist
         );
     } else {
-        // TYPO3 v13: Use old approach with addPiFlexFormValue
-        $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeEventlist] = 'pi_flexform';
+        // TYPO3 v13: Use addToAllTCAtypes for field registration
+        ExtensionManagementUtility::addToAllTCAtypes(
+            'tt_content',
+            'pi_flexform',
+            $ctypeEventlist,
+            'after:subheader'
+        );
         ExtensionManagementUtility::addPiFlexFormValue(
-            '',
+            $ctypeEventlist,
             'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
             $ctypeEventlist
         );
@@ -63,9 +68,14 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             $ctypeStatistics
         );
     } else {
-        $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeStatistics] = 'pi_flexform';
+        ExtensionManagementUtility::addToAllTCAtypes(
+            'tt_content',
+            'pi_flexform',
+            $ctypeStatistics,
+            'after:subheader'
+        );
         ExtensionManagementUtility::addPiFlexFormValue(
-            '',
+            $ctypeStatistics,
             'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml',
             $ctypeStatistics
         );
@@ -92,9 +102,14 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             $ctypeSidebar
         );
     } else {
-        $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeSidebar] = 'pi_flexform';
+        ExtensionManagementUtility::addToAllTCAtypes(
+            'tt_content',
+            'pi_flexform',
+            $ctypeSidebar,
+            'after:subheader'
+        );
         ExtensionManagementUtility::addPiFlexFormValue(
-            '',
+            $ctypeSidebar,
             'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml',
             $ctypeSidebar
         );
@@ -121,9 +136,14 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             $ctypeRss
         );
     } else {
-        $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeRss] = 'pi_flexform';
+        ExtensionManagementUtility::addToAllTCAtypes(
+            'tt_content',
+            'pi_flexform',
+            $ctypeRss,
+            'after:subheader'
+        );
         ExtensionManagementUtility::addPiFlexFormValue(
-            '',
+            $ctypeRss,
             'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml',
             $ctypeRss
         );
