@@ -3,10 +3,13 @@ declare(strict_types=1);
 
 defined('TYPO3') or die();
 
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 (function (): void {
+    $typo3Version = new Typo3Version();
+    $isV14Plus = $typo3Version->getMajorVersion() >= 14;
 
     // Hauptplugin: Eventlist
     $ctypeEventlist = ExtensionUtility::registerPlugin(
@@ -16,12 +19,18 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         'rescue_reports_eventlist'
     );
 
-    ExtensionManagementUtility::addToAllTCAtypes(
-        'tt_content',
-        '--div--;Konfiguration,pi_flexform,pages,recursive,',
-        $ctypeEventlist,
-        'after:subheader'
-    );
+    if ($isV14Plus) {
+        // TYPO3 v14+: Use new approach with addToAllTCAtypes
+        ExtensionManagementUtility::addToAllTCAtypes(
+            'tt_content',
+            '--div--;Konfiguration,pi_flexform,pages,recursive,',
+            $ctypeEventlist,
+            'after:subheader'
+        );
+    } else {
+        // TYPO3 v13: Use old approach with addPiFlexFormValue
+        $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeEventlist] = 'pi_flexform';
+    }
 
     ExtensionManagementUtility::addPiFlexFormValue(
         '*',
@@ -37,12 +46,16 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         'rescue_reports_statistics'
     );
 
-    ExtensionManagementUtility::addToAllTCAtypes(
-        'tt_content',
-        '--div--;Konfiguration,pi_flexform,pages,recursive,',
-        $ctypeStatistics,
-        'after:subheader'
-    );
+    if ($isV14Plus) {
+        ExtensionManagementUtility::addToAllTCAtypes(
+            'tt_content',
+            '--div--;Konfiguration,pi_flexform,pages,recursive,',
+            $ctypeStatistics,
+            'after:subheader'
+        );
+    } else {
+        $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeStatistics] = 'pi_flexform';
+    }
 
     ExtensionManagementUtility::addPiFlexFormValue(
         '*',
@@ -58,12 +71,16 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         'rescue_reports_sidebar'
     );
 
-    ExtensionManagementUtility::addToAllTCAtypes(
-        'tt_content',
-        '--div--;Konfiguration,pi_flexform,pages,recursive,',
-        $ctypeSidebar,
-        'after:subheader'
-    );
+    if ($isV14Plus) {
+        ExtensionManagementUtility::addToAllTCAtypes(
+            'tt_content',
+            '--div--;Konfiguration,pi_flexform,pages,recursive,',
+            $ctypeSidebar,
+            'after:subheader'
+        );
+    } else {
+        $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeSidebar] = 'pi_flexform';
+    }
 
     ExtensionManagementUtility::addPiFlexFormValue(
         '*',
@@ -79,12 +96,16 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         'rescue_reports_rss'
     );
 
-    ExtensionManagementUtility::addToAllTCAtypes(
-        'tt_content',
-        '--div--;Konfiguration,pi_flexform,pages,recursive,',
-        $ctypeRss,
-        'after:subheader'
-    );
+    if ($isV14Plus) {
+        ExtensionManagementUtility::addToAllTCAtypes(
+            'tt_content',
+            '--div--;Konfiguration,pi_flexform,pages,recursive,',
+            $ctypeRss,
+            'after:subheader'
+        );
+    } else {
+        $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeRss] = 'pi_flexform';
+    }
 
     ExtensionManagementUtility::addPiFlexFormValue(
         '*',
