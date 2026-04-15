@@ -24,7 +24,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'hidden, title, --palette--;;times, number, types, location, --palette--;;coordinates, disable_detail, description, slug, --div--;Eingesetzte Einheiten, stations, --div--;Fahrzeuge, vehicles, --div--;Bilder, images, --div--;Intern, internal_notes'
+            'showitem' => 'hidden, title, --palette--;;times, number, types, location, --palette--;;coordinates, disable_detail, description, slug, --div--;Eingesetzte Einheiten, stations, --div--;Fahrzeuge, vehicles, --div--;Bilder, images, --div--;Interne Notizen, internal_notes'
         ],
     ],
 
@@ -106,7 +106,7 @@ return [
         ],
         'number' => [
             'label' => 'Einsatznummer',
-            'config' => ['type' => 'input', 'eval' => 'trim', 'placeholder' => 'ZÖ/123', 'max' => 6, 'default' => 'ZÖ/'],
+            'config' => ['type' => 'input', 'eval' => 'trim', 'placeholder' => '26/123', 'max' => 6, 'default' => '26/'],
         ],
         'description' => [
             'label' => 'Einsatzbericht',
