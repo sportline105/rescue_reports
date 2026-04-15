@@ -20,7 +20,7 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
     );
 
     if ($isV14Plus) {
-        // TYPO3 v14+: Use new approach with addToAllTCAtypes
+        // TYPO3 v14+: ds_pointerField removed, use columnsOverrides via '*' wildcard
         ExtensionManagementUtility::addToAllTCAtypes(
             'tt_content',
             '--div--;Konfiguration,pi_flexform,pages,recursive,',
@@ -33,7 +33,7 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             $ctypeEventlist
         );
     } else {
-        // TYPO3 v13: Use addToAllTCAtypes for field registration
+        // TYPO3 v13: ds_pointerField='list_type,CType' → key = ',CType' (empty list_type)
         ExtensionManagementUtility::addToAllTCAtypes(
             'tt_content',
             'pi_flexform',
@@ -41,7 +41,7 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             'after:subheader'
         );
         ExtensionManagementUtility::addPiFlexFormValue(
-            $ctypeEventlist,
+            '',
             'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
             $ctypeEventlist
         );
@@ -75,7 +75,7 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             'after:subheader'
         );
         ExtensionManagementUtility::addPiFlexFormValue(
-            $ctypeStatistics,
+            '',
             'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml',
             $ctypeStatistics
         );
@@ -109,7 +109,7 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             'after:subheader'
         );
         ExtensionManagementUtility::addPiFlexFormValue(
-            $ctypeSidebar,
+            '',
             'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml',
             $ctypeSidebar
         );
@@ -143,7 +143,7 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             'after:subheader'
         );
         ExtensionManagementUtility::addPiFlexFormValue(
-            $ctypeRss,
+            '',
             'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml',
             $ctypeRss
         );
