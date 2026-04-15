@@ -16,28 +16,20 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         'rescue_reports_eventlist'
     );
 
-    // Register pi_flexform as subtype for v13
+    // For TYPO3 v13, register pi_flexform as subtype
     $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeEventlist] = 'pi_flexform';
 
-    // Add field to form
     ExtensionManagementUtility::addToAllTCAtypes(
         'tt_content',
         '--div--;Konfiguration,pi_flexform,',
         $ctypeEventlist,
         'after:subheader'
     );
-
-    // Direct columnsOverrides for v13 - completely bypass ds_pointerField lookup
-    if (!isset($GLOBALS['TCA']['tt_content']['types'][$ctypeEventlist])) {
-        $GLOBALS['TCA']['tt_content']['types'][$ctypeEventlist] = [];
-    }
-    $GLOBALS['TCA']['tt_content']['types'][$ctypeEventlist]['columnsOverrides']['pi_flexform'] = [
-        'config' => [
-            'ds' => [
-                'default' => 'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
-            ],
-        ],
-    ];
+    ExtensionManagementUtility::addPiFlexFormValue(
+        '*',
+        'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
+        $ctypeEventlist
+    );
 
     // Statistik-Plugin
     $ctypeStatistics = ExtensionUtility::registerPlugin(
@@ -55,17 +47,11 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         $ctypeStatistics,
         'after:subheader'
     );
-
-    if (!isset($GLOBALS['TCA']['tt_content']['types'][$ctypeStatistics])) {
-        $GLOBALS['TCA']['tt_content']['types'][$ctypeStatistics] = [];
-    }
-    $GLOBALS['TCA']['tt_content']['types'][$ctypeStatistics]['columnsOverrides']['pi_flexform'] = [
-        'config' => [
-            'ds' => [
-                'default' => 'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml',
-            ],
-        ],
-    ];
+    ExtensionManagementUtility::addPiFlexFormValue(
+        '*',
+        'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml',
+        $ctypeStatistics
+    );
 
     // Sidebar-Plugin
     $ctypeSidebar = ExtensionUtility::registerPlugin(
@@ -83,17 +69,11 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         $ctypeSidebar,
         'after:subheader'
     );
-
-    if (!isset($GLOBALS['TCA']['tt_content']['types'][$ctypeSidebar])) {
-        $GLOBALS['TCA']['tt_content']['types'][$ctypeSidebar] = [];
-    }
-    $GLOBALS['TCA']['tt_content']['types'][$ctypeSidebar]['columnsOverrides']['pi_flexform'] = [
-        'config' => [
-            'ds' => [
-                'default' => 'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml',
-            ],
-        ],
-    ];
+    ExtensionManagementUtility::addPiFlexFormValue(
+        '*',
+        'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml',
+        $ctypeSidebar
+    );
 
     // RSS-Feed-Plugin
     $ctypeRss = ExtensionUtility::registerPlugin(
@@ -111,16 +91,10 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         $ctypeRss,
         'after:subheader'
     );
-
-    if (!isset($GLOBALS['TCA']['tt_content']['types'][$ctypeRss])) {
-        $GLOBALS['TCA']['tt_content']['types'][$ctypeRss] = [];
-    }
-    $GLOBALS['TCA']['tt_content']['types'][$ctypeRss]['columnsOverrides']['pi_flexform'] = [
-        'config' => [
-            'ds' => [
-                'default' => 'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml',
-            ],
-        ],
-    ];
+    ExtensionManagementUtility::addPiFlexFormValue(
+        '*',
+        'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml',
+        $ctypeRss
+    );
 
 })();
