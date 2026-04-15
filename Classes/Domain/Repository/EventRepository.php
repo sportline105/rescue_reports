@@ -1,8 +1,12 @@
 <?php
 declare(strict_types=1);
+
 namespace nkfire\RescueReports\Domain\Repository;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\SqlitePlatform;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -11,7 +15,6 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class EventRepository extends Repository
 {
-
     /**
      * Holt ein einzelnes Event inkl. Relationen
      */
@@ -320,6 +323,39 @@ class EventRepository extends Repository
         return $query->execute();
     }
 
+    private function getConnection(): Connection
+    {
+        return GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('tx_rescuereports_domain_model_event');
+    }
+
+    private function getYearSql(string $field, AbstractPlatform $platform): string
+    {
+        if ($platform instanceof SqlitePlatform) {
+            return "CAST(strftime('%Y', $field) AS INTEGER)";
+        }
+
+        return "YEAR($field)";
+    }
+
+    private function getMonthSql(string $field, AbstractPlatform $platform): string
+    {
+        if ($platform instanceof SqlitePlatform) {
+            return "CAST(strftime('%m', $field) AS INTEGER)";
+        }
+
+        return "MONTH($field)";
+    }
+
+    private function getDurationSecondsSql(string $startField, string $endField, AbstractPlatform $platform): string
+    {
+        if ($platform instanceof SqlitePlatform) {
+            return "(strftime('%s', $endField) - strftime('%s', $startField))";
+        }
+
+        return "TIMESTAMPDIFF(SECOND, $startField, $endField)";
+    }
+
     /**
      * Zählt die Einsätze einer Station innerhalb eines Jahres bis zum aktuellen Einsatzzeitpunkt.
      * Bei gleichem Startzeitpunkt entscheidet die UID.
@@ -408,12 +444,16 @@ class EventRepository extends Repository
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
 
+        $platform = $queryBuilder->getConnection()->getDatabasePlatform();
+        $yearSql = $this->getYearSql('e.start', $platform);
+        $durationSql = $this->getDurationSecondsSql('e.start', 'e.end', $platform);
+
         $queryBuilder
             ->select('cat.uid AS cat_uid', 'cat.title AS cat_title', 'cat.color AS cat_color')
             ->addSelectLiteral(
-                'YEAR(e.start) AS year',
+                $yearSql . ' AS year',
                 'COUNT(DISTINCT e.uid) AS cnt',
-                'ROUND(AVG(TIMESTAMPDIFF(SECOND, e.start, e.end))) AS avg_dur_sec'
+                'ROUND(AVG(' . $durationSql . ')) AS avg_dur_sec'
             )
             ->from('tx_rescuereports_domain_model_event', 'e')
             ->leftJoin('e', 'tx_rescuereports_event_type_mm', 'tmm', 'e.uid = tmm.uid_local')
@@ -440,7 +480,6 @@ class EventRepository extends Repository
             ->executeQuery()
             ->fetchAllAssociative();
 
-        // Aufbau: year -> categories[] + total
         $raw = [];
         foreach ($rows as $row) {
             $year = (int)$row['year'];
@@ -451,22 +490,20 @@ class EventRepository extends Repository
                 'uid'   => (int)$row['cat_uid'],
                 'title' => (string)($row['cat_title'] ?: '– ohne Kategorie –'),
                 'color' => (string)($row['cat_color'] ?: '#95a5a6'),
-                'count'       => (int)$row['cnt'],
+                'count' => (int)$row['cnt'],
                 'avg_dur_sec' => isset($row['avg_dur_sec']) && $row['avg_dur_sec'] !== null ? (int)$row['avg_dur_sec'] : null,
             ];
         }
 
-        // Einsatzarten je Jahr/Kategorie aus tatsächlich vorkommenden Datensätzen ermitteln
         $typesByYearAndCategory = $this->getTypeStatsByYearAndCategory($stationUid);
 
-        // Gesamtzahl + Prozentwerte + SVG-Tortendiagramm berechnen
         $statistics = [];
         foreach ($raw as $year => $categories) {
             $total = array_sum(array_column($categories, 'count'));
             foreach ($categories as &$cat) {
-                $cat['percent']     = $total > 0 ? round($cat['count'] / $total * 100, 1) : 0.0;
+                $cat['percent'] = $total > 0 ? round($cat['count'] / $total * 100, 1) : 0.0;
                 $cat['avgDuration'] = $this->formatDurationSeconds($cat['avg_dur_sec'] ?? null);
-                $cat['types']       = $typesByYearAndCategory[$year][$cat['uid']] ?? [];
+                $cat['types'] = $typesByYearAndCategory[$year][$cat['uid']] ?? [];
                 foreach ($cat['types'] as &$type) {
                     $type['percent'] = $cat['count'] > 0 ? round($type['count'] / $cat['count'] * 100, 1) : 0.0;
                 }
@@ -474,37 +511,37 @@ class EventRepository extends Repository
             }
             unset($cat);
 
-            // SVG-Pfade für Tortendiagramm (Kreis 220×220, Mittelpunkt 110/110, Radius 100)
             $svgPaths = [];
-            $cx = 110; $cy = 110; $r = 100;
+            $cx = 110;
+            $cy = 110;
+            $r = 100;
             if (count($categories) === 1) {
-                // Einzelkategorie: Vollkreis
                 $svgPaths[] = [
-                    'type'        => 'circle',
-                    'color'       => $categories[0]['color'],
-                    'title'       => $categories[0]['title'],
-                    'count'       => $categories[0]['count'],
-                    'percent'     => $categories[0]['percent'],
+                    'type' => 'circle',
+                    'color' => $categories[0]['color'],
+                    'title' => $categories[0]['title'],
+                    'count' => $categories[0]['count'],
+                    'percent' => $categories[0]['percent'],
                     'categoryUid' => $categories[0]['uid'],
                 ];
             } else {
-                $startAngle = -M_PI / 2; // Start bei 12 Uhr
+                $startAngle = -M_PI / 2;
                 foreach ($categories as $cat) {
                     $sliceAngle = $total > 0 ? ($cat['count'] / $total * 2 * M_PI) : 0;
-                    $endAngle   = $startAngle + $sliceAngle;
+                    $endAngle = $startAngle + $sliceAngle;
                     $x1 = round($cx + $r * cos($startAngle), 3);
                     $y1 = round($cy + $r * sin($startAngle), 3);
                     $x2 = round($cx + $r * cos($endAngle), 3);
                     $y2 = round($cy + $r * sin($endAngle), 3);
-                    $largeArc   = $sliceAngle > M_PI ? 1 : 0;
+                    $largeArc = $sliceAngle > M_PI ? 1 : 0;
                     $svgPaths[] = [
-                        'type'        => 'path',
-                        'color'       => $cat['color'],
-                        'd'           => 'M ' . $cx . ' ' . $cy . ' L ' . $x1 . ' ' . $y1
-                                         . ' A ' . $r . ' ' . $r . ' 0 ' . $largeArc . ' 1 ' . $x2 . ' ' . $y2 . ' Z',
-                        'title'       => $cat['title'],
-                        'count'       => $cat['count'],
-                        'percent'     => $cat['percent'],
+                        'type' => 'path',
+                        'color' => $cat['color'],
+                        'd' => 'M ' . $cx . ' ' . $cy . ' L ' . $x1 . ' ' . $y1
+                            . ' A ' . $r . ' ' . $r . ' 0 ' . $largeArc . ' 1 ' . $x2 . ' ' . $y2 . ' Z',
+                        'title' => $cat['title'],
+                        'count' => $cat['count'],
+                        'percent' => $cat['percent'],
                         'categoryUid' => $cat['uid'],
                     ];
                     $startAngle = $endAngle;
@@ -512,13 +549,12 @@ class EventRepository extends Repository
             }
 
             $statistics[$year] = [
-                'total'             => $total,
-                'categories'        => $categories,
-                'svgPaths'          => $svgPaths,
+                'total' => $total,
+                'categories' => $categories,
+                'svgPaths' => $svgPaths,
             ];
         }
 
-        // Gesamtdauer pro Jahr separat berechnen (kein Type-JOIN → kein double-counting)
         $yearlyTotals = $this->getYearlyTotalDurations($stationUid);
         foreach ($yearlyTotals as $year => $totalSec) {
             if (isset($statistics[$year])) {
@@ -526,18 +562,17 @@ class EventRepository extends Repository
             }
         }
 
-        // Vorjahresvergleich berechnen
         foreach (array_keys($statistics) as $year) {
             $prevYear = $year - 1;
             if (!isset($statistics[$prevYear])) {
                 continue;
             }
-            $current  = $statistics[$year]['total'];
+            $current = $statistics[$year]['total'];
             $previous = $statistics[$prevYear]['total'];
             if ($previous <= 0) {
                 continue;
             }
-            $diff    = $current - $previous;
+            $diff = $current - $previous;
             $percent = round(abs($diff) / $previous * 100, 1);
             $percentFormatted = str_replace('.', ',', (string)$percent);
             if ($diff > 0) {
@@ -550,7 +585,6 @@ class EventRepository extends Repository
             $statistics[$year]['yearCompare'] = $label;
         }
 
-        // Auf die gewünschte Anzahl Jahre begrenzen (nach Vorjahresvergleich, damit die Anzeige korrekt ist)
         if ($maxYears > 0) {
             $statistics = array_slice($statistics, 0, $maxYears, true);
         }
@@ -578,10 +612,14 @@ class EventRepository extends Repository
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
 
+        $platform = $queryBuilder->getConnection()->getDatabasePlatform();
+        $yearSql = $this->getYearSql('e.start', $platform);
+        $monthSql = $this->getMonthSql('e.start', $platform);
+
         $queryBuilder
             ->addSelectLiteral(
-                'YEAR(e.start) AS year',
-                'MONTH(e.start) AS month',
+                $yearSql . ' AS year',
+                $monthSql . ' AS month',
                 'COUNT(DISTINCT e.uid) AS cnt'
             )
             ->from('tx_rescuereports_domain_model_event', 'e')
@@ -606,10 +644,9 @@ class EventRepository extends Repository
             ->executeQuery()
             ->fetchAllAssociative();
 
-        // Rohdaten → [year => [month => count]]
         $raw = [];
         foreach ($rows as $row) {
-            $year  = (int)$row['year'];
+            $year = (int)$row['year'];
             $month = (int)$row['month'];
             if (!isset($raw[$year])) {
                 $raw[$year] = [];
@@ -621,7 +658,7 @@ class EventRepository extends Repository
             $raw = array_slice($raw, 0, $maxYears, true);
         }
 
-        $years  = array_keys($raw);
+        $years = array_keys($raw);
         $maxCnt = 0;
         foreach ($raw as $months) {
             if ($months) {
@@ -635,24 +672,24 @@ class EventRepository extends Repository
             foreach ($years as $yi => $year) {
                 $count = (int)($raw[$year][$m] ?? 0);
                 $values[] = [
-                    'year'    => $year,
-                    'count'   => $count,
+                    'year' => $year,
+                    'count' => $count,
                     'percent' => $maxCnt > 0 ? round($count / $maxCnt * 100, 1) : 0.0,
-                    'color'   => $yearColors[$yi % count($yearColors)],
+                    'color' => $yearColors[$yi % count($yearColors)],
                 ];
             }
             $mobileRows[] = [
-                'month'  => $monthNames[$m - 1],
+                'month' => $monthNames[$m - 1],
                 'values' => $values,
             ];
         }
 
         return [
-            'years'       => $years,
-            'monthNames'  => $monthNames,
+            'years' => $years,
+            'monthNames' => $monthNames,
             'monthCounts' => $raw,
-            'maxCount'    => $maxCnt,
-            'mobileRows'  => $mobileRows,
+            'maxCount' => $maxCnt,
+            'mobileRows' => $mobileRows,
             'svgBarChart' => $this->buildMonthlyBarChartSvg($raw, $years, $maxCnt),
         ];
     }
@@ -667,65 +704,65 @@ class EventRepository extends Repository
      */
     private function buildMonthlyBarChartSvg(array $raw, array $years, int $maxCnt): array
     {
-        $W = 700; $H = 300;
-        $mL = 45; $mB = 55; $mT = 15; $mR = 15;
-        $plotW = $W - $mL - $mR;  // 640
-        $plotH = $H - $mB - $mT;  // 230
+        $W = 700;
+        $H = 300;
+        $mL = 45;
+        $mB = 55;
+        $mT = 15;
+        $mR = 15;
+        $plotW = $W - $mL - $mR;
+        $plotH = $H - $mB - $mT;
 
         $yearColors = ['#3498db', '#e67e22', '#2ecc71', '#9b59b6', '#e74c3c', '#1abc9c', '#f39c12', '#34495e'];
         $monthNames = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
-        $nYears     = count($years);
-        $groupW     = $plotW / 12;
-        $barW       = $nYears > 0 ? max(3.0, ($groupW - 4) / $nYears - 1) : $groupW - 4;
-        $yScale     = $maxCnt > 0 ? $plotH / $maxCnt : 1.0;
+        $nYears = count($years);
+        $groupW = $plotW / 12;
+        $barW = $nYears > 0 ? max(3.0, ($groupW - 4) / $nYears - 1) : $groupW - 4;
+        $yScale = $maxCnt > 0 ? $plotH / $maxCnt : 1.0;
 
-        // Gitterlinien (4–5 Stufen)
         $step = $maxCnt > 0 ? (int)ceil($maxCnt / 5) : 1;
         $gridLines = [];
         for ($v = $step; $v <= $maxCnt; $v += $step) {
             $y = round($mT + $plotH - $v * $yScale, 2);
             $gridLines[] = [
-                'x1'     => $mL,
-                'y1'     => $y,
-                'x2'     => $mL + $plotW,
-                'y2'     => $y,
-                'label'  => $v,
+                'x1' => $mL,
+                'y1' => $y,
+                'x2' => $mL + $plotW,
+                'y2' => $y,
+                'label' => $v,
                 'labelX' => $mL - 4,
                 'labelY' => $y + 4,
             ];
         }
 
-        // Balken
         $bars = [];
         foreach ($years as $yi => $year) {
             $color = $yearColors[$yi % count($yearColors)];
             for ($m = 1; $m <= 12; $m++) {
                 $cnt = $raw[$year][$m] ?? 0;
-                $bH  = round($cnt * $yScale, 2);
-                $x   = round($mL + ($m - 1) * $groupW + 2 + $yi * ($barW + 1), 2);
-                $y   = round($mT + $plotH - $bH, 2);
+                $bH = round($cnt * $yScale, 2);
+                $x = round($mL + ($m - 1) * $groupW + 2 + $yi * ($barW + 1), 2);
+                $y = round($mT + $plotH - $bH, 2);
                 $bars[] = [
-                    'x'       => $x,
-                    'y'       => $y,
-                    'width'   => round($barW, 2),
-                    'height'  => max(0.5, $bH),
-                    'color'   => $color,
+                    'x' => $x,
+                    'y' => $y,
+                    'width' => round($barW, 2),
+                    'height' => max(0.5, $bH),
+                    'color' => $color,
                     'tooltip' => $monthNames[$m - 1] . ' ' . $year . ': ' . $cnt,
                 ];
             }
         }
 
-        // Monatsbeschriftungen
         $monthLabels = [];
         for ($m = 1; $m <= 12; $m++) {
             $monthLabels[] = [
-                'x'    => round($mL + ($m - 1) * $groupW + $groupW / 2, 2),
-                'y'    => $mT + $plotH + 14,
+                'x' => round($mL + ($m - 1) * $groupW + $groupW / 2, 2),
+                'y' => $mT + $plotH + 14,
                 'text' => $monthNames[$m - 1],
             ];
         }
 
-        // Legende (zentriert unterhalb der Monatsnamen)
         $legendTotalW = $nYears * 65;
         $legendStartX = $mL + ($plotW - $legendTotalW) / 2;
         $legend = [];
@@ -733,24 +770,24 @@ class EventRepository extends Repository
             $lx = round($legendStartX + $yi * 65, 2);
             $ly = $H - 14;
             $legend[] = [
-                'rx'    => $lx,
-                'ry'    => $ly - 9,
+                'rx' => $lx,
+                'ry' => $ly - 9,
                 'color' => $yearColors[$yi % count($yearColors)],
-                'tx'    => $lx + 13,
-                'ty'    => $ly,
+                'tx' => $lx + 13,
+                'ty' => $ly,
                 'label' => (string)$year,
             ];
         }
 
         return [
-            'viewBox'     => "0 0 $W $H",
-            'axisLeft'    => $mL,
-            'axisBottom'  => $mT + $plotH,
-            'axisRight'   => $mL + $plotW,
-            'gridLines'   => $gridLines,
+            'viewBox' => "0 0 $W $H",
+            'axisLeft' => $mL,
+            'axisBottom' => $mT + $plotH,
+            'axisRight' => $mL + $plotW,
+            'gridLines' => $gridLines,
             'monthLabels' => $monthLabels,
-            'bars'        => $bars,
-            'legend'      => $legend,
+            'bars' => $bars,
+            'legend' => $legend,
         ];
     }
 
@@ -758,17 +795,21 @@ class EventRepository extends Repository
      * Liefert die Summe der Einsatzdauern (in Sekunden) je Jahr.
      * Kein JOIN auf die Typ-MM-Tabelle, damit Events mit mehreren Typen nicht mehrfach gezählt werden.
      *
-     * @return array<int, int>  [$year => $totalSeconds]
+     * @return array<int, int|null> [$year => $totalSeconds]
      */
     private function getYearlyTotalDurations(int $stationUid = 0): array
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
 
+        $platform = $queryBuilder->getConnection()->getDatabasePlatform();
+        $yearSql = $this->getYearSql('e.start', $platform);
+        $durationSql = $this->getDurationSecondsSql('e.start', 'e.end', $platform);
+
         $queryBuilder
             ->addSelectLiteral(
-                'YEAR(e.start) AS year',
-                'SUM(TIMESTAMPDIFF(SECOND, e.start, e.end)) AS total_sec'
+                $yearSql . ' AS year',
+                'SUM(' . $durationSql . ') AS total_sec'
             )
             ->from('tx_rescuereports_domain_model_event', 'e')
             ->where(
@@ -812,8 +853,11 @@ class EventRepository extends Repository
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
 
+        $platform = $queryBuilder->getConnection()->getDatabasePlatform();
+        $yearSql = $this->getYearSql('e.start', $platform);
+
         $queryBuilder
-            ->addSelectLiteral('YEAR(e.start) AS year')
+            ->addSelectLiteral($yearSql . ' AS year')
             ->from('tx_rescuereports_domain_model_event', 'e')
             ->where(
                 $queryBuilder->expr()->eq('e.deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
@@ -843,8 +887,10 @@ class EventRepository extends Repository
         if ($seconds === null || $seconds <= 0) {
             return '—';
         }
-        $hours   = (int)($seconds / 3600);
+
+        $hours = (int)($seconds / 3600);
         $minutes = (int)(($seconds % 3600) / 60);
+
         return $hours > 0
             ? sprintf('%d Std. %02d Min.', $hours, $minutes)
             : sprintf('%d Min.', $minutes);
@@ -860,8 +906,11 @@ class EventRepository extends Repository
         $qb = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
 
+        $platform = $qb->getConnection()->getDatabasePlatform();
+        $yearSql = $this->getYearSql('e.start', $platform);
+
         $qb->select('cat.uid AS cat_uid', 't.title AS type_title')
-            ->addSelectLiteral('YEAR(e.start) AS year', 'COUNT(DISTINCT e.uid) AS cnt')
+            ->addSelectLiteral($yearSql . ' AS year', 'COUNT(DISTINCT e.uid) AS cnt')
             ->from('tx_rescuereports_domain_model_event', 'e')
             ->innerJoin('e', 'tx_rescuereports_event_type_mm', 'tmm', 'e.uid = tmm.uid_local')
             ->innerJoin('tmm', 'tx_rescuereports_domain_model_type', 't', 'tmm.uid_foreign = t.uid')
@@ -886,7 +935,6 @@ class EventRepository extends Repository
                 );
         }
 
-        // query after optional station filter
         $rows = $qb->executeQuery()->fetchAllAssociative();
 
         $result = [];
