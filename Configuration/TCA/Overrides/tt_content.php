@@ -15,6 +15,10 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         'Rescue Reports: Einsatzübersicht',
         'rescue_reports_eventlist'
     );
+
+    // For TYPO3 v13, register pi_flexform as subtype
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeEventlist] = 'pi_flexform';
+
     ExtensionManagementUtility::addToAllTCAtypes(
         'tt_content',
         '--div--;Konfiguration,pi_flexform,',
@@ -34,6 +38,9 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         'Rescue Reports: Jahresstatistik',
         'rescue_reports_statistics'
     );
+
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeStatistics] = 'pi_flexform';
+
     ExtensionManagementUtility::addToAllTCAtypes(
         'tt_content',
         '--div--;Konfiguration,pi_flexform,',
@@ -53,6 +60,9 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         'Rescue Reports: Sidebar',
         'rescue_reports_sidebar'
     );
+
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeSidebar] = 'pi_flexform';
+
     ExtensionManagementUtility::addToAllTCAtypes(
         'tt_content',
         '--div--;Konfiguration,pi_flexform,',
@@ -72,6 +82,9 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         'Rescue Reports: RSS-Feed',
         'rescue_reports_rss'
     );
+
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeRss] = 'pi_flexform';
+
     ExtensionManagementUtility::addToAllTCAtypes(
         'tt_content',
         '--div--;Konfiguration,pi_flexform,',
