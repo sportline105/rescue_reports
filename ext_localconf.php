@@ -1,14 +1,11 @@
 <?php
-declare(strict_types=1);
 
 defined('TYPO3') or die();
 
-use nkfire\RescueReports\Controller\EventController;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
+use nkfire\RescueReports\Controller\EventController;
 
-(function (): void {
-
-    // Hauptplugin
+(static function (): void {
     ExtensionUtility::configurePlugin(
         'RescueReports',
         'Eventlist',
@@ -17,10 +14,10 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         ],
         [
             EventController::class => 'list',
-        ]
+        ],
+        ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
     );
 
-    // Statistik-Plugin
     ExtensionUtility::configurePlugin(
         'RescueReports',
         'Statistics',
@@ -29,43 +26,27 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         ],
         [
             EventController::class => 'statistics',
-        ]
+        ],
+        ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
     );
 
-    // Sidebar-Plugin
     ExtensionUtility::configurePlugin(
         'RescueReports',
         'Sidebar',
         [
             EventController::class => 'list',
         ],
-        [
-            EventController::class => '',
-        ]
+        [],
+        ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
     );
 
-    // RSS-Feed-Plugin
     ExtensionUtility::configurePlugin(
         'RescueReports',
         'Rss',
         [
             EventController::class => 'rss',
         ],
-        [
-            EventController::class => '',
-        ]
+        [],
+        ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
     );
-
-    // RTE configuration removed - deprecated in TYPO3 13+
-
 })();
-
-$GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][] = [
-    'nodeName' => 'eventVehicleAssignment',
-    'priority' => 40,
-    'class' => \nkfire\RescueReports\Form\Element\EventVehicleAssignmentElement::class,
-];
-
-// DataHandler hook for VehicleNameAutoFill
-// Still using hook system instead of events because it has direct access to fieldArray with unsaved data
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] = \nkfire\RescueReports\Hooks\VehicleNameAutoFill::class;
