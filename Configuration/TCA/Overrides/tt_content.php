@@ -20,7 +20,7 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
     );
 
     if ($isV14Plus) {
-        // TYPO3 v14+: ds_pointerField removed, use columnsOverrides via '*' wildcard
+        // TYPO3 v14+: ds_pointerField removed; addPiFlexFormValue('*') uses columnsOverrides internally
         ExtensionManagementUtility::addToAllTCAtypes(
             'tt_content',
             '--div--;Konfiguration,pi_flexform,pages,recursive,',
@@ -33,18 +33,15 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             $ctypeEventlist
         );
     } else {
-        // TYPO3 v13: ds_pointerField='list_type,CType' → key = ',CType' (empty list_type)
+        // TYPO3 v13: Use columnsOverrides to bypass ds_pointerField lookup entirely
         ExtensionManagementUtility::addToAllTCAtypes(
             'tt_content',
             'pi_flexform',
             $ctypeEventlist,
             'after:subheader'
         );
-        ExtensionManagementUtility::addPiFlexFormValue(
-            '',
-            'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml',
-            $ctypeEventlist
-        );
+        $GLOBALS['TCA']['tt_content']['types'][$ctypeEventlist]['columnsOverrides']['pi_flexform']['config']['ds']['default'] =
+            'FILE:EXT:rescue_reports/Configuration/FlexForms/eventlist.xml';
     }
 
     // Statistik-Plugin
@@ -74,11 +71,8 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             $ctypeStatistics,
             'after:subheader'
         );
-        ExtensionManagementUtility::addPiFlexFormValue(
-            '',
-            'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml',
-            $ctypeStatistics
-        );
+        $GLOBALS['TCA']['tt_content']['types'][$ctypeStatistics]['columnsOverrides']['pi_flexform']['config']['ds']['default'] =
+            'FILE:EXT:rescue_reports/Configuration/FlexForms/statistics.xml';
     }
 
     // Sidebar-Plugin
@@ -108,11 +102,8 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             $ctypeSidebar,
             'after:subheader'
         );
-        ExtensionManagementUtility::addPiFlexFormValue(
-            '',
-            'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml',
-            $ctypeSidebar
-        );
+        $GLOBALS['TCA']['tt_content']['types'][$ctypeSidebar]['columnsOverrides']['pi_flexform']['config']['ds']['default'] =
+            'FILE:EXT:rescue_reports/Configuration/FlexForms/sidebar.xml';
     }
 
     // RSS-Feed-Plugin
@@ -142,11 +133,8 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
             $ctypeRss,
             'after:subheader'
         );
-        ExtensionManagementUtility::addPiFlexFormValue(
-            '',
-            'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml',
-            $ctypeRss
-        );
+        $GLOBALS['TCA']['tt_content']['types'][$ctypeRss]['columnsOverrides']['pi_flexform']['config']['ds']['default'] =
+            'FILE:EXT:rescue_reports/Configuration/FlexForms/rss.xml';
     }
 
 })();
