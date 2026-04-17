@@ -1,7 +1,7 @@
 {
   "name": "nkfire/rescue_reports",
   "type": "typo3-cms-extension",
-  "description": "Extbase-basierte Feuerwehr-Extension mit Einsatzverwaltung",
+  "description": "Extbase-based TYPO3 extension for managing detailed incident reports for fire departments and emergency services with multiple locations and sub-units. // Extbase-basierte TYPO3-Extension zur Verwaltung detaillierter Einsatzberichte für Feuerwehren und BOS mit mehreren Standorten und Untereinheiten.",
   "license": "GPL-2.0-or-later",
   "require": {
     "typo3/cms-core": "^13.0 || ^14.0",
