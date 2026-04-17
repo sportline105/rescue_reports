@@ -1,7 +1,7 @@
 <?php
 $EM_CONF[$_EXTKEY] = [
     'title' => 'rescue_reports',
-    'description' => 'Detaillierte Einsatzberichte für Feuerwehren und BOS',
+    'description' => 'Detailed incident reports for fire departments and emergency services with multiple locations and sub-units. // Detaillierte Einsatzberichte für Feuerwehren und BOS mit mehreren Standorten und Untereinheiten',
     'category' => 'plugin',
     'author' => 'Norbert Külz',
     'author_email' => 'sportline105@googlemail.com',
