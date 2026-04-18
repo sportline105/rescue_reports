@@ -128,6 +128,286 @@ RSS 2.0-Feed der neuesten Einsätze.
 
 ---
 
+## Template-Variablen Referenz
+
+Nachfolgend ist eine vollständige Referenz aller Template-Variablen pro Plugin-Action dokumentiert. Diese Variablen sind in den entsprechenden Fluid-Templates verfügbar und können für individuelle Anpassungen verwendet werden.
+
+### Einsatzliste (`tx_rescuereports_eventlist`)
+
+#### Action: `list` – Ereignisliste und Sidebar-Widget
+
+| Variable | Typ | Beschreibung |
+|---|---|---|
+| `events` | `ObjectStorage<Event>` | Alle gefilterten Einsätze (Rohkollektion) |
+| `eventItems` | `Array` | Einsätze mit berechneten Stationsnummern |
+| `eventItemsByYear` | `Array` | Einsätze gruppiert nach Jahr (Struktur: `[year => [events]]`) |
+| `yearGroupsWithStats` | `Array` | Jahre mit eingebetteten Statistiken (für Inline-Statistik) |
+| `stations` | `ObjectStorage<Station>` | Verfügbare Stationen (für Dropdown-Filter) |
+| `activeStationUid` | `int` | UID der aktuell gewählten Station |
+| `defaultStationUid` | `int` | UID der Standard-/Vorausgewählten Station (aus FlexForm) |
+| `activeStationName` | `string` | Name der aktuellen Station (für Anzeige) |
+| `searchWord` | `string` | Benutzereingabe Suchtext |
+| `enableSearch` | `bool` | Suche aktiviert (aus FlexForm) |
+| `dateFrom` | `\DateTime` | Startdatum des Filters als DateTime-Objekt |
+| `dateTo` | `\DateTime` | Enddatum des Filters als DateTime-Objekt |
+| `dateFromStr` | `string` | Startdatum als String (Format: `YYYY-MM-DD`) |
+| `dateToStr` | `string` | Enddatum als String (Format: `YYYY-MM-DD`) |
+| `enableDateFilter` | `bool` | Datumsfilter im Frontend anzeigen (aus FlexForm) |
+| `maxCount` | `int` | Maximale Anzahl angezeigter Einsätze (0 = unbegrenzt) |
+| `statistics` | `Array` | Jahresstatistiken mit Kategorie-Daten (für Block-Statistik) |
+| `yearGroupsWithStats` | `Array` | Jahre mit eingebetteten Statistiken (für Inline-Anzeige je Jahresgruppe) |
+| `showStatistics` | `bool` | Statistik anzeigen (aus FlexForm) |
+| `showBlockStatistics` | `bool` | Block-Statistik für aktuelle Filter sichtbar |
+| `statisticsPosition` | `string` | Position der Statistik: `'above'` oder `'below'` |
+| `enableYearFilter` | `bool` | Jahresauswahl im Frontend anzeigen (aus FlexForm) |
+| `selectedYear` | `int \| null` | Aktuell gewähltes Jahr (null = alle Jahre) |
+| `availableYears` | `Array<int>` | Array verfügbarer Jahre für Dropdown |
+| `showMapView` | `bool` | Kartenansicht anzeigen (aus FlexForm) |
+| `mapPosition` | `string` | Position der Karte: `'above'` oder `'below'` |
+| `widgetTitle` | `string` | Widget-Überschrift (z. B. „Letzte Einsätze") |
+| `detailPageUid` | `int` | Page-UID der Detailansicht (für Links) |
+| `listPageUid` | `int` | Page-UID der vollständigen Liste (für Widget-Links) |
+| `templateVariant` | `string` | Template-Variante: `'bootstrap'`, `'foundation'`, `'sidebar-bootstrap'`, `'sidebar-foundation'` |
+| `settings` | `Array` | FlexForm-Einstellungen (alle Konfigurationsoptionen) |
+
+**Komplexe Datenstrukturen:**
+
+`eventItemsByYear` und `yearGroupsWithStats`:
+```
+[
+  2024 => [
+    ['uid' => 123, 'number' => '001', 'title' => 'Wohnhausbrand', ...Event-Properties],
+    ['uid' => 124, 'number' => '002', 'title' => 'Verkehrsunfall', ...Event-Properties]
+  ],
+  2023 => [ ... ]
+]
+```
+
+`statistics` und eingebettete Statistiken in `yearGroupsWithStats`:
+```
+[
+  'categories' => [
+    ['name' => 'Brand', 'count' => 45, 'percentage' => 25.5, 'color' => '#ff0000'],
+    ['name' => 'Rettung', 'count' => 78, 'percentage' => 44.3, 'color' => '#00ff00'],
+    ...
+  ]
+]
+```
+
+**Event-Objekt Properties:**
+Alle `Event`-Objekte enthalten folgende Eigenschaften:
+- `uid`, `title`, `description` (HTML), `location`
+- `start`, `end` (DateTime), `duration`
+- `types` (ObjectStorage<Type>), `categories` (für Statistik)
+- `latitude`, `longitude` (für Karte)
+- `images` (ObjectStorage<Image>)
+
+---
+
+#### Action: `show` – Event-Detailansicht
+
+| Variable | Typ | Beschreibung |
+|---|---|---|
+| `event` | `Event` | Das angeforderte Event-Objekt |
+| `groupedVehicleData` | `Array` | Fahrzeuge gruppiert nach Brigade und Station |
+| `activeStationUid` | `int` | UID der angezeigten Station |
+| `defaultStationUid` | `int` | Standard-Station (aus FlexForm) |
+| `displayNumber` | `string` | Formatierte Einsatznummer (mit Station-Präfix) |
+| `displayPlainNumber` | `string` | Einsatznummer ohne Formatierung |
+| `displayStationName` | `string` | Name der angezeigten Station |
+| `detailPageUid` | `int` | Aktuelle Page-UID |
+| `templateVariant` | `string` | Template-Variante (`'bootstrap'` oder `'foundation'`) |
+| `settings` | `Array` | FlexForm-Einstellungen |
+
+**groupedVehicleData Struktur:**
+```
+[
+  [
+    'uid' => 1,
+    'name' => 'FF Musterstadt',
+    'sorting' => 10,
+    'stations' => [
+      [
+        'name' => 'Hauptwache',
+        'sorting' => 5,
+        'vehicles' => [
+          ['name' => 'LF 10', 'image' => ImageObject, 'link' => 'https://example.com'],
+          ['name' => 'DLK 23', 'image' => ImageObject, 'link' => 'https://example.com']
+        ]
+      ],
+      [
+        'name' => 'Außenstelle Nord',
+        'sorting' => 10,
+        'vehicles' => [ ... ]
+      ]
+    ]
+  ],
+  [ ... weitere Brigaden ... ]
+]
+```
+
+**Event-Objekt Properties (in Detailansicht):**
+- `uid`, `title`, `description` (HTML)
+- `location`, `start`, `end` (DateTime), `duration`
+- `latitude`, `longitude` (für eventuelle Karteneinbindung)
+- `types` (Einsatzarten), `categories`
+- `images` (ObjectStorage mit Bildobjekten für Carousel/Lightbox)
+- `disableDetail` (bool – Link kann versteckt werden)
+
+---
+
+### Statistik-Plugin (`tx_rescuereports_statistics`)
+
+#### Action: `statistics` – Statistikseite mit Jahres- und Monatsübersicht
+
+| Variable | Typ | Beschreibung |
+|---|---|---|
+| `statistics` | `Array` | Jahresstatistiken mit Kategorie-Details |
+| `monthlyStatistics` | `Array` | Monatsdaten mit SVG-Balkendiagramm |
+| `showMonthlyChart` | `bool` | Monatsvergleich anzeigen (aus FlexForm) |
+| `stations` | `ObjectStorage<Station>` | Verfügbare Stationen (für Filter) |
+| `activeStationUid` | `int` | UID der aktuell gewählten Station |
+| `stationUid` | `int` | UID der gefilterten Station (Alias zu `activeStationUid`) |
+| `stationName` | `string` | Name der gefilterten Station |
+| `showStationFilter` | `bool` | Stationsfilter im Frontend anzeigen (aus FlexForm) |
+
+**statistics (Jahresstatistik):**
+```
+[
+  'categories' => [
+    ['name' => 'Brand', 'count' => 120, 'percentage' => 28.5, 'color' => '#ff0000'],
+    ['name' => 'Rettung', 'count' => 200, 'percentage' => 47.6, 'color' => '#00ff00'],
+    ...
+  ]
+]
+```
+
+**monthlyStatistics (mit SVG-Diagramm):**
+```
+[
+  'svgBarChart' => [
+    'viewBox' => '0 0 800 400',
+    'gridLines' => [ ... Array von Grid-Linien-Objekten ... ],
+    'bars' => [
+      [
+        'x' => 50,
+        'y' => 200,
+        'width' => 30,
+        'height' => 150,
+        'color' => '#ff0000',
+        'tooltip' => 'Januar: 45 Einsätze'
+      ],
+      [ ... weitere Balken für Feb, Mär, etc. ... ]
+    ],
+    'monthLabels' => [
+      ['x' => 65, 'y' => 380, 'text' => 'Jan'],
+      ['x' => 115, 'y' => 380, 'text' => 'Feb'],
+      [ ... alle 12 Monate ... ]
+    ],
+    'legend' => [
+      ['x' => 650, 'y' => 50, 'color' => '#ff0000', 'label' => 'Brand'],
+      [ ... weitere Kategorien ... ]
+    ]
+  ],
+  'mobileRows' => [ ... Mobile-optimierte Darstellung ... ]
+]
+```
+
+---
+
+### Sidebar-Widget (`tx_rescuereports_sidebar`)
+
+#### Action: `list` – Kompakte Ereignisliste für Sidebar
+
+| Variable | Typ | Beschreibung |
+|---|---|---|
+| `events` | `ObjectStorage<Event>` | Gefilterte, limitierte Einsätze |
+| `activeStationUid` | `int` | UID der Standard-/Aktuellen Station |
+| `widgetTitle` | `string` | Widget-Überschrift (z. B. „Letzte Einsätze") |
+| `maxCount` | `int` | Maximale Anzahl angezeigter Einsätze (Standard: 5) |
+| `detailPageUid` | `int` | Page-UID für „Zum Einsatz"-Link |
+| `listPageUid` | `int` | Page-UID für „Alle Einsätze"-Link |
+| `templateVariant` | `string` | Template-Variante (`'sidebar-bootstrap'` oder `'sidebar-foundation'`) |
+| `settings` | `Array` | FlexForm-Einstellungen |
+
+---
+
+### RSS-Feed (`tx_rescuereports_rss`)
+
+#### Action: `rss` – RSS 2.0 Feed (XML-Format)
+
+| Variable | Typ | Beschreibung |
+|---|---|---|
+| `events` | `ObjectStorage<Event>` | Gefilterte Einsätze für Feed-Items |
+| `feedTitle` | `string` | RSS-Feed-Titel (aus FlexForm oder Fallback) |
+| `stationName` | `string` | Station (für Feed-Beschreibung) |
+| `detailPageUid` | `int` | Page-UID für Event-Links |
+
+**Verwendete Event-Properties in RSS:**
+- `title` – RSS Item-Titel
+- `start` – Publikationsdatum (pubDate)
+- `description` – RSS Item-Beschreibung (HTML wird mit `<![CDATA[...]]>` eingebunden)
+- `uid` – Event-Eindeutigkeit
+
+---
+
+### Partials (Wiederverwendbare Komponenten)
+
+#### `Statistics/PieChart.html` – Tortendiagramm-Statistik
+
+**Eingabe-Variablen:**
+| Variable | Typ | Beschreibung |
+|---|---|---|
+| `statistics` | `Array` | Statistik-Array mit `categories` (siehe `statistics` oben) |
+| `title` | `string` | Optionale Überschrift für das Diagramm |
+
+**Rendering:**
+- SVG-basiertes, responsives Tortendiagramm
+- CSS-Tooltips auf Hover (Kategoriename, Anzahl, Prozentsatz)
+- Automatische Farben aus Kategorie-Objekt
+
+---
+
+#### `Map/EventList.html` – OpenStreetMap-Karte
+
+**Eingabe-Variablen:**
+| Variable | Typ | Beschreibung |
+|---|---|---|
+| `events` | `ObjectStorage<Event>` | Einsätze mit Koordinaten (`latitude`, `longitude`) |
+| `settings` | `Array` | Enthält `mapHeight`, `mapZoom` aus FlexForm |
+
+**Rendering:**
+- Leaflet.js 1.9.4 (CDN)
+- Marker für jeden Event mit Koordinaten
+- Popup mit Event-Titel und Datum
+
+---
+
+#### `Deployment/Item.html` – Fahrzeug-Anzeige in Detailansicht
+
+**Eingabe-Variablen:**
+| Variable | Typ | Beschreibung |
+|---|---|---|
+| `vehicle` | `Vehicle` | Fahrzeug-Objekt mit `name`, `image`, `link` |
+
+---
+
+## Naming-Konventionen für Template-Variablen
+
+Die Extension folgt konsistenten Namenskonventionen:
+
+| Muster | Beispiele | Bedeutung |
+|---|---|---|
+| `enable*` oder `show*` | `enableSearch`, `showStatistics`, `showMapView` | Boolean Feature-Flags |
+| `*Uid` | `activeStationUid`, `detailPageUid`, `listPageUid` | TYPO3 UID-Referenzen |
+| `*Name` oder `active*Name` | `stationName`, `activeStationName` | Anzeigetexte |
+| `*Str` | `dateFromStr`, `dateToStr` | String-Varianten von Daten |
+| `display*` | `displayNumber`, `displayStationName` | Formatierte Ausgabevariablen |
+| `default*` | `defaultStationUid` | Vorbelegte Standard-Werte |
+| `selected*` | `selectedYear` | Benutzer-Auswahl (Filter) |
+
+---
+
 ## Bildergalerie & Lightbox
 
 ### Bootstrap-Template
