@@ -18,7 +18,7 @@ final class VehicleNameAutoFillListener
             return;
         }
 
-        $this->process($event->getRecord());
+        $this->processVehicleData($event->getRecord(), $event->getUid());
     }
 
     public function beforeRecordUpdated(BeforeRecordUpdatedEvent $event): void
@@ -27,65 +27,79 @@ final class VehicleNameAutoFillListener
             return;
         }
 
-        $this->process($event->getRecord());
+        $this->processVehicleData($event->getRecord(), $event->getUid());
     }
 
-    private function process(array &$fieldArray): void
+    protected function processVehicleData(array &$fieldArray, int|string $id): void
     {
-        // Nur wenn car gesetzt wurde
-        if (!isset($fieldArray['car'])) {
-            return;
-        }
-
-        $carUid = (int)$fieldArray['car'];
+        $carUid = $this->resolveCarUid($fieldArray, $id);
         if ($carUid <= 0) {
             return;
         }
 
-        // 👉 Optional: nur wenn name leer ist (wie früher sinnvoll)
-        if (!empty($fieldArray['name'])) {
+        $carName = $this->getCarNameByUid($carUid);
+        if ($carName === '') {
             return;
         }
 
+        // Gleiches Verhalten wie der bisherige Hook:
+        // Fahrzeugname wird aus dem gewählten car gesetzt/überschrieben.
+        $fieldArray['name'] = $carName;
+    }
+
+    protected function resolveCarUid(array $fieldArray, int|string $id): int
+    {
+        // Wenn car im aktuellen Speichervorgang gesetzt/geändert wird, diesen Wert verwenden
+        if (!empty($fieldArray['car'])) {
+            return (int)$fieldArray['car'];
+        }
+
+        // Bei bestehenden Datensätzen auf aktuellen DB-Wert zurückfallen
+        if ((int)$id > 0) {
+            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+                ->getQueryBuilderForTable('tx_rescuereports_domain_model_vehicle');
+
+            $row = $queryBuilder
+                ->select('car')
+                ->from('tx_rescuereports_domain_model_vehicle')
+                ->where(
+                    $queryBuilder->expr()->eq(
+                        'uid',
+                        $queryBuilder->createNamedParameter((int)$id, ParameterType::INTEGER)
+                    )
+                )
+                ->setMaxResults(1)
+                ->executeQuery()
+                ->fetchAssociative();
+
+            return (int)($row['car'] ?? 0);
+        }
+
+        return 0;
+    }
+
+    protected function getCarNameByUid(int $carUid): string
+    {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_car');
 
-        $car = $queryBuilder
+        $row = $queryBuilder
             ->select('name')
             ->from('tx_rescuereports_domain_model_car')
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid',
                     $queryBuilder->createNamedParameter($carUid, ParameterType::INTEGER)
+                ),
+                $queryBuilder->expr()->eq(
+                    'deleted',
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
                 )
             )
+            ->setMaxResults(1)
             ->executeQuery()
             ->fetchAssociative();
 
-        if (!empty($car['name'])) {
-            $fieldArray['name'] = (string)$car['name'];
-        }
-    }
-}                $carQueryBuilder->expr()->eq(
-                    'uid',
-                    $carQueryBuilder->createNamedParameter((int)$vehicleRow['car'], ParameterType::INTEGER)
-                )
-            )
-            ->executeQuery()
-            ->fetchAssociative();
-
-        if (empty($carRow) || empty($carRow['name'])) {
-            return;
-        }
-
-        // Update vehicle name and timestamp
-        $vehicleConnection->update(
-            'tx_rescuereports_domain_model_vehicle',
-            [
-                'name' => $carRow['name'],
-                'tstamp' => time(),
-            ],
-            ['uid' => $recordUid]
-        );
+        return trim((string)($row['name'] ?? ''));
     }
 }
