@@ -23,10 +23,10 @@ services:
   nkfire\RescueReports\EventListener\VehicleNameAutoFillListener:
     tags:
       - name: event.listener
-        event: 'TYPO3\CMS\Core\DataHandling\Event\AfterRecordCreatedEvent'
+        event: 'TYPO3\CMS\Core\DataHandling\Event\BeforeRecordCreatedEvent'
         method: beforeRecordCreated
       - name: event.listener
-        event: 'TYPO3\CMS\Core\DataHandling\Event\AfterRecordUpdatedEvent'
+        event: 'TYPO3\CMS\Core\DataHandling\Event\BeforeRecordUpdatedEvent'
         method: beforeRecordUpdated
 
   nkfire\RescueReports\EventListener\DataHandlerEventListener:
