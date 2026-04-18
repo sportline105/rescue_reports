@@ -1,71 +1,72 @@
 <?php
+
 declare(strict_types=1);
 
 namespace nkfire\RescueReports\EventListener;
 
 use Doctrine\DBAL\ParameterType;
-use TYPO3\CMS\Core\DataHandling\Event\AfterRecordCreatedEvent;
-use TYPO3\CMS\Core\DataHandling\Event\AfterRecordUpdatedEvent;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\DataHandling\Event\BeforeRecordCreatedEvent;
+use TYPO3\CMS\Core\DataHandling\Event\BeforeRecordUpdatedEvent;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class VehicleNameAutoFillListener
+final class VehicleNameAutoFillListener
 {
-    public function onAfterRecordCreated(AfterRecordCreatedEvent $event): void
+    public function beforeRecordCreated(BeforeRecordCreatedEvent $event): void
     {
         if ($event->getTableName() !== 'tx_rescuereports_domain_model_vehicle') {
             return;
         }
 
-        $recordUid = $event->getRecordUid();
-        $this->updateVehicleName($recordUid);
+        $this->process($event->getRecord());
     }
 
-    public function onAfterRecordUpdated(AfterRecordUpdatedEvent $event): void
+    public function beforeRecordUpdated(BeforeRecordUpdatedEvent $event): void
     {
         if ($event->getTableName() !== 'tx_rescuereports_domain_model_vehicle') {
             return;
         }
 
-        $recordUid = $event->getRecordUid();
-        $this->updateVehicleName($recordUid);
+        $this->process($event->getRecord());
     }
 
-    protected function updateVehicleName(int $recordUid): void
+    private function process(array &$fieldArray): void
     {
-        if ($recordUid <= 0) {
+        // Nur wenn car gesetzt wurde
+        if (!isset($fieldArray['car'])) {
             return;
         }
 
-        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
-        $vehicleConnection = $connectionPool->getConnectionForTable('tx_rescuereports_domain_model_vehicle');
+        $carUid = (int)$fieldArray['car'];
+        if ($carUid <= 0) {
+            return;
+        }
 
-        // Get the vehicle's car field using QueryBuilder
-        $vehicleQueryBuilder = $vehicleConnection->createQueryBuilder();
-        $vehicleRow = $vehicleQueryBuilder
-            ->select('car')
-            ->from('tx_rescuereports_domain_model_vehicle')
+        // 👉 Optional: nur wenn name leer ist (wie früher sinnvoll)
+        if (!empty($fieldArray['name'])) {
+            return;
+        }
+
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tx_rescuereports_domain_model_car');
+
+        $car = $queryBuilder
+            ->select('name')
+            ->from('tx_rescuereports_domain_model_car')
             ->where(
-                $vehicleQueryBuilder->expr()->eq(
+                $queryBuilder->expr()->eq(
                     'uid',
-                    $vehicleQueryBuilder->createNamedParameter($recordUid, ParameterType::INTEGER)
+                    $queryBuilder->createNamedParameter($carUid, ParameterType::INTEGER)
                 )
             )
             ->executeQuery()
             ->fetchAssociative();
 
-        if (empty($vehicleRow) || empty($vehicleRow['car'])) {
-            return;
+        if (!empty($car['name'])) {
+            $fieldArray['name'] = (string)$car['name'];
         }
-
-        // Get car name using QueryBuilder
-        $carConnection = $connectionPool->getConnectionForTable('tx_rescuereports_domain_model_car');
-        $carQueryBuilder = $carConnection->createQueryBuilder();
-        $carRow = $carQueryBuilder
-            ->select('name')
-            ->from('tx_rescuereports_domain_model_car')
-            ->where(
-                $carQueryBuilder->expr()->eq(
+    }
+}                $carQueryBuilder->expr()->eq(
                     'uid',
                     $carQueryBuilder->createNamedParameter((int)$vehicleRow['car'], ParameterType::INTEGER)
                 )
