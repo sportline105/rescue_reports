@@ -49,4 +49,8 @@ use nkfire\RescueReports\Controller\EventController;
         [],
         ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
     );
+    // Register VehicleNameAutoFill hook for DataHandler
+    // The hook provides access to $status ('new'/'update') and $fieldArray
+    // which allows proper detection of car field changes
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamap_afterDatabaseOperations'][] = \nkfire\RescueReports\Hooks\VehicleNameAutoFill::class . '->processDatamap_afterDatabaseOperations';
 })();
