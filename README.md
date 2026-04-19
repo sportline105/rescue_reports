@@ -463,10 +463,23 @@ Die Suche durchsucht folgende Felder: Titel, Beschreibung, Einsatzort, Einsatzar
 - **Slug-Routing** für sprechende URLs der Detailansicht ist vorbereitet (mit `slug` und `slug_source` Feldern).
 - **RSS-Feed** wird über einen eigenen `typeNum = 100` ausgeliefert; Content-Type `application/rss+xml`.
 - **TypoScript-Konfiguration** wird automatisch über TYPO3 13+ Site Sets geladen (`Configuration/Sets/RescueReports/`).
-- **Event-basierte Architektur**: Moderne TYPO3 13/14 Event Listener ersetzen alte Hook-Patterns
-  - Fahrzeugnamen werden automatisch beim Erstellen eines Events generiert
-  - Slug-Quellen werden automatisch bei Datenerstellung/-änderung aktualisiert
 - **Datenbankschema**: Vollständig kompatibel mit TYPO3 13 und 14, mit Unterstützung für:
   - Versionierung (Workspace-Management)
   - Mehrsprachigkeit (L10n)
   - Zeitbasierte Zugriffskontrolle (starttime/endtime)
+
+## To Do
+
+-
+
+## Hinweis zu DataHandler Hooks
+
+Die Extension verwendet aktuell bewusst DataHandler Hooks
+(processDatamapClass), da die Migration auf PSR-14 Listener
+in TYPO3 13/14 noch nicht stabil funktioniert.
+
+Betroffene Funktionalität:
+- automatische Fahrzeugbenennung
+- Slug-Generierung für Events
+
+Eine spätere Migration ist geplant.
