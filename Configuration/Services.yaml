@@ -28,3 +28,8 @@ services:
       - name: event.listener
         event: 'TYPO3\CMS\Core\DataHandling\Event\BeforeRecordUpdatedEvent'
         method: beforeRecordUpdated
+
+  nkfire\RescueReports\Routing\StationPrefixAspect:
+    public: true
+    tags:
+      - name: routing.aspect

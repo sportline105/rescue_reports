@@ -17,6 +17,10 @@ class DataHandlerHook
             return;
         }
 
+        if ($this->isKeywordEscalationDisabled($incomingFieldArray)) {
+            $incomingFieldArray['keyword_escalation'] = 0;
+        }
+
         $title = trim((string)($incomingFieldArray['title'] ?? ''));
         if ($title === '') {
             $title = 'einsatz';
@@ -33,8 +37,7 @@ class DataHandlerHook
         if ($start !== '') {
             $timestamp = strtotime($start);
             if ($timestamp !== false) {
-                $slugParts[] = date('m', $timestamp);
-                $slugParts[] = date('d', $timestamp);
+                $slugParts[] = date('Y-m-d', $timestamp);
             }
         }
 
@@ -55,12 +58,66 @@ class DataHandlerHook
         $incomingFieldArray['slug'] = '';
     }
 
+    public function processDatamap_afterDatabaseOperations(
+        string $status,
+        string $table,
+        $id,
+        array $fieldArray,
+        DataHandler $dataHandler
+    ): void {
+        if ($table !== 'tx_rescuereports_domain_model_event') {
+            return;
+        }
+
+        if (!$this->isKeywordEscalationDisabled($fieldArray)) {
+            return;
+        }
+
+        $eventUid = $status === 'new'
+            ? (int)($dataHandler->substNEWwithIDs[$id] ?? 0)
+            : (int)$id;
+
+        if ($eventUid <= 0) {
+            return;
+        }
+
+        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+
+        $connectionPool
+            ->getConnectionForTable('tx_rescuereports_event_keyword_escalation_mm')
+            ->delete(
+                'tx_rescuereports_event_keyword_escalation_mm',
+                ['uid_local' => $eventUid]
+            );
+
+        $connectionPool
+            ->getConnectionForTable('tx_rescuereports_domain_model_event')
+            ->update(
+                'tx_rescuereports_domain_model_event',
+                ['keyword_escalation' => 0],
+                ['uid' => $eventUid]
+            );
+    }
+
+    protected function isKeywordEscalationDisabled(array $incomingFieldArray): bool
+    {
+        if (!array_key_exists('enable_keyword_escalation', $incomingFieldArray)) {
+            return false;
+        }
+
+        return (int)$incomingFieldArray['enable_keyword_escalation'] === 0;
+    }
+
     protected function resolveTypeTitle(array $incomingFieldArray, $id): string
     {
         $typeUid = 0;
 
         if (!empty($incomingFieldArray['types'])) {
-            $typeUid = (int)$incomingFieldArray['types'];
+            if (is_array($incomingFieldArray['types'])) {
+                $typeUid = (int)($incomingFieldArray['types'][0] ?? 0);
+            } else {
+                $typeUid = (int)$incomingFieldArray['types'];
+            }
         }
 
         if ($typeUid <= 0 && (int)$id > 0) {

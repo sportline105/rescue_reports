@@ -441,73 +441,71 @@ class EventRepository extends Repository
      */
     public function getYearlyStatistics(int $stationUid = 0, int $maxYears = 0): array
     {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
-
-        $platform = $queryBuilder->getConnection()->getDatabasePlatform();
-        $yearSql = $this->getYearSql('e.start', $platform);
-        $durationSql = $this->getDurationSecondsSql('e.start', 'e.end', $platform);
-
-        $queryBuilder
-            ->select('cat.uid AS cat_uid', 'cat.title AS cat_title', 'cat.color AS cat_color')
-            ->addSelectLiteral(
-                $yearSql . ' AS year',
-                'COUNT(DISTINCT e.uid) AS cnt',
-                'ROUND(AVG(' . $durationSql . ')) AS avg_dur_sec'
-            )
-            ->from('tx_rescuereports_domain_model_event', 'e')
-            ->leftJoin('e', 'tx_rescuereports_event_type_mm', 'tmm', 'e.uid = tmm.uid_local')
-            ->leftJoin('tmm', 'tx_rescuereports_domain_model_type', 't', 'tmm.uid_foreign = t.uid')
-            ->leftJoin('t', 'tx_rescuereports_domain_model_category', 'cat', 't.category = cat.uid')
-            ->where(
-                $queryBuilder->expr()->eq('e.deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
-                $queryBuilder->expr()->eq('e.hidden', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
-                $queryBuilder->expr()->isNotNull('e.start')
-            );
-
-        if ($stationUid > 0) {
-            $queryBuilder
-                ->innerJoin('e', 'tx_rescuereports_event_station_mm', 'smm', 'e.uid = smm.uid_local')
-                ->andWhere(
-                    $queryBuilder->expr()->eq('smm.uid_foreign', $queryBuilder->createNamedParameter($stationUid, ParameterType::INTEGER))
-                );
-        }
-
-        $rows = $queryBuilder
-            ->groupBy('year', 'cat.uid')
-            ->orderBy('year', 'DESC')
-            ->addOrderBy('cat.title', 'ASC')
-            ->executeQuery()
-            ->fetchAllAssociative();
-
+        $rows = $this->getEffectiveStatisticsRows($stationUid);
         $raw = [];
-        foreach ($rows as $row) {
-            $year = (int)$row['year'];
-            if (!isset($raw[$year])) {
-                $raw[$year] = [];
-            }
-            $raw[$year][] = [
-                'uid'   => (int)$row['cat_uid'],
-                'title' => (string)($row['cat_title'] ?: '– ohne Kategorie –'),
-                'color' => (string)($row['cat_color'] ?: '#95a5a6'),
-                'count' => (int)$row['cnt'],
-                'avg_dur_sec' => isset($row['avg_dur_sec']) && $row['avg_dur_sec'] !== null ? (int)$row['avg_dur_sec'] : null,
-            ];
-        }
+        $typeCountsByYearAndCategory = [];
 
-        $typesByYearAndCategory = $this->getTypeStatsByYearAndCategory($stationUid);
+        foreach ($rows as $row) {
+            $year = (int)($row['year'] ?? 0);
+            if ($year <= 0) {
+                continue;
+            }
+
+            $useKeywordEscalation = (int)($row['enable_keyword_escalation'] ?? 0) === 1
+                && (int)($row['keyword_uid'] ?? 0) > 0;
+
+            $categoryUid = (int)($useKeywordEscalation ? ($row['keyword_cat_uid'] ?? 0) : ($row['type_cat_uid'] ?? 0));
+            $categoryTitle = trim((string)($useKeywordEscalation ? ($row['keyword_cat_title'] ?? '') : ($row['type_cat_title'] ?? '')));
+            $categoryColor = trim((string)($useKeywordEscalation ? ($row['keyword_cat_color'] ?? '') : ($row['type_cat_color'] ?? '')));
+            $effectiveTypeTitle = trim((string)($useKeywordEscalation ? ($row['keyword_title'] ?? '') : ($row['type_title'] ?? '')));
+
+            if (!isset($raw[$year][$categoryUid])) {
+                $raw[$year][$categoryUid] = [
+                    'uid' => $categoryUid,
+                    'title' => $categoryTitle !== '' ? $categoryTitle : '– ohne Kategorie –',
+                    'color' => $categoryColor !== '' ? $categoryColor : '#95a5a6',
+                    'count' => 0,
+                    'duration_sum_sec' => 0,
+                    'duration_count' => 0,
+                ];
+            }
+
+            $raw[$year][$categoryUid]['count']++;
+
+            $durationSeconds = $this->calculateDurationSeconds(
+                $row['start'] ?? null,
+                $row['end'] ?? null
+            );
+            if ($durationSeconds !== null) {
+                $raw[$year][$categoryUid]['duration_sum_sec'] += $durationSeconds;
+                $raw[$year][$categoryUid]['duration_count']++;
+            }
+
+            if ($effectiveTypeTitle !== '') {
+                $typeCountsByYearAndCategory[$year][$categoryUid][$effectiveTypeTitle] =
+                    ($typeCountsByYearAndCategory[$year][$categoryUid][$effectiveTypeTitle] ?? 0) + 1;
+            }
+        }
 
         $statistics = [];
         foreach ($raw as $year => $categories) {
+            uasort(
+                $categories,
+                static fn(array $left, array $right): int => strcasecmp($left['title'], $right['title'])
+            );
+
+            $categories = array_values($categories);
             $total = array_sum(array_column($categories, 'count'));
             foreach ($categories as &$cat) {
                 $cat['percent'] = $total > 0 ? round($cat['count'] / $total * 100, 1) : 0.0;
-                $cat['avgDuration'] = $this->formatDurationSeconds($cat['avg_dur_sec'] ?? null);
-                $cat['types'] = $typesByYearAndCategory[$year][$cat['uid']] ?? [];
-                foreach ($cat['types'] as &$type) {
-                    $type['percent'] = $cat['count'] > 0 ? round($type['count'] / $cat['count'] * 100, 1) : 0.0;
-                }
-                unset($type);
+                $avgDurationSeconds = $cat['duration_count'] > 0
+                    ? (int)round($cat['duration_sum_sec'] / $cat['duration_count'])
+                    : null;
+                $cat['avgDuration'] = $this->formatDurationSeconds($avgDurationSeconds);
+                $cat['types'] = $this->buildTypeStatistics(
+                    $typeCountsByYearAndCategory[$year][$cat['uid']] ?? [],
+                    $cat['count']
+                );
             }
             unset($cat);
 
@@ -897,11 +895,10 @@ class EventRepository extends Repository
     }
 
     /**
-     * Liefert pro Jahr und Kategorie nur die Einsatzarten, die in den gefilterten Datensätzen vorkommen.
-     *
-     * @return array<int,array<int,array<int,array{title:string,count:int}>>> [year => [catUid => [['title' => string, 'count' => int], ...]]]
+     * Lädt die Rohdaten für die Statistik und liefert pro Einsatz genau einen Typ-Zweig:
+     * bei aktivierter Stichworterhöhung den Escalation-Typ, sonst den normalen Alarmtyp.
      */
-    private function getTypeStatsByYearAndCategory(int $stationUid = 0): array
+    private function getEffectiveStatisticsRows(int $stationUid = 0): array
     {
         $qb = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
@@ -909,24 +906,54 @@ class EventRepository extends Repository
         $platform = $qb->getConnection()->getDatabasePlatform();
         $yearSql = $this->getYearSql('e.start', $platform);
 
-        $qb->select('cat.uid AS cat_uid', 't.title AS type_title')
-            ->addSelectLiteral($yearSql . ' AS year', 'COUNT(DISTINCT e.uid) AS cnt')
+        $qb->select(
+            'e.uid',
+            'e.start',
+            'e.end',
+            'e.enable_keyword_escalation',
+            'type_t.uid AS type_uid',
+            'type_t.title AS type_title',
+            'type_cat.uid AS type_cat_uid',
+            'type_cat.title AS type_cat_title',
+            'type_cat.color AS type_cat_color',
+            'keyword_t.uid AS keyword_uid',
+            'keyword_t.title AS keyword_title',
+            'keyword_cat.uid AS keyword_cat_uid',
+            'keyword_cat.title AS keyword_cat_title',
+            'keyword_cat.color AS keyword_cat_color'
+        )
+            ->addSelectLiteral($yearSql . ' AS year')
             ->from('tx_rescuereports_domain_model_event', 'e')
-            ->innerJoin('e', 'tx_rescuereports_event_type_mm', 'tmm', 'e.uid = tmm.uid_local')
-            ->innerJoin('tmm', 'tx_rescuereports_domain_model_type', 't', 'tmm.uid_foreign = t.uid')
-            ->leftJoin('t', 'tx_rescuereports_domain_model_category', 'cat', 't.category = cat.uid')
+            ->leftJoin('e', 'tx_rescuereports_event_type_mm', 'tmm', 'e.uid = tmm.uid_local')
+            ->leftJoin('tmm', 'tx_rescuereports_domain_model_type', 'type_t', 'tmm.uid_foreign = type_t.uid')
+            ->leftJoin('type_t', 'tx_rescuereports_domain_model_category', 'type_cat', 'type_t.category = type_cat.uid')
+            ->leftJoin('e', 'tx_rescuereports_event_keyword_escalation_mm', 'kmm', 'e.uid = kmm.uid_local')
+            ->leftJoin('kmm', 'tx_rescuereports_domain_model_type', 'keyword_t', 'kmm.uid_foreign = keyword_t.uid')
+            ->leftJoin('keyword_t', 'tx_rescuereports_domain_model_category', 'keyword_cat', 'keyword_t.category = keyword_cat.uid')
             ->where(
                 $qb->expr()->eq('e.deleted', $qb->createNamedParameter(0, ParameterType::INTEGER)),
                 $qb->expr()->eq('e.hidden', $qb->createNamedParameter(0, ParameterType::INTEGER)),
-                $qb->expr()->eq('t.deleted', $qb->createNamedParameter(0, ParameterType::INTEGER)),
-                $qb->expr()->eq('t.hidden', $qb->createNamedParameter(0, ParameterType::INTEGER)),
                 $qb->expr()->isNotNull('e.start')
             )
-            ->groupBy('year', 'cat.uid', 't.uid', 't.title')
             ->orderBy('year', 'DESC')
-            ->addOrderBy('cat.title', 'ASC')
-            ->addOrderBy('cnt', 'DESC')
-            ->addOrderBy('t.title', 'ASC');
+            ->addOrderBy('e.uid', 'DESC');
+
+        $typeVisibilityConstraint = $qb->expr()->or(
+            $qb->expr()->isNull('type_t.uid'),
+            $qb->expr()->and(
+                $qb->expr()->eq('type_t.deleted', $qb->createNamedParameter(0, ParameterType::INTEGER)),
+                $qb->expr()->eq('type_t.hidden', $qb->createNamedParameter(0, ParameterType::INTEGER))
+            )
+        );
+        $keywordVisibilityConstraint = $qb->expr()->or(
+            $qb->expr()->isNull('keyword_t.uid'),
+            $qb->expr()->and(
+                $qb->expr()->eq('keyword_t.deleted', $qb->createNamedParameter(0, ParameterType::INTEGER)),
+                $qb->expr()->eq('keyword_t.hidden', $qb->createNamedParameter(0, ParameterType::INTEGER))
+            )
+        );
+
+        $qb->andWhere($typeVisibilityConstraint, $keywordVisibilityConstraint);
 
         if ($stationUid > 0) {
             $qb->innerJoin('e', 'tx_rescuereports_event_station_mm', 'smm', 'e.uid = smm.uid_local')
@@ -935,22 +962,68 @@ class EventRepository extends Repository
                 );
         }
 
-        $rows = $qb->executeQuery()->fetchAllAssociative();
+        return $qb->executeQuery()->fetchAllAssociative();
+    }
+
+    /**
+     * @param array<string,int> $typeCounts
+     * @return array<int,array{title:string,count:int,percent:float}>
+     */
+    private function buildTypeStatistics(array $typeCounts, int $categoryCount): array
+    {
+        if ($typeCounts === []) {
+            return [];
+        }
+
+        arsort($typeCounts);
 
         $result = [];
-        foreach ($rows as $row) {
-            $year = (int)$row['year'];
-            $catUid = (int)$row['cat_uid'];
-            $count = (int)$row['cnt'];
-            if ($year <= 0 || $catUid <= 0 || $count <= 0) {
-                continue;
-            }
-            $result[$year][$catUid][] = [
-                'title' => (string)$row['type_title'],
+        foreach ($typeCounts as $title => $count) {
+            $result[] = [
+                'title' => $title,
                 'count' => $count,
+                'percent' => $categoryCount > 0 ? round($count / $categoryCount * 100, 1) : 0.0,
             ];
         }
 
+        usort(
+            $result,
+            static function (array $left, array $right): int {
+                $countCompare = $right['count'] <=> $left['count'];
+                if ($countCompare !== 0) {
+                    return $countCompare;
+                }
+
+                return strcasecmp($left['title'], $right['title']);
+            }
+        );
+
         return $result;
+    }
+
+    private function calculateDurationSeconds($startValue, $endValue): ?int
+    {
+        $startTimestamp = $this->normalizeTimestamp($startValue);
+        $endTimestamp = $this->normalizeTimestamp($endValue);
+
+        if ($startTimestamp === null || $endTimestamp === null || $endTimestamp < $startTimestamp) {
+            return null;
+        }
+
+        return $endTimestamp - $startTimestamp;
+    }
+
+    private function normalizeTimestamp($value): ?int
+    {
+        if ($value instanceof \DateTimeInterface) {
+            return $value->getTimestamp();
+        }
+
+        if (!is_string($value) || trim($value) === '') {
+            return null;
+        }
+
+        $timestamp = strtotime($value);
+        return $timestamp === false ? null : $timestamp;
     }
 }

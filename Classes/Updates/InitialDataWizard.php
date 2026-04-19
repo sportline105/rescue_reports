@@ -8,6 +8,7 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Install\Updates\UpgradeWizardInterface;
 
@@ -56,14 +57,40 @@ final class InitialDataWizard implements UpgradeWizardInterface
     public function updateNecessary(): bool
     {
         if (
-            !$this->tableExists('tx_rescuereports_domain_model_organisation')
+            !$this->tableExists('pages')
+            || !$this->tableExists('tx_rescuereports_domain_model_organisation')
             || !$this->tableExists('tx_rescuereports_domain_model_car')
         ) {
             return false;
         }
 
+        if ($this->needsSysFolderMigration()) {
+            return true;
+        }
+
         return $this->countRecords('tx_rescuereports_domain_model_organisation') === 0
             || $this->countRecords('tx_rescuereports_domain_model_car') === 0;
+    }
+
+    private function needsSysFolderMigration(): bool
+    {
+        $targetPid = $this->getStorageParentPid();
+        $existingTargetUid = $targetPid > 0 ? $this->findExistingSysFolderUid($targetPid) : false;
+        $existingAnyUid = $this->findExistingSysFolderUid();
+
+        if ($targetPid > 0 && $existingTargetUid === false && $existingAnyUid !== false) {
+            return true;
+        }
+
+        if ($existingAnyUid === false) {
+            return true;
+        }
+
+        if ($targetPid <= 0) {
+            return false;
+        }
+
+        return (int)$existingAnyUid !== (int)$existingTargetUid;
     }
 
     public function getPrerequisites(): array
@@ -109,21 +136,26 @@ final class InitialDataWizard implements UpgradeWizardInterface
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable('pages');
 
-        $queryBuilder = $connection->createQueryBuilder();
-        $existingUid = $queryBuilder
-            ->select('uid')
-            ->from('pages')
-            ->where(
-                $queryBuilder->expr()->eq('doktype', $queryBuilder->createNamedParameter(254, \Doctrine\DBAL\ParameterType::INTEGER)),
-                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, \Doctrine\DBAL\ParameterType::INTEGER)),
-                $queryBuilder->expr()->like('title', $queryBuilder->createNamedParameter('Rescue Reports%'))
-            )
-            ->setMaxResults(1)
-            ->executeQuery()
-            ->fetchOne();
+        $targetPid = $this->getStorageParentPid();
+
+        $existingUid = $this->findExistingSysFolderUid($targetPid);
 
         if ($existingUid !== false && $existingUid > 0) {
             return (int)$existingUid;
+        }
+
+        $legacyUid = $this->findExistingSysFolderUid();
+        if ($legacyUid !== false && $legacyUid > 0 && $targetPid > 0) {
+            $connection->update(
+                'pages',
+                [
+                    'pid' => $targetPid,
+                    'tstamp' => time(),
+                ],
+                ['uid' => (int)$legacyUid]
+            );
+
+            return (int)$legacyUid;
         }
 
         $folderTitle = $this->getLanguageService()->sL(
@@ -135,7 +167,7 @@ final class InitialDataWizard implements UpgradeWizardInterface
 
         $now = time();
         $connection->insert('pages', [
-            'pid' => 0,
+            'pid' => $targetPid,
             'title' => $folderTitle,
             'slug' => '',
             'doktype' => 254,
@@ -158,6 +190,72 @@ final class InitialDataWizard implements UpgradeWizardInterface
         }
 
         return $newUid;
+    }
+
+    private function findExistingSysFolderUid(?int $pid = null)
+    {
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('pages');
+
+        $queryBuilder = $connection->createQueryBuilder();
+        $constraints = [
+            $queryBuilder->expr()->eq('doktype', $queryBuilder->createNamedParameter(254, \Doctrine\DBAL\ParameterType::INTEGER)),
+            $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, \Doctrine\DBAL\ParameterType::INTEGER)),
+            $queryBuilder->expr()->like('title', $queryBuilder->createNamedParameter('Rescue Reports%')),
+        ];
+
+        if ($pid !== null) {
+            $constraints[] = $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid, \Doctrine\DBAL\ParameterType::INTEGER));
+        }
+
+        return $queryBuilder
+            ->select('uid')
+            ->from('pages')
+            ->where(...$constraints)
+            ->setMaxResults(1)
+            ->executeQuery()
+            ->fetchOne();
+    }
+
+    private function getStorageParentPid(): int
+    {
+        try {
+            $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+            $siteRootPageIds = [];
+
+            foreach ($siteFinder->getAllSites() as $site) {
+                $rootPageId = (int)$site->getRootPageId();
+                if ($rootPageId > 0) {
+                    $siteRootPageIds[] = $rootPageId;
+                }
+            }
+
+            sort($siteRootPageIds);
+            if ($siteRootPageIds !== []) {
+                return (int)$siteRootPageIds[0];
+            }
+        } catch (\Throwable) {
+        }
+
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('pages');
+        $queryBuilder = $connection->createQueryBuilder();
+
+        $pageUid = $queryBuilder
+            ->select('uid')
+            ->from('pages')
+            ->where(
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter(0, \Doctrine\DBAL\ParameterType::INTEGER)),
+                $queryBuilder->expr()->eq('deleted', $queryBuilder->createNamedParameter(0, \Doctrine\DBAL\ParameterType::INTEGER)),
+                $queryBuilder->expr()->neq('doktype', $queryBuilder->createNamedParameter(254, \Doctrine\DBAL\ParameterType::INTEGER))
+            )
+            ->orderBy('sorting', 'ASC')
+            ->addOrderBy('uid', 'ASC')
+            ->setMaxResults(1)
+            ->executeQuery()
+            ->fetchOne();
+
+        return $pageUid !== false ? (int)$pageUid : 0;
     }
 
     /**

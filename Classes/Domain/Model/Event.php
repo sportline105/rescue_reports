@@ -36,12 +36,38 @@ class Event extends AbstractEntity
     /** @var ObjectStorage<Type> */
     protected ObjectStorage $types;
 
+    /** @var ObjectStorage<Type> */
+    protected ObjectStorage $keywordEscalation;
+
+    protected bool $enableKeywordEscalation = false;
+
     public function __construct()
     {
-        $this->vehicles = new ObjectStorage();
-        $this->stations = new ObjectStorage();
-        $this->images = new ObjectStorage();
-        $this->types = new ObjectStorage();
+        $this->initializeStorages();
+    }
+
+    public function initializeObject(): void
+    {
+        $this->initializeStorages();
+    }
+
+    protected function initializeStorages(): void
+    {
+        if (!isset($this->vehicles) || !$this->vehicles instanceof ObjectStorage) {
+            $this->vehicles = new ObjectStorage();
+        }
+        if (!isset($this->stations) || !$this->stations instanceof ObjectStorage) {
+            $this->stations = new ObjectStorage();
+        }
+        if (!isset($this->images) || !$this->images instanceof ObjectStorage) {
+            $this->images = new ObjectStorage();
+        }
+        if (!isset($this->types) || !$this->types instanceof ObjectStorage) {
+            $this->types = new ObjectStorage();
+        }
+        if (!isset($this->keywordEscalation) || !$this->keywordEscalation instanceof ObjectStorage) {
+            $this->keywordEscalation = new ObjectStorage();
+        }
     }
 
     public function getTitle(): string
@@ -221,6 +247,56 @@ class Event extends AbstractEntity
     public function removeType(Type $type): void
     {
         $this->types->detach($type);
+    }
+
+    /** @return ObjectStorage<Type> */
+    public function getKeywordEscalation(): ObjectStorage
+    {
+        $this->initializeObject();
+
+        return $this->keywordEscalation;
+    }
+
+    public function setKeywordEscalation(ObjectStorage $keywordEscalation): void
+    {
+        $this->keywordEscalation = $keywordEscalation;
+    }
+
+    public function getKeywordEscalations(): ObjectStorage
+    {
+        return $this->getKeywordEscalation();
+    }
+
+    public function setKeywordEscalations(ObjectStorage $keywordEscalation): void
+    {
+        $this->setKeywordEscalation($keywordEscalation);
+    }
+
+    public function addKeywordEscalation(Type $keyword): void
+    {
+        $this->initializeObject();
+        $this->keywordEscalation->attach($keyword);
+    }
+
+    public function removeKeywordEscalation(Type $keyword): void
+    {
+        $this->initializeObject();
+        $this->keywordEscalation->detach($keyword);
+    }
+
+    public function hasKeywordEscalation(): bool
+    {
+        return $this->enableKeywordEscalation && $this->getKeywordEscalation()->count() > 0;
+    }
+
+    public function isEnableKeywordEscalation(): bool
+    {
+        return $this->enableKeywordEscalation;
+    }
+
+    public function setEnableKeywordEscalation(bool $enable): void
+    {
+        $this->enableKeywordEscalation = $enable;
     }
 
     public function getDuration(): string

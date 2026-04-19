@@ -1,8 +1,6 @@
 <?php
 declare(strict_types=1);
 namespace nkfire\RescueReports\Utility;
-use Doctrine\DBAL\ParameterType;
-
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -14,46 +12,47 @@ class CarLabelItemsProcFunc
             ->getConnectionForTable('tx_rescuereports_domain_model_car')
             ->createQueryBuilder();
 
-        foreach ($config['items'] as &$item) {
-            // Skip empty and default items
-            if (empty($item[1]) || !is_numeric($item[1])) {
-                continue;
+        $rows = $queryBuilder
+            ->select(
+                'car.uid',
+                'car.name',
+                'org.uid AS organization_uid',
+                'org.abbreviation AS organization_abbreviation',
+                'org.name AS organization_name'
+            )
+            ->from('tx_rescuereports_domain_model_car', 'car')
+            ->leftJoin('car', 'tx_rescuereports_domain_model_organisation', 'org', 'car.organization = org.uid')
+            ->where(
+                $queryBuilder->expr()->eq('car.deleted', $queryBuilder->createNamedParameter(0)),
+                $queryBuilder->expr()->eq('car.hidden', $queryBuilder->createNamedParameter(0))
+            )
+            ->orderBy('org.abbreviation', 'ASC')
+            ->addOrderBy('org.name', 'ASC')
+            ->addOrderBy('car.name', 'ASC')
+            ->executeQuery()
+            ->fetchAllAssociative();
+
+        $config['items'] = [];
+        $currentGroupLabel = null;
+
+        foreach ($rows as $row) {
+            $organizationLabel = trim((string)($row['organization_name'] ?? ''));
+            if ($organizationLabel === '') {
+                $organizationLabel = trim((string)($row['organization_abbreviation'] ?? ''));
+            }
+            if ($organizationLabel === '') {
+                $organizationLabel = 'Ohne Organisation';
             }
 
-            $carUid = (int)$item[1];
-
-            $carRow = $queryBuilder
-                ->select('name', 'organization')
-                ->from('tx_rescuereports_domain_model_car')
-                ->where(
-                    $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($carUid, ParameterType::INTEGER))
-                )
-                ->executeQuery()
-                ->fetchAssociative();
-
-            if (!empty($carRow['organization'])) {
-                $orgQueryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-                    ->getConnectionForTable('tx_rescuereports_domain_model_organisation')
-                    ->createQueryBuilder();
-
-                $orgData = $orgQueryBuilder
-                    ->select('abbreviation')
-                    ->from('tx_rescuereports_domain_model_organisation')
-                    ->where(
-                        $orgQueryBuilder->expr()->eq(
-                            'uid',
-                            $orgQueryBuilder->createNamedParameter((int)$carRow['organization'], ParameterType::INTEGER)
-                        )
-                    )
-                    ->andWhere($orgQueryBuilder->expr()->eq('deleted', 0))
-                    ->andWhere($orgQueryBuilder->expr()->eq('hidden', 0))
-                    ->executeQuery()
-                    ->fetchAssociative();
-
-                if (!empty($orgData['abbreviation'])) {
-                    $item[0] .= ' (' . $orgData['abbreviation'] . ')';
-                }
+            if ($organizationLabel !== $currentGroupLabel) {
+                $config['items'][] = [$organizationLabel, '--div--'];
+                $currentGroupLabel = $organizationLabel;
             }
+
+            $config['items'][] = [
+                (string)$row['name'],
+                (int)$row['uid'],
+            ];
         }
     }
 }

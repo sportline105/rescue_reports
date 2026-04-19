@@ -15,10 +15,12 @@ CREATE TABLE tx_rescuereports_domain_model_event (
   slug varchar(2048) DEFAULT '' NOT NULL,
   slug_source varchar(255) DEFAULT '' NOT NULL,
   types int(11) DEFAULT '0' NOT NULL,
+  keyword_escalation int(11) DEFAULT '0' NOT NULL,
   images INT(11) DEFAULT 0 NOT NULL,
   brigade INT(11) DEFAULT 0 NOT NULL,
   stations int(11) DEFAULT '0' NOT NULL,
   number varchar(255) DEFAULT '0' NOT NULL,
+  enable_keyword_escalation tinyint(1) DEFAULT 0 NOT NULL,
   hidden tinyint(4) DEFAULT '0' NOT NULL,
   deleted tinyint(4) DEFAULT '0' NOT NULL,
   tstamp int(11) DEFAULT '0' NOT NULL,
@@ -133,6 +135,14 @@ CREATE TABLE tx_rescuereports_event_type_mm (
   KEY uid_foreign (uid_foreign)
 );
 
+CREATE TABLE tx_rescuereports_event_keyword_escalation_mm (
+  uid_local INT(11) DEFAULT 0 NOT NULL,
+  uid_foreign INT(11) DEFAULT 0 NOT NULL,
+  sorting INT(11) DEFAULT 0 NOT NULL,
+  KEY uid_local (uid_local),
+  KEY uid_foreign (uid_foreign)
+);
+
 CREATE TABLE tx_rescuereports_event_station_mm (
   uid_local INT(11) DEFAULT 0 NOT NULL,
   uid_foreign INT(11) DEFAULT 0 NOT NULL,
@@ -222,6 +232,15 @@ CREATE TABLE tx_rescuereports_event_car_mm (
   sorting int(11) unsigned NOT NULL DEFAULT 0,
   sorting_foreign int(11) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (uid_local, uid_foreign),
+  KEY uid_local (uid_local),
+  KEY uid_foreign (uid_foreign)
+);
+
+CREATE TABLE tx_rescuereports_eventvehicleassignment_car_mm (
+  uid_local int(11) DEFAULT 0 NOT NULL,
+  uid_foreign int(11) DEFAULT 0 NOT NULL,
+  sorting int(11) DEFAULT 0 NOT NULL,
+  sorting_foreign int(11) DEFAULT 0 NOT NULL,
   KEY uid_local (uid_local),
   KEY uid_foreign (uid_foreign)
 );

@@ -85,3 +85,7 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['proc
 // Slug-Erzeugung für Events
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] =
     \nkfire\RescueReports\Hooks\DataHandlerHook::class;
+
+// Custom Routing Aspect für Station-Prefix (case-insensitive, nur Primary Brigade)
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['routing']['aspects']['StationPrefixAspect'] =
+    \nkfire\RescueReports\Routing\StationPrefixAspect::class;
