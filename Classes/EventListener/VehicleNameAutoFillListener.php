@@ -18,7 +18,9 @@ final class VehicleNameAutoFillListener
             return;
         }
 
-        $this->processVehicleData($event->getRecord(), $event->getUid());
+        $record = $event->getRecord();
+        $record = $this->processCreate($record);
+        $event->setRecord($record);
     }
 
     public function beforeRecordUpdated(BeforeRecordUpdatedEvent $event): void
@@ -27,59 +29,90 @@ final class VehicleNameAutoFillListener
             return;
         }
 
-        $this->processVehicleData($event->getRecord(), $event->getUid());
+        $record = $event->getRecord();
+        $record = $this->processUpdate($record, $event->getUid());
+        $event->setRecord($record);
     }
 
-    protected function processVehicleData(array &$fieldArray, int|string $id): void
+    private function processCreate(array $fieldArray): array
     {
-        $carUid = $this->resolveCarUid($fieldArray, $id);
+        $currentName = trim((string)($fieldArray['name'] ?? ''));
+        if ($currentName !== '') {
+            return $fieldArray;
+        }
+
+        $carUid = (int)($fieldArray['car'] ?? 0);
         if ($carUid <= 0) {
-            return;
+            return $fieldArray;
         }
 
         $carName = $this->getCarNameByUid($carUid);
         if ($carName === '') {
-            return;
+            return $fieldArray;
         }
 
-        // Gleiches Verhalten wie der bisherige Hook:
-        // Fahrzeugname wird aus dem gewählten car gesetzt/überschrieben.
         $fieldArray['name'] = $carName;
+        return $fieldArray;
     }
 
-    protected function resolveCarUid(array $fieldArray, int|string $id): int
+    private function processUpdate(array $fieldArray, int|string $id): array
     {
-        // Wenn car im aktuellen Speichervorgang gesetzt/geändert wird, diesen Wert verwenden
-        if (!empty($fieldArray['car'])) {
-            return (int)$fieldArray['car'];
+        // Nur reagieren, wenn car im aktuellen Speichervorgang überhaupt mitkommt
+        if (!array_key_exists('car', $fieldArray)) {
+            return $fieldArray;
         }
 
-        // Bei bestehenden Datensätzen auf aktuellen DB-Wert zurückfallen
-        if ((int)$id > 0) {
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-                ->getQueryBuilderForTable('tx_rescuereports_domain_model_vehicle');
+        $newCarUid = (int)$fieldArray['car'];
+        if ($newCarUid <= 0) {
+            return $fieldArray;
+        }
 
-            $row = $queryBuilder
-                ->select('car')
-                ->from('tx_rescuereports_domain_model_vehicle')
-                ->where(
-                    $queryBuilder->expr()->eq(
-                        'uid',
-                        $queryBuilder->createNamedParameter((int)$id, ParameterType::INTEGER)
-                    )
+        $currentCarUid = (int)$this->getCurrentVehicleCarUid((int)$id);
+        if ($newCarUid === $currentCarUid) {
+            return $fieldArray;
+        }
+
+        $carName = $this->getCarNameByUid($newCarUid);
+        if ($carName === '') {
+            return $fieldArray;
+        }
+
+        // Beim Update nur überschreiben, wenn car wirklich geändert wurde
+        $fieldArray['name'] = $carName;
+        return $fieldArray;
+    }
+
+    private function getCurrentVehicleCarUid(int $vehicleUid): int
+    {
+        if ($vehicleUid <= 0) {
+            return 0;
+        }
+
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tx_rescuereports_domain_model_vehicle');
+
+        $row = $queryBuilder
+            ->select('car')
+            ->from('tx_rescuereports_domain_model_vehicle')
+            ->where(
+                $queryBuilder->expr()->eq(
+                    'uid',
+                    $queryBuilder->createNamedParameter($vehicleUid, ParameterType::INTEGER)
                 )
-                ->setMaxResults(1)
-                ->executeQuery()
-                ->fetchAssociative();
+            )
+            ->setMaxResults(1)
+            ->executeQuery()
+            ->fetchAssociative();
 
-            return (int)($row['car'] ?? 0);
-        }
-
-        return 0;
+        return (int)($row['car'] ?? 0);
     }
 
-    protected function getCarNameByUid(int $carUid): string
+    private function getCarNameByUid(int $carUid): string
     {
+        if ($carUid <= 0) {
+            return '';
+        }
+
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_car');
 
