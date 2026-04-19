@@ -1,15 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace nkfire\RescueReports\Hooks;
 
-use PDO;
+use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class DataHandlerHook
 {
-    public function processDatamap_preProcessFieldArray(array &$incomingFieldArray, $table, $id, $parentObject): void
+    public function processDatamap_preProcessFieldArray(array &$incomingFieldArray, string $table, $id, DataHandler $dataHandler): void
     {
         if ($table !== 'tx_rescuereports_domain_model_event') {
             return;
@@ -43,7 +45,6 @@ class DataHandlerHook
         if ($titleSlug !== '') {
             $lastPart .= ($lastPart !== '' ? '/' : '') . $titleSlug;
         }
-
         if ($lastPart === '') {
             $lastPart = 'einsatz';
         }
@@ -51,8 +52,6 @@ class DataHandlerHook
         $slugParts[] = $lastPart;
 
         $incomingFieldArray['slug_source'] = implode('/', $slugParts);
-
-        // nur wenn du automatische Neugenerierung willst
         $incomingFieldArray['slug'] = '';
     }
 
@@ -60,12 +59,10 @@ class DataHandlerHook
     {
         $typeUid = 0;
 
-        // Wenn types direkt im aktuellen Speichervorgang mitkommt
         if (!empty($incomingFieldArray['types'])) {
             $typeUid = (int)$incomingFieldArray['types'];
         }
 
-        // Falls nichts mitkommt: aus bestehender MM-Zuordnung lesen
         if ($typeUid <= 0 && (int)$id > 0) {
             $typeUid = $this->getTypeUidFromMm((int)$id);
         }
@@ -88,7 +85,7 @@ class DataHandlerHook
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid_local',
-                    $queryBuilder->createNamedParameter($eventUid, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($eventUid, Connection::PARAM_INT)
                 )
             )
             ->setMaxResults(1)
@@ -103,19 +100,17 @@ class DataHandlerHook
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_type');
 
-        $queryBuilder->getRestrictions()->removeAll();
-
         $row = $queryBuilder
             ->select('title')
             ->from('tx_rescuereports_domain_model_type')
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid',
-                    $queryBuilder->createNamedParameter($typeUid, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($typeUid, Connection::PARAM_INT)
                 ),
                 $queryBuilder->expr()->eq(
                     'deleted',
-                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, Connection::PARAM_INT)
                 )
             )
             ->setMaxResults(1)
