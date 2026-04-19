@@ -54,3 +54,6 @@ use nkfire\RescueReports\Controller\EventController;
 // Alten VehicleNameAutoFill-Hook testweise wieder aktivieren
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] =
     \nkfire\RescueReports\Hooks\VehicleNameAutoFill::class;
+
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] =
+    \nkfire\RescueReports\Hooks\DataHandlerHook::class;
