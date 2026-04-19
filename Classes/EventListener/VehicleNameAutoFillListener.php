@@ -41,12 +41,18 @@ final class VehicleNameAutoFillListener
         $vehicleConnection = $connectionPool->getConnectionForTable('tx_rescuereports_domain_model_vehicle');
 
         $vehicleRow = $vehicleConnection->select(
-            ['car'],
+            ['car', 'name'],
             'tx_rescuereports_domain_model_vehicle',
             ['uid' => $recordUid]
         )->fetchAssociative();
 
         if (!$vehicleRow || empty($vehicleRow['car'])) {
+            return;
+        }
+
+        // Only auto-fill if name is empty
+        $currentName = trim((string)($vehicleRow['name'] ?? ''));
+        if ($currentName !== '') {
             return;
         }
 
