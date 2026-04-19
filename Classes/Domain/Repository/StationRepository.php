@@ -26,4 +26,26 @@ class StationRepository extends Repository
 
         return $query->execute();
     }
+
+    public function findByPrefixAndPrimaryBrigade(string $prefix): ?\nkfire\RescueReports\Domain\Model\Station
+    {
+        if (empty($prefix)) {
+            return null;
+        }
+
+        $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectStoragePage(false);
+
+        $query->matching(
+            $query->logicalAnd(
+                $query->equals('brigade.isPrimary', true),
+                $query->like('LOWER(prefix)', mb_strtolower($prefix))
+            )
+        );
+
+        $query->setLimit(1);
+
+        $result = $query->execute();
+        return $result->count() > 0 ? $result->getFirst() : null;
+    }
 }

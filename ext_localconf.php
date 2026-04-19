@@ -49,6 +49,32 @@ use nkfire\RescueReports\Controller\EventController;
         [],
         ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
     );
+
+    // Register Route Enhancer for Event List with Station Prefix
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['routing']['enhancers']['rescueReportsEventList'] = [
+        'type' => 'Extbase',
+        'extension' => 'RescueReports',
+        'plugin' => 'Eventlist',
+        'routes' => [
+            [
+                'routePath' => '/{station}/',
+                'defaults' => [
+                    '_controller' => 'Event::list',
+                    'station' => '0',
+                ],
+                'aspects' => [
+                    'station' => [
+                        'type' => 'PersistedPatternMapper',
+                        'tableName' => 'tx_rescuereports_domain_model_station',
+                        'routeFieldName' => 'prefix',
+                        'routeFieldPattern' => '[a-zA-Z0-9]+',
+                        'mapper' => \nkfire\RescueReports\Routing\Aspect\StationPrefixAspect::class,
+                    ],
+                ],
+            ],
+        ],
+    ];
+
     // Register VehicleNameAutoFill hook for DataHandler
     // In TYPO3 13/14, use processDatamap_postProcessFieldArray hook
     // This is called BEFORE the database operation, allowing us to modify fieldArray
