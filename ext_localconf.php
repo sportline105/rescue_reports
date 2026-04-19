@@ -57,7 +57,7 @@ use nkfire\RescueReports\Controller\EventController;
 
 /**
 
- * ⚠️ WICHTIG:
+ * WICHTIG:
 
  * Diese Hooks stammen aus der v11-Extension und wurden bewusst
  * wieder aktiviert, da die Migration auf PSR-14 Listener aktuell
