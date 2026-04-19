@@ -40,28 +40,17 @@
                 <f:if condition="{showStationFilter}">
                     <div class="mb-3">
                         <label class="form-label fw-semibold" for="station-switch-bootstrap">Ortsfeuerwehr</label>
-                        <select
-                            id="station-switch-bootstrap"
-                            name="station"
-                            class="form-select"
-                            onchange="if (this.value) { window.location.href = this.value; }"
-                        >
+                        <select onchange="window.location.href = this.value;">
                             <f:for each="{stations}" as="station">
                                 <option
-                                    value="{f:uri.action(
+                                    value="{f:link.action(
                                         action: 'list',
                                         controller: 'Event',
-                                        arguments: {
-                                            station: station.uid,
-                                            year: selectedYear,
-                                            dateFrom: dateFromStr,
-                                            dateTo: dateToStr,
-                                            searchWord: searchWord
-                                        },
+                                        arguments: {station: station.uid},
                                         pluginName: 'Eventlist',
                                         extensionName: 'RescueReports'
                                     )}"
-                                    {f:if(condition: '{station.uid} == {activeStationUid}', then: 'selected="selected"')}
+                                    {f:if(condition: station.uid == activeStationUid, then: 'selected')}
                                 >
                                     {station.name}
                                 </option>
