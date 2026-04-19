@@ -146,12 +146,23 @@
                                         {displayNumber}
                                     </p>
 
-                                    <p class="mb-2">
-                                        <strong>Alarmstichwort:</strong><br>
-                                        <f:for each="{event.types}" as="type" iteration="it">
-                                            {type.title}<f:if condition="!{it.isLast}">, </f:if>
-                                        </f:for>
-                                    </p>
+                                    <f:if condition="{event.types -> f:count()}">
+                                        <p class="mb-2">
+                                            <strong>Alarmstichwort:</strong><br>
+                                            <f:for each="{event.types}" as="type" iteration="it">
+                                                {type.title}<f:if condition="!{it.isLast}">, </f:if>
+                                            </f:for>
+                                        </p>
+                                    </f:if>
+
+                                    <f:if condition="{event.keywordEscalation -> f:count()}">
+                                        <p class="mb-2">
+                                            <strong>Stichworterhöhung:</strong><br>
+                                            <f:for each="{event.keywordEscalation}" as="keyword" iteration="it">
+                                                {keyword.title}<f:if condition="!{it.isLast}">, </f:if>
+                                            </f:for>
+                                        </p>
+                                    </f:if>
 
                                     <p class="mb-2">
                                         <strong>Einsatzort:</strong><br>
@@ -325,12 +336,23 @@
                             <div class="panel psmall">
                                 <p><b>Einsatznummer:</b><br />{displayNumber}</p>
 
-                                <p>
-                                    <b>Alarmstichwort:</b><br />
-                                    <f:for each="{event.types}" as="type" iteration="it">
-                                        {type.title}<f:if condition="!{it.isLast}">, </f:if>
-                                    </f:for>
-                                </p>
+                                <f:if condition="{event.keywordEscalation -> f:count()}">
+                                    <p>
+                                        <b>Stichworterhöhung:</b><br />
+                                        <f:for each="{event.keywordEscalation}" as="keyword" iteration="it">
+                                            {keyword.title}<f:if condition="!{it.isLast}">, </f:if>
+                                        </f:for>
+                                    </p>
+                                </f:if>
+
+                                <f:if condition="{event.types -> f:count()}">
+                                    <p>
+                                        <b>Alarmstichwort:</b><br />
+                                        <f:for each="{event.types}" as="type" iteration="it">
+                                            {type.title}<f:if condition="!{it.isLast}">, </f:if>
+                                        </f:for>
+                                    </p>
+                                </f:if>
 
                                 <p><b>Einsatzort:</b><br />{event.location}</p>
                                 <p><b>Einsatzbeginn:</b><br /><f:format.date format="d.m.Y H:i">{event.start}</f:format.date> Uhr</p>

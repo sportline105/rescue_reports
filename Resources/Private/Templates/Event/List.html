@@ -39,30 +39,39 @@
 
                 <f:if condition="{showStationFilter}">
                     <div class="mb-3">
-                        <label class="form-label fw-semibold" for="station-switch-bootstrap">Ortsfeuerwehr</label>
-                        <select onchange="window.location.href = this.value;">
+                        <label class="form-label fw-semibold">Ortsfeuerwehr auswählen</label>
+                        <select name="station" class="form-select" onchange="navigateToStation(this.value)">
                             <f:for each="{stations}" as="station">
-                                <option
-                                    value="{f:link.action(
-                                        action: 'list',
-                                        controller: 'Event',
-                                        arguments: {station: station.uid},
-                                        pluginName: 'Eventlist',
-                                        extensionName: 'RescueReports'
-                                    )}"
-                                    {f:if(condition: station.uid == activeStationUid, then: 'selected')}
-                                >
+                                <f:variable name="stationUrl">
+                                    <f:uri.action action="list" arguments="{station: station.uid}" />
+                                </f:variable>
+                                <option value="{station.uid}" data-url="{stationUrl}" <f:if condition="{station.uid} == {activeStationUid}">selected</f:if>>
                                     {station.name}
                                 </option>
                             </f:for>
                         </select>
+                        <noscript>
+                            <button type="submit" class="btn btn-sm btn-primary mt-2" form="stationForm">Anzeigen</button>
+                        </noscript>
+                        <form id="stationForm" action="{f:uri.action(action: 'list')}" method="post" style="display:none;">
+                            <f:form.hidden name="station" value="{activeStationUid}" />
+                        </form>
                     </div>
+                    <script>
+                    function navigateToStation(stationUid) {
+                        var select = document.querySelector('select[name="station"]');
+                        var option = select.querySelector('option[value="' + stationUid + '"]');
+                        if (option && option.getAttribute('data-url')) {
+                            window.location.href = option.getAttribute('data-url');
+                        }
+                    }
+                    </script>
                 </f:if>
 
                 <f:if condition="{enableYearFilter}">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Jahr</label>
-                        <f:form action="list" method="post">
+                        <f:form action="list" method="get">
                             <f:form.hidden name="station" value="{activeStationUid}" />
                             <f:form.hidden name="dateFrom" value="{dateFromStr}" />
                             <f:form.hidden name="dateTo" value="{dateToStr}" />
@@ -126,23 +135,12 @@
                 </f:if>
 
                 <f:if condition="{enableSearch}">
-                    <div class="card mb-1 border-0">
+                    <div class="mb-4 border-0">
                         <div class="card-body">
                             <h3 class="fs-6 fw-semibold text-muted mb-3">Einsätze suchen und filtern</h3>
-                            <f:form action="list" method="post">
+                            <f:form action="list" method="get">
                                 <!-- Zeile 1: Stations-/Jahr-/Datumsfilter -->
                                 <div class="row g-2 align-items-end mb-2">
-                                    <div class="col-12 col-md-4">
-                                        <label class="form-label small">Ortsfeuerwehr</label>
-                                        <f:form.select
-                                            name="station"
-                                            options="{stations}"
-                                            optionLabelField="name"
-                                            optionValueField="uid"
-                                            value="{activeStationUid}"
-                                            class="form-select" />
-                                    </div>
-
                                     <f:if condition="{enableYearFilter}">
                                         <div class="col-12 col-md-2">
                                             <label class="form-label small">Jahr</label>
@@ -277,7 +275,7 @@
             <f:if condition="{showStationFilter}">
                 <div class="row" style="padding-top:10px; padding-bottom:5px;">
                     <div class="small-12 columns">
-                        <f:form action="list" method="post">
+                        <f:form action="list" method="get">
                             <f:form.hidden name="year" value="{selectedYear}" />
                             <f:form.hidden name="dateFrom" value="{dateFromStr}" />
                             <f:form.hidden name="dateTo" value="{dateToStr}" />
@@ -296,7 +294,7 @@
             <f:if condition="{enableYearFilter}">
                 <div class="row" style="padding-top:10px; padding-bottom:5px;">
                     <div class="small-12 columns">
-                        <f:form action="list" method="post">
+                        <f:form action="list" method="get">
                             <f:form.hidden name="station" value="{activeStationUid}" />
                             <f:form.hidden name="dateFrom" value="{dateFromStr}" />
                             <f:form.hidden name="dateTo" value="{dateToStr}" />
@@ -317,7 +315,7 @@
             <f:if condition="{enableSearch}">
                 <div class="row" style="padding-top:10px;">
                     <div class="small-12 columns">
-                        <f:form action="list" method="post">
+                        <f:form action="list" method="get">
                             <f:form.hidden name="year" value="{selectedYear}" />
                             <div class="row collapse">
 
