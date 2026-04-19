@@ -39,24 +39,34 @@
 
                 <f:if condition="{showStationFilter}">
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Ortsfeuerwehr</label>
-                        <f:form action="list" method="post">
-                            <f:form.hidden name="year" value="{selectedYear}" />
-                            <f:form.hidden name="dateFrom" value="{dateFromStr}" />
-                            <f:form.hidden name="dateTo" value="{dateToStr}" />
-                            <div class="row g-2 align-items-stretch">
-                                <div class="col-12 col-md-6">
-                                    <f:form.select
-                                        name="station"
-                                        options="{stations}"
-                                        optionLabelField="name"
-                                        optionValueField="uid"
-                                        value="{activeStationUid}"
-                                        class="form-select"
-                                        additionalAttributes="{onchange: 'this.form.submit()'}" />
-                                </div>
-                            </div>
-                        </f:form>
+                        <label class="form-label fw-semibold" for="station-switch-bootstrap">Ortsfeuerwehr</label>
+                        <select
+                            id="station-switch-bootstrap"
+                            name="station"
+                            class="form-select"
+                            onchange="if (this.value) { window.location.href = this.value; }"
+                        >
+                            <f:for each="{stations}" as="station">
+                                <option
+                                    value="{f:uri.action(
+                                        action: 'list',
+                                        controller: 'Event',
+                                        arguments: {
+                                            station: station.uid,
+                                            year: selectedYear,
+                                            dateFrom: dateFromStr,
+                                            dateTo: dateToStr,
+                                            searchWord: searchWord
+                                        },
+                                        pluginName: 'Eventlist',
+                                        extensionName: 'RescueReports'
+                                    )}"
+                                    {f:if(condition: '{station.uid} == {activeStationUid}', then: 'selected="selected"')}
+                                >
+                                    {station.name}
+                                </option>
+                            </f:for>
+                        </select>
                     </div>
                 </f:if>
 
