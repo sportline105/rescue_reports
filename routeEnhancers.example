@@ -1,0 +1,33 @@
+routeEnhancers:
+  RescueReports:
+    type: Extbase
+    extension: RescueReports
+    plugin: Eventlist
+    defaultController: 'Event::list'
+    routes:
+      - routePath: '/{station}/{event_slug}'
+        _controller: 'Event::show'
+        _arguments:
+          station: station
+          event_slug: event
+
+      - routePath: '/{station}'
+        _controller: 'Event::list'
+        _arguments:
+          station: station
+
+      - routePath: '/{event_slug}'
+        _controller: 'Event::show'
+        _arguments:
+          event_slug: event
+    requirements:
+      station: '[A-Za-z0-9_-]+'
+    aspects:
+      station:
+        type: PersistedAliasMapper
+        tableName: tx_rescuereports_domain_model_station
+        routeFieldName: prefix
+      event_slug:
+        type: PersistedAliasMapper
+        tableName: tx_rescuereports_domain_model_event
+        routeFieldName: slug
