@@ -3,27 +3,40 @@
 <f:section name="main">
 <div class="rescue-statistics">
 
-    <f:if condition="{stations} && {showStationFilter}">
-        <f:form action="statistics" method="post" class="rescue-statistics__station-filter">
-            <label for="statistics-station" class="form-label fw-semibold">Ortsfeuerwehr</label>
-            <f:form.select
-                id="statistics-station"
-                name="station"
-                options="{stations}"
-                optionValueField="uid"
-                optionLabelField="name"
-                value="{activeStationUid}"
-                class="form-select"
-                additionalAttributes="{onchange: 'this.form.submit()'}" />
-            <noscript>
-                <button type="submit">Filtern</button>
-            </noscript>
-        </f:form>
+    <f:if condition="{stationName}">
+        <f:then><h1 class="rescue-statistics__station">Einsatzstatistik {stationName}</h1></f:then>
+        <f:else><h1 class="rescue-statistics__station">Einsatzstatistik</h1></f:else>
     </f:if>
 
-    <f:if condition="{stationName}">
-        <f:then><h1 class="rescue-statistics__station">Einsatzstatistik: {stationName}</h1></f:then>
-        <f:else><h1 class="rescue-statistics__station">Einsatzstatistik</h1></f:else>
+    <f:if condition="{stations} && {showStationFilter}">
+        <div class="rescue-statistics__station-filter">
+            <label for="statistics-station" class="form-label fw-semibold">Ortsfeuerwehr auswählen</label>
+            <select id="statistics-station" name="station" class="form-select" onchange="navigateToStatisticsStation(this.value)">
+                <f:for each="{stations}" as="station">
+                    <f:variable name="stationUrl">
+                        <f:uri.action action="statistics" arguments="{station: station.uid}" />
+                    </f:variable>
+                    <option value="{station.uid}" data-url="{stationUrl}" <f:if condition="{station.uid} == {activeStationUid}">selected</f:if>>
+                        {station.name}
+                    </option>
+                </f:for>
+            </select>
+            <noscript>
+                <form action="{f:uri.action(action: 'statistics')}" method="post" style="margin-top:0.5rem;">
+                    <f:form.hidden name="station" value="{activeStationUid}" />
+                    <button type="submit" class="btn btn-sm btn-primary">Filtern</button>
+                </form>
+            </noscript>
+        </div>
+        <script>
+        function navigateToStatisticsStation(stationUid) {
+            var select = document.querySelector('select[name="station"]');
+            var option = select.querySelector('option[value="' + stationUid + '"]');
+            if (option && option.getAttribute('data-url')) {
+                window.location.href = option.getAttribute('data-url').split('?')[0];
+            }
+        }
+        </script>
     </f:if>
 
     <f:render partial="Statistics/PieChart" arguments="{statistics: statistics}" />

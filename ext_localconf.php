@@ -50,3 +50,42 @@ use nkfire\RescueReports\Controller\EventController;
         ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
     );
 })();
+
+// ---------------------------------------------------------
+// DataHandler Hooks (temporär für TYPO3 13/14 Upgrade)
+// ---------------------------------------------------------
+
+/**
+
+ * WICHTIG:
+
+ * Diese Hooks stammen aus der v11-Extension und wurden bewusst
+ * wieder aktiviert, da die Migration auf PSR-14 Listener aktuell
+ * nicht zuverlässig funktioniert (TYPO3 13/14).
+ *
+ * Aufgaben:
+ * 
+ * - VehicleNameAutoFill:
+ *   Setzt den Fahrzeugnamen automatisch aus dem ausgewählten "car"
+ *
+ * - DataHandlerHook:
+ *   Generiert slug_source für Event-Datensätze (Datum + Typ + Titel),
+ *   sodass TYPO3 daraus den finalen Slug erzeugen kann.
+ *
+ * TODO:
+
+ * Perspektivisch Migration auf PSR-14 Events prüfen,
+ * sobald ein stabiler 1:1-Ersatz möglich ist.
+ */
+
+// Fahrzeugname automatisch setzen
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] =
+    \nkfire\RescueReports\Hooks\VehicleNameAutoFill::class;
+
+// Slug-Erzeugung für Events
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] =
+    \nkfire\RescueReports\Hooks\DataHandlerHook::class;
+
+// Custom Routing Aspect für Station-Prefix (case-insensitive, nur Primary Brigade)
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['routing']['aspects']['StationPrefixAspect'] =
+    \nkfire\RescueReports\Routing\StationPrefixAspect::class;
