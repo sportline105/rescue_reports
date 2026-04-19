@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+defined('TYPO3') or die();
 
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 use nkfire\RescueReports\Controller\EventController;
@@ -8,7 +8,7 @@ use nkfire\RescueReports\Controller\EventController;
 (static function (): void {
     ExtensionUtility::configurePlugin(
         'RescueReports',
-        'Pi1',
+        'Eventlist',
         [
             EventController::class => 'list,show',
         ],
