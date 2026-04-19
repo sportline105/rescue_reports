@@ -1,6 +1,6 @@
 <?php
 
-defined('TYPO3') or die();
+declare(strict_types=1);
 
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 use nkfire\RescueReports\Controller\EventController;
@@ -8,7 +8,7 @@ use nkfire\RescueReports\Controller\EventController;
 (static function (): void {
     ExtensionUtility::configurePlugin(
         'RescueReports',
-        'Eventlist',
+        'Pi1',
         [
             EventController::class => 'list,show',
         ],
@@ -50,3 +50,7 @@ use nkfire\RescueReports\Controller\EventController;
         ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
     );
 })();
+
+// Alten VehicleNameAutoFill-Hook testweise wieder aktivieren
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] =
+    \nkfire\RescueReports\Hooks\VehicleNameAutoFill::class;
