@@ -6,6 +6,13 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 use nkfire\RescueReports\Controller\EventController;
 
 (static function (): void {
+    $GLOBALS['TYPO3_CONF_VARS']['RTE']['Presets']['rescue_reports'] =
+        'EXT:rescue_reports/Configuration/RTE/RteConfig.yaml';
+    $GLOBALS['TYPO3_CONF_VARS']['RTE']['Presets']['rescue_reports_v2'] =
+        'EXT:rescue_reports/Configuration/RTE/RteConfig.yaml';
+    $GLOBALS['TYPO3_CONF_VARS']['RTE']['Presets']['rescue_reports_v3'] =
+        'EXT:rescue_reports/Configuration/RTE/RteConfig.yaml';
+
     ExtensionUtility::configurePlugin(
         'RescueReports',
         'Eventlist',

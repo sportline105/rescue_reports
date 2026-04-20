@@ -115,7 +115,12 @@ return [
         ],
         'description' => [
             'label' => 'Einsatzbericht',
-            'config' => ['type' => 'text', 'enableRichtext' => true, 'rows' => 5],
+            'config' => [
+                'type' => 'text',
+                'enableRichtext' => true,
+                'richtextConfiguration' => 'rescue_reports_v3',
+                'rows' => 5,
+            ],
         ],
 
         'internal_notes' => [
@@ -245,7 +250,7 @@ return [
             'config' => [
                 'type' => 'check',
                 'items' => [
-                    ['Keinen Link zur Detailansicht anzeigen', 1],
+                    ['Keinen Einsatzbericht (Link zur Detailansicht) anzeigen', 1],
                 ],
                 'default' => 0,
             ],
