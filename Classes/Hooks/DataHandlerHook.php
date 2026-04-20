@@ -111,17 +111,32 @@ class DataHandlerHook
     protected function resolveTypeTitle(array $incomingFieldArray, $id): string
     {
         $typeUid = 0;
+        $useEscalation = (int)($incomingFieldArray['enable_keyword_escalation'] ?? 0) === 1;
 
-        if (!empty($incomingFieldArray['types'])) {
-            if (is_array($incomingFieldArray['types'])) {
-                $typeUid = (int)($incomingFieldArray['types'][0] ?? 0);
+        // Bei aktivierter Stichworterhöhung: escalation verwenden statt types
+        if ($useEscalation && !empty($incomingFieldArray['keyword_escalation'])) {
+            if (is_array($incomingFieldArray['keyword_escalation'])) {
+                $typeUid = (int)($incomingFieldArray['keyword_escalation'][0] ?? 0);
             } else {
-                $typeUid = (int)$incomingFieldArray['types'];
+                $typeUid = (int)$incomingFieldArray['keyword_escalation'];
             }
+        } elseif ($useEscalation && (int)$id > 0) {
+            $typeUid = $this->getKeywordEscalationUidFromMm((int)$id);
         }
 
-        if ($typeUid <= 0 && (int)$id > 0) {
-            $typeUid = $this->getTypeUidFromMm((int)$id);
+        // Fallback auf types, wenn keine Escalation vorhanden
+        if ($typeUid <= 0) {
+            if (!empty($incomingFieldArray['types'])) {
+                if (is_array($incomingFieldArray['types'])) {
+                    $typeUid = (int)($incomingFieldArray['types'][0] ?? 0);
+                } else {
+                    $typeUid = (int)$incomingFieldArray['types'];
+                }
+            }
+
+            if ($typeUid <= 0 && (int)$id > 0) {
+                $typeUid = $this->getTypeUidFromMm((int)$id);
+            }
         }
 
         if ($typeUid <= 0) {
@@ -139,6 +154,27 @@ class DataHandlerHook
         $row = $queryBuilder
             ->select('uid_foreign')
             ->from('tx_rescuereports_event_type_mm')
+            ->where(
+                $queryBuilder->expr()->eq(
+                    'uid_local',
+                    $queryBuilder->createNamedParameter($eventUid, Connection::PARAM_INT)
+                )
+            )
+            ->setMaxResults(1)
+            ->executeQuery()
+            ->fetchAssociative();
+
+        return (int)($row['uid_foreign'] ?? 0);
+    }
+
+    protected function getKeywordEscalationUidFromMm(int $eventUid): int
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tx_rescuereports_event_keyword_escalation_mm');
+
+        $row = $queryBuilder
+            ->select('uid_foreign')
+            ->from('tx_rescuereports_event_keyword_escalation_mm')
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid_local',
