@@ -157,7 +157,7 @@
 
                                     <f:if condition="{event.keywordEscalation -> f:count()}">
                                         <p class="mb-2">
-                                            <strong>Stichworterhöhung:</strong><br>
+                                            <strong>Stichworterhöhung auf:</strong><br>
                                             <f:for each="{event.keywordEscalation}" as="keyword" iteration="it">
                                                 {keyword.title}<f:if condition="!{it.isLast}">, </f:if>
                                             </f:for>
