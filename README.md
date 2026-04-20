@@ -383,6 +383,15 @@ Alle `Event`-Objekte enthalten folgende Eigenschaften:
 
 ---
 
+#### `Deployment/Item.html` – Fahrzeug-Anzeige in Detailansicht
+
+**Eingabe-Variablen:**
+| Variable | Typ | Beschreibung |
+|---|---|---|
+| `vehicle` | `Vehicle` | Fahrzeug-Objekt mit `name`, `image`, `link` |
+
+---
+
 ## Naming-Konventionen für Template-Variablen
 
 Die Extension folgt konsistenten Namenskonventionen:
