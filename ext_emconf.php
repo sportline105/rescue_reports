@@ -5,12 +5,12 @@ $EM_CONF[$_EXTKEY] = [
     'category' => 'plugin',
     'author' => 'Norbert Külz',
     'author_email' => 'sportline105@googlemail.com',
-    'state' => 'beta',
+    'state' => 'stable',
     'clearCacheOnLoad' => 1,
-    'version' => '1.1.5',
+    'version' => '1.2.0',
     'constraints' => [
         'depends' => [
-            'typo3' => '13.0.0-14.99.99',
+            'typo3' => '12.4.20-14.99.99',
             'php' => '8.2.0-8.99.99'
         ],
         'conflicts' => [],

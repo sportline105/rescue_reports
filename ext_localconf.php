@@ -3,6 +3,7 @@
 defined('TYPO3') or die();
 
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use nkfire\RescueReports\Controller\EventController;
 
 (static function (): void {
@@ -12,6 +13,13 @@ use nkfire\RescueReports\Controller\EventController;
         'EXT:rescue_reports/Configuration/RTE/RteConfig.yaml';
     $GLOBALS['TYPO3_CONF_VARS']['RTE']['Presets']['rescue_reports_v3'] =
         'EXT:rescue_reports/Configuration/RTE/RteConfig.yaml';
+
+    ExtensionManagementUtility::addTypoScriptSetup('
+        config.pageTitleProviders.rescueReportsEvent {
+            provider = nkfire\\RescueReports\\PageTitle\\EventPageTitleProvider
+            before = record
+        }
+    ');
 
     ExtensionUtility::configurePlugin(
         'RescueReports',
@@ -42,6 +50,16 @@ use nkfire\RescueReports\Controller\EventController;
         'Sidebar',
         [
             EventController::class => 'list',
+        ],
+        [],
+        ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
+    );
+
+    ExtensionUtility::configurePlugin(
+        'RescueReports',
+        'Cards',
+        [
+            EventController::class => 'cards',
         ],
         [],
         ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT

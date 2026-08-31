@@ -17,6 +17,15 @@ mod.wizards.newContentElement.wizardItems.common {
                 CType = rescuereports_sidebar
             }
         }
+
+        cards {
+            iconIdentifier = rescue_reports_cards
+            title = Rescue Reports: Cards
+            description = Kompakte Einsatzkarten mit Bild und Detail-Link
+            tt_content_defValues {
+                CType = rescuereports_cards
+            }
+        }
     }
-    show := addToList(eventlist,sidebar)
+    show := addToList(eventlist,sidebar,cards)
 }

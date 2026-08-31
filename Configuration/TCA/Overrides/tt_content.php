@@ -75,6 +75,28 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         $ctypeSidebar
     );
 
+    // Cards-Plugin
+    $ctypeCards = ExtensionUtility::registerPlugin(
+        'RescueReports',
+        'Cards',
+        'Rescue Reports: Cards',
+        'rescue_reports_cards'
+    );
+
+    $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$ctypeCards] = 'pi_flexform';
+
+    ExtensionManagementUtility::addToAllTCAtypes(
+        'tt_content',
+        '--div--;Konfiguration,pi_flexform,',
+        $ctypeCards,
+        'after:subheader'
+    );
+    ExtensionManagementUtility::addPiFlexFormValue(
+        '*',
+        'FILE:EXT:rescue_reports/Configuration/FlexForms/cards.xml',
+        $ctypeCards
+    );
+
     // RSS-Feed-Plugin
     $ctypeRss = ExtensionUtility::registerPlugin(
         'RescueReports',

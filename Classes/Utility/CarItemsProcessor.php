@@ -15,10 +15,10 @@ class CarItemsProcessor
 
         if (!empty($stationUids)) {
             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-                ->getQueryBuilderForTable('tx_rescuereports_domain_model_car_station_mm');
+                ->getQueryBuilderForTable('tx_rescuereports_station_car_mm');
             $result = $queryBuilder
                 ->select('uid_foreign')
-                ->from('tx_rescuereports_domain_model_car_station_mm')
+                ->from('tx_rescuereports_station_car_mm')
                 ->where(
                     $queryBuilder->expr()->in('uid_local', $queryBuilder->createNamedParameter($stationUids, ArrayParameterType::INTEGER))
                 )
@@ -30,7 +30,7 @@ class CarItemsProcessor
                 $carQueryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
                     ->getQueryBuilderForTable('tx_rescuereports_domain_model_car');
                 $carResult = $carQueryBuilder
-                    ->select('uid', 'title')
+                    ->select('uid', 'name')
                     ->from('tx_rescuereports_domain_model_car')
                     ->where(
                         $carQueryBuilder->expr()->in('uid', $carQueryBuilder->createNamedParameter($carUids, ArrayParameterType::INTEGER))
@@ -39,7 +39,7 @@ class CarItemsProcessor
 
                 $config['items'] = [];
                 while ($row = $carResult->fetchAssociative()) {
-                    $config['items'][] = [$row['title'], $row['uid']];
+                    $config['items'][] = [$row['name'], $row['uid']];
                 }
             }
         }

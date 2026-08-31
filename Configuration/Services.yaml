@@ -20,14 +20,8 @@ services:
     tags:
       - name: install.upgradewizard
 
-  nkfire\RescueReports\EventListener\DataHandlerEventListener:
-    tags:
-      - name: event.listener
-        event: 'TYPO3\CMS\Core\DataHandling\Event\BeforeRecordCreatedEvent'
-        method: beforeRecordCreated
-      - name: event.listener
-        event: 'TYPO3\CMS\Core\DataHandling\Event\BeforeRecordUpdatedEvent'
-        method: beforeRecordUpdated
+  nkfire\RescueReports\PageTitle\EventPageTitleProvider:
+    public: true
 
   nkfire\RescueReports\Routing\StationPrefixAspect:
     public: true

@@ -1,11 +1,13 @@
 # rescue_reports – TYPO3-Extension für Feuerwehr-Einsatzberichte
 
-Detaillierte Einsatzberichte für Feuerwehren und BOS mit modernem Event-System. Die Extension stellt Frontend-Plugins für Einsatzlisten, Statistiken, ein Sidebar-Widget und einen RSS-Feed bereit. Vollständig optimiert für TYPO3 13 und 14.
+Detaillierte Einsatzberichte für Feuerwehren und BOS. Die Extension stellt Frontend-Plugins für Einsatzlisten, Statistiken, ein Sidebar-Widget, ein Cards-Content-Element und einen RSS-Feed bereit und unterstützt TYPO3 12 LTS, 13 und 14.
 
 **Extension-Key:** `rescue_reports`  
-**TYPO3:** 13.0 – 14.99  
+**TYPO3:** 12.4.20 – 14.99  
 **PHP:** 8.2 – 8.99  
 **Lizenz:** GPL-2.0-or-later
+
+Getestet mit TYPO3 12.4.20, 13.4.34 und 14.3.6. TYPO3 12 wird als ELTS-Version weiterhin unterstützt.
 
 ---
 
@@ -82,7 +84,28 @@ Eigenständige Statistikseite mit Jahres- und Monatsdiagrammen.
 
 ---
 
-### 3. Sidebar-Widget (`tx_rescuereports_sidebar`)
+### 3. Cards-Widget (`tx_rescuereports_cards`)
+
+Kartenansicht für aktuelle Einsätze mit Bild, Titel und Verlinkung zur Detailansicht.
+
+**Aktion:** `cards`
+
+| Einstellung | Beschreibung | Standard |
+|---|---|---|
+| **Widget-Überschrift** | Überschrift oberhalb der Karten | – |
+| **Standard-Ortsfeuerwehr** | Vorausgewählte Station | – (alle) |
+| **Anzahl angezeigter Einsätze** | Maximale Anzahl der Karten | 6 |
+| **Bildverarbeitung** | Responsive Bildformat oder Servercrop | Responsive Bildformat |
+| **Bildformat** | Sichtbarer Zuschnitt: 16:9, 4:3 oder 1:1 | 16:9 |
+| **Servercrop-Breite / -Höhe** | Erzeugte Bildgröße in Pixeln, jeweils 1–4000 | 800 × 500 |
+| **Seite für Einsatz-Detailansicht** | Zielseite der Karten | – |
+| **Seite der vollständigen Einsatzliste** | Ziel des „Alle Einsätze“-Links | – |
+
+Bei **Responsive Bildformat** passt sich das Bild der Kartenbreite an und wird per `object-fit: cover` im gewählten Seitenverhältnis dargestellt. Bei **Servercrop** erzeugt TYPO3 ein verarbeitetes Bild mit den konfigurierten Pixelmaßen; im Frontend wird dieses anschließend proportional skaliert.
+
+Bestehende Content-Elemente ohne die neuen Werte bleiben kompatibel und verwenden 16:9 beziehungsweise 800 × 500 als sichere Fallback-Werte.
+
+### 4. Sidebar-Widget (`tx_rescuereports_sidebar`)
 
 Kompaktes Widget für die Seitenleiste – zeigt die letzten N Einsätze.
 
@@ -99,7 +122,7 @@ Kompaktes Widget für die Seitenleiste – zeigt die letzten N Einsätze.
 
 ---
 
-### 4. RSS-Feed (`tx_rescuereports_rss`)
+### 5. RSS-Feed (`tx_rescuereports_rss`)
 
 RSS 2.0-Feed der neuesten Einsätze.
 
@@ -462,11 +485,11 @@ Die Suche durchsucht folgende Felder: Titel, Beschreibung, Einsatzort, Einsatzar
 - **Einsatznummern** werden dynamisch per Station und Jahr berechnet (laufende Nummer `001`, `002`, …) und können stationsspezifische Präfixe tragen.
 - **Slug-Routing** für sprechende URLs der Detailansicht ist vorbereitet (mit `slug` und `slug_source` Feldern).
 - **RSS-Feed** wird über einen eigenen `typeNum = 100` ausgeliefert; Content-Type `application/rss+xml`.
-- **TypoScript-Konfiguration** wird automatisch über TYPO3 13+ Site Sets geladen (`Configuration/Sets/RescueReports/`).
-- **Event-basierte Architektur**: Moderne TYPO3 13/14 Event Listener ersetzen alte Hook-Patterns
+- **TypoScript-Konfiguration:** In TYPO3 13+ wird das Site Set `Rescue Reports Setup` eingebunden. In TYPO3 12 ist im Root-Template zusätzlich das statische Template `Rescue Reports` einzubinden.
+- **Datenpflege:** Bewährte DataHandler-Hooks setzen Fahrzeugnamen und Slug-Quellen automatisch bei Datenerstellung/-änderung.
   - Fahrzeugnamen werden automatisch beim Erstellen eines Events generiert
   - Slug-Quellen werden automatisch bei Datenerstellung/-änderung aktualisiert
-- **Datenbankschema**: Vollständig kompatibel mit TYPO3 13 und 14, mit Unterstützung für:
+- **Datenbankschema:** Kompatibel mit MySQL/MariaDB, PostgreSQL und SQLite über die TYPO3-Datenbankabstraktion, mit Unterstützung für:
   - Versionierung (Workspace-Management)
   - Mehrsprachigkeit (L10n)
   - Zeitbasierte Zugriffskontrolle (starttime/endtime)

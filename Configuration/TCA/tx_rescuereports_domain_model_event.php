@@ -73,11 +73,11 @@ return [
         // Einsatzzeit
         'start' => [
             'label' => 'Einsatzbeginn',
-            'config' => ['type' => 'input', 'renderType' => 'inputDateTime', 'eval' => 'datetime', 'dbType' => 'datetime', 'default' => null],
+            'config' => ['type' => 'datetime', 'dbType' => 'datetime', 'nullable' => true, 'default' => null],
         ],
         'end' => [
             'label' => 'Einsatzende',
-            'config' => ['type' => 'input', 'renderType' => 'inputDateTime', 'eval' => 'datetime', 'dbType' => 'datetime', 'default' => null],
+            'config' => ['type' => 'datetime', 'dbType' => 'datetime', 'nullable' => true, 'default' => null],
         ],
 
         // Inhaltliche Felder
@@ -236,10 +236,24 @@ return [
         // Bilder
         'images' => [
             'label' => 'Bilder',
+            'description' => 'Bildunterschrift in „Description (Caption)“ und Fotograf:in im Feld „Foto: Urheber/in“ der jeweiligen Bildreferenz pflegen.',
             'config' => [
                 'type' => 'file',
                 'allowed' => 'common-image-types',
                 'maxitems' => 10,
+                'overrideChildTca' => [
+                    'columns' => [
+                        'tx_rescuereports_credit' => [
+                            'label' => 'Foto: Urheber/in',
+                            'config' => [
+                                'type' => 'input',
+                                'size' => 30,
+                                'max' => 255,
+                                'eval' => 'trim',
+                            ],
+                        ],
+                    ],
+                ],
                 'appearance' => [
                     'createNewRelationLinkTitle' => 'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:label.addFileReference',
                 ],

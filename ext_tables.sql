@@ -188,6 +188,7 @@ CREATE TABLE tx_rescuereports_domain_model_category (
   pid int(11) DEFAULT '0' NOT NULL,
   title varchar(255) DEFAULT '' NOT NULL,
   color varchar(10) DEFAULT '#3498db' NOT NULL,
+  image int(11) DEFAULT 0 NOT NULL,
   sorting int(11) DEFAULT '0' NOT NULL,
   hidden tinyint(4) DEFAULT '0' NOT NULL,
   deleted tinyint(4) DEFAULT '0' NOT NULL,
@@ -202,6 +203,7 @@ CREATE TABLE tx_rescuereports_domain_model_type (
   pid int(11) DEFAULT '0' NOT NULL,
   title varchar(255) DEFAULT '' NOT NULL,
   category int(11) DEFAULT '0' NOT NULL,
+  image int(11) DEFAULT 0 NOT NULL,
   deprecated tinyint(1) unsigned DEFAULT '0' NOT NULL,
   hidden tinyint(4) DEFAULT '0' NOT NULL,
   deleted tinyint(4) DEFAULT '0' NOT NULL,
@@ -293,4 +295,8 @@ CREATE TABLE tx_rescuereports_domain_model_snippet (
   crdate int(11) DEFAULT '0' NOT NULL,
   cruser_id int(11) DEFAULT '0' NOT NULL,
   PRIMARY KEY (uid)
+);
+
+CREATE TABLE sys_file_reference (
+  tx_rescuereports_credit varchar(255) DEFAULT '' NOT NULL
 );

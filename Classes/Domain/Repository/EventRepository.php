@@ -6,7 +6,8 @@ namespace nkfire\RescueReports\Domain\Repository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Platforms\SqlitePlatform;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -52,37 +53,9 @@ class EventRepository extends Repository
      */
     public function search(string $searchWord = '', $dateFrom = null, $dateTo = null, int $limit = 0): QueryResultInterface
     {
-        $query = $this->createQuery();
-        $query->getQuerySettings()->setRespectStoragePage(false);
+        $uids = $this->findEventUidsBySearch($searchWord, $dateFrom, $dateTo, $limit);
 
-        $constraints = [];
-
-        if (trim($searchWord) !== '') {
-            $constraints[] = $query->logicalOr([
-                $query->like('title', '%' . $searchWord . '%'),
-                $query->like('description', '%' . $searchWord . '%'),
-                $query->like('location', '%' . $searchWord . '%'),
-                $query->like('types.title', '%' . $searchWord . '%'),
-                $query->like('number', '%' . $searchWord . '%'),
-            ]);
-        }
-
-        $dateConstraints = $this->buildDateConstraints($query, $dateFrom, $dateTo);
-        if (!empty($dateConstraints)) {
-            $constraints = array_merge($constraints, $dateConstraints);
-        }
-
-        if (!empty($constraints)) {
-            $query->matching($query->logicalAnd(...$constraints));
-        }
-
-        if ($limit > 0) {
-            $query->setLimit($limit);
-        }
-
-        $query->setOrderings($this->getDefaultOrderings());
-
-        return $query->execute();
+        return $this->findByUids($uids);
     }
 
     /**
@@ -103,12 +76,16 @@ class EventRepository extends Repository
     /**
      * Liefert Events gefiltert nach Datum & Limit
      */
-    public function findFiltered($dateFrom = null, $dateTo = null, int $limit = 0): QueryResultInterface
+    public function findFiltered($dateFrom = null, $dateTo = null, int $limit = 0, bool $excludeDisabledDetail = false): QueryResultInterface
     {
         $query = $this->createQuery();
         $query->getQuerySettings()->setRespectStoragePage(false);
 
         $constraints = $this->buildDateConstraints($query, $dateFrom, $dateTo);
+
+        if ($excludeDisabledDetail) {
+            $constraints[] = $query->equals('disableDetail', false);
+        }
 
         if (!empty($constraints)) {
             $query->matching($query->logicalAnd(...$constraints));
@@ -126,9 +103,9 @@ class EventRepository extends Repository
     /**
      * Liefert Events gefiltert nach Station, Datum & Limit
      */
-    public function findFilteredByStation(int $stationUid, $dateFrom = null, $dateTo = null, int $limit = 0): QueryResultInterface
+    public function findFilteredByStation(int $stationUid, $dateFrom = null, $dateTo = null, int $limit = 0, bool $excludeDisabledDetail = false): QueryResultInterface
     {
-        $uids = $this->findEventUidsByStation($stationUid, $dateFrom, $dateTo, '', $limit);
+        $uids = $this->findEventUidsByStation($stationUid, $dateFrom, $dateTo, '', $limit, $excludeDisabledDetail);
 
         return $this->findByUids($uids);
     }
@@ -206,7 +183,8 @@ class EventRepository extends Repository
         $dateFrom = null,
         $dateTo = null,
         string $searchWord = '',
-        int $limit = 0
+        int $limit = 0,
+        bool $excludeDisabledDetail = false
     ): array {
         if ($stationUid <= 0) {
             return [];
@@ -216,7 +194,7 @@ class EventRepository extends Repository
             ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
 
         $queryBuilder
-            ->select('e.uid')
+            ->select('e.uid', 'e.start', 'e.number')
             ->from('tx_rescuereports_domain_model_event', 'e')
             ->innerJoin(
                 'e',
@@ -242,6 +220,15 @@ class EventRepository extends Repository
                 )
             );
 
+        if ($excludeDisabledDetail) {
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->eq(
+                    'e.disable_detail',
+                    $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
+                )
+            );
+        }
+
         $fromDate = $this->convertToDateTime($dateFrom);
         if ($fromDate instanceof \DateTimeInterface) {
             $fromDate = (clone $fromDate)->setTime(0, 0, 0)->format('Y-m-d H:i:s');
@@ -265,24 +252,24 @@ class EventRepository extends Repository
         }
 
         if (trim($searchWord) !== '') {
-            $like = '%' . $queryBuilder->escapeLikeWildcards($searchWord) . '%';
+            $like = '%' . $queryBuilder->escapeLikeWildcards(mb_strtolower($searchWord, 'UTF-8')) . '%';
 
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->or(
                     $queryBuilder->expr()->like(
-                        'e.title',
+                        'LOWER(e.title)',
                         $queryBuilder->createNamedParameter($like)
                     ),
                     $queryBuilder->expr()->like(
-                        'e.description',
+                        'LOWER(e.description)',
                         $queryBuilder->createNamedParameter($like)
                     ),
                     $queryBuilder->expr()->like(
-                        'e.location',
+                        'LOWER(e.location)',
                         $queryBuilder->createNamedParameter($like)
                     ),
                     $queryBuilder->expr()->like(
-                        'e.number',
+                        'LOWER(e.number)',
                         $queryBuilder->createNamedParameter($like)
                     )
                 )
@@ -290,7 +277,7 @@ class EventRepository extends Repository
         }
 
         $queryBuilder
-            ->groupBy('e.uid')
+            ->groupBy('e.uid', 'e.start', 'e.number')
             ->orderBy('e.start', 'DESC')
             ->addOrderBy('e.number', 'DESC')
             ->addOrderBy('e.uid', 'DESC');
@@ -302,6 +289,72 @@ class EventRepository extends Repository
         $uids = $queryBuilder->executeQuery()->fetchFirstColumn();
 
         return array_map('intval', $uids ?: []);
+    }
+
+    /**
+     * Finds incident UIDs for the global search in a database-neutral way.
+     * LOWER() keeps PostgreSQL searches case-insensitive like the default
+     * MySQL/MariaDB collations without relying on PostgreSQL-specific ILIKE.
+     *
+     * @return int[]
+     */
+    private function findEventUidsBySearch(string $searchWord, $dateFrom = null, $dateTo = null, int $limit = 0): array
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tx_rescuereports_domain_model_event');
+
+        $queryBuilder
+            ->select('e.uid', 'e.start', 'e.number')
+            ->from('tx_rescuereports_domain_model_event', 'e')
+            ->leftJoin('e', 'tx_rescuereports_event_type_mm', 'tmm', 'e.uid = tmm.uid_local')
+            ->leftJoin('tmm', 'tx_rescuereports_domain_model_type', 't', 'tmm.uid_foreign = t.uid')
+            ->where(
+                $queryBuilder->expr()->eq('e.deleted', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
+                $queryBuilder->expr()->eq('e.hidden', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER))
+            );
+
+        $fromDate = $this->convertToDateTime($dateFrom);
+        if ($fromDate instanceof \DateTimeInterface) {
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->gte(
+                    'e.start',
+                    $queryBuilder->createNamedParameter((clone $fromDate)->setTime(0, 0, 0)->format('Y-m-d H:i:s'))
+                )
+            );
+        }
+
+        $toDate = $this->convertToDateTime($dateTo);
+        if ($toDate instanceof \DateTimeInterface) {
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->lte(
+                    'e.start',
+                    $queryBuilder->createNamedParameter((clone $toDate)->setTime(23, 59, 59)->format('Y-m-d H:i:s'))
+                )
+            );
+        }
+
+        $like = '%' . $queryBuilder->escapeLikeWildcards(mb_strtolower($searchWord, 'UTF-8')) . '%';
+        $queryBuilder->andWhere(
+            $queryBuilder->expr()->or(
+                $queryBuilder->expr()->like('LOWER(e.title)', $queryBuilder->createNamedParameter($like)),
+                $queryBuilder->expr()->like('LOWER(e.description)', $queryBuilder->createNamedParameter($like)),
+                $queryBuilder->expr()->like('LOWER(e.location)', $queryBuilder->createNamedParameter($like)),
+                $queryBuilder->expr()->like('LOWER(t.title)', $queryBuilder->createNamedParameter($like)),
+                $queryBuilder->expr()->like('LOWER(e.number)', $queryBuilder->createNamedParameter($like))
+            )
+        );
+
+        $queryBuilder
+            ->groupBy('e.uid', 'e.start', 'e.number')
+            ->orderBy('e.start', 'DESC')
+            ->addOrderBy('e.number', 'DESC')
+            ->addOrderBy('e.uid', 'DESC');
+
+        if ($limit > 0) {
+            $queryBuilder->setMaxResults($limit);
+        }
+
+        return array_map('intval', $queryBuilder->executeQuery()->fetchFirstColumn() ?: []);
     }
 
     /**
@@ -331,29 +384,63 @@ class EventRepository extends Repository
 
     private function getYearSql(string $field, AbstractPlatform $platform): string
     {
-        if ($platform instanceof SqlitePlatform) {
+        if ($this->isSqlitePlatform($platform)) {
             return "CAST(strftime('%Y', $field) AS INTEGER)";
         }
 
-        return "YEAR($field)";
+        if ($platform instanceof PostgreSQLPlatform) {
+            return "CAST(EXTRACT(YEAR FROM $field) AS INTEGER)";
+        }
+
+        if ($platform instanceof AbstractMySQLPlatform) {
+            return "YEAR($field)";
+        }
+
+        throw new \LogicException('Unsupported database platform for rescue report statistics: ' . $platform::class);
     }
 
     private function getMonthSql(string $field, AbstractPlatform $platform): string
     {
-        if ($platform instanceof SqlitePlatform) {
+        if ($this->isSqlitePlatform($platform)) {
             return "CAST(strftime('%m', $field) AS INTEGER)";
         }
 
-        return "MONTH($field)";
+        if ($platform instanceof PostgreSQLPlatform) {
+            return "CAST(EXTRACT(MONTH FROM $field) AS INTEGER)";
+        }
+
+        if ($platform instanceof AbstractMySQLPlatform) {
+            return "MONTH($field)";
+        }
+
+        throw new \LogicException('Unsupported database platform for rescue report statistics: ' . $platform::class);
     }
 
     private function getDurationSecondsSql(string $startField, string $endField, AbstractPlatform $platform): string
     {
-        if ($platform instanceof SqlitePlatform) {
+        if ($this->isSqlitePlatform($platform)) {
             return "(strftime('%s', $endField) - strftime('%s', $startField))";
         }
 
-        return "TIMESTAMPDIFF(SECOND, $startField, $endField)";
+        if ($platform instanceof PostgreSQLPlatform) {
+            return "CAST(EXTRACT(EPOCH FROM ($endField - $startField)) AS INTEGER)";
+        }
+
+        if ($platform instanceof AbstractMySQLPlatform) {
+            return "TIMESTAMPDIFF(SECOND, $startField, $endField)";
+        }
+
+        throw new \LogicException('Unsupported database platform for rescue report statistics: ' . $platform::class);
+    }
+
+    /**
+     * Doctrine DBAL 3 calls this SqlitePlatform, while DBAL 4 and TYPO3 13/14
+     * use SQLitePlatform. Comparing the class name keeps this compatible without
+     * relying on platform methods that TYPO3's DBAL 4 platform wrappers omit.
+     */
+    private function isSqlitePlatform(AbstractPlatform $platform): bool
+    {
+        return str_ends_with(strtolower($platform::class), '\\sqliteplatform');
     }
 
     /**
@@ -636,6 +723,8 @@ class EventRepository extends Repository
         }
 
         $rows = $queryBuilder
+            // QueryBuilder quotes order/group arguments as identifiers. Use the
+            // select aliases instead of the SQL functions (YEAR/EXTRACT/etc.).
             ->groupBy('year', 'month')
             ->orderBy('year', 'DESC')
             ->addOrderBy('month', 'ASC')

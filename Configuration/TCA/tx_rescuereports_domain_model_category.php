@@ -15,7 +15,7 @@ return [
         'sortby'                   => 'sorting',
     ],
     'types' => [
-        '1' => ['showitem' => 'title, color, --div--;Access, hidden'],
+        '1' => ['showitem' => 'title, color, --div--;Bild, image, --div--;Access, hidden'],
     ],
     'columns' => [
         'hidden' => [
@@ -33,6 +33,14 @@ return [
                 'renderType' => 'colorpicker',
                 'default'    => '#3498db',
                 'size'       => 10,
+            ],
+        ],
+        'image' => [
+            'label' => 'Bild',
+            'config' => [
+                'type' => 'file',
+                'maxitems' => 1,
+                'allowed' => 'common-image-types',
             ],
         ],
     ],

@@ -30,7 +30,7 @@ class CarFilterUtility
                 ->where(
                     $queryBuilder->expr()->in(
                         'uid_local',
-                        $queryBuilder->createNamedParameter($selectedStationUids, \TYPO3\CMS\Core\Database\ArrayParameterType::INTEGER)
+                        $queryBuilder->createNamedParameter($selectedStationUids, ArrayParameterType::INTEGER)
                     )
                 )
                 ->executeQuery()

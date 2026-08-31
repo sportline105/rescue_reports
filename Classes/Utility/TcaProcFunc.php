@@ -38,7 +38,7 @@ class TcaProcFunc
             ->where(
                 $queryBuilder->expr()->in('mm.uid_local', $queryBuilder->createNamedParameter($stationIds, ArrayParameterType::INTEGER))
             )
-            ->groupBy('car.uid')
+            ->groupBy('car.uid', 'car.name')
             ->orderBy('car.name');
 
         $cars = $queryBuilder->executeQuery()->fetchAllAssociative();

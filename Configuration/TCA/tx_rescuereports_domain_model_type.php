@@ -23,7 +23,7 @@ return [
         'iconfile' => 'EXT:rescue_reports/Resources/Public/Icons/tx_rescuereports_domain_model_type.svg'
     ],
     'types' => [
-        '1' => ['showitem' => 'deprecated, title, category, --div--;Access, hidden, starttime, endtime'],
+        '1' => ['showitem' => 'deprecated, title, category, --div--;Bild, image, --div--;Access, hidden, starttime, endtime'],
     ],
     'columns' => [
         'sys_language_uid' => [
@@ -69,6 +69,14 @@ return [
                 'items' => [
                     ['Einsatzstichwort für neue Einsätze nicht mehr anzeigen (wird für bestehende Einsätze weiterhin angezeigt)', 1],
                 ],
+            ],
+        ],
+        'image' => [
+            'label' => 'Bild',
+            'config' => [
+                'type' => 'file',
+                'maxitems' => 1,
+                'allowed' => 'common-image-types',
             ],
         ]
     ]

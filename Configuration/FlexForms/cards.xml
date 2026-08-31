@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<T3DataStructure type="array">
+    <sheets>
+        <sheet index="general">
+            <ROOT type="array">
+                <sheetTitle>Cards-Widget</sheetTitle>
+                <type>array</type>
+                <el type="array">
+
+                    <settings.widgetTitle type="array">
+                        <label>Widget-Überschrift</label>
+                        <config type="array">
+                            <type>input</type>
+                            <eval>trim</eval>
+                            <placeholder>Aktuelle Einsätze</placeholder>
+                        </config>
+                    </settings.widgetTitle>
+
+                    <settings.defaultStation type="array">
+                        <label>Standard-Ortsfeuerwehr</label>
+                        <config type="array">
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <itemsProcFunc>nkfire\RescueReports\UserFunctions\FlexFormStationItems->addPrimaryStations</itemsProcFunc>
+                            <items type="array">
+                                <numIndex index="0" type="array">
+                                    <numIndex index="0">-- alle Ortsfeuerwehren --</numIndex>
+                                    <numIndex index="1">0</numIndex>
+                                </numIndex>
+                            </items>
+                            <minitems>0</minitems>
+                            <maxitems>1</maxitems>
+                            <size>1</size>
+                        </config>
+                    </settings.defaultStation>
+
+                    <settings.maxCount type="array">
+                        <label>Anzahl der angezeigten Einsätze</label>
+                        <config type="array">
+                            <type>input</type>
+                            <eval>int</eval>
+                            <size>5</size>
+                            <default>6</default>
+                            <placeholder>6</placeholder>
+                        </config>
+                    </settings.maxCount>
+
+                    <settings.cardImageMode type="array">
+                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:cards.imageMode</label>
+                        <config type="array">
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <items type="array">
+                                <numIndex index="0" type="array">
+                                    <numIndex index="0">LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:cards.imageModeFormat</numIndex>
+                                    <numIndex index="1">format</numIndex>
+                                </numIndex>
+                                <numIndex index="1" type="array">
+                                    <numIndex index="0">LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:cards.imageModeServercrop</numIndex>
+                                    <numIndex index="1">servercrop</numIndex>
+                                </numIndex>
+                            </items>
+                            <default>format</default>
+                        </config>
+                    </settings.cardImageMode>
+
+                    <settings.cardImageRatio type="array">
+                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:cards.imageRatio</label>
+                        <displayCond>FIELD:settings.cardImageMode:=:format</displayCond>
+                        <config type="array">
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <items type="array">
+                                <numIndex index="0" type="array">
+                                    <numIndex index="0">16:9</numIndex>
+                                    <numIndex index="1">16 / 9</numIndex>
+                                </numIndex>
+                                <numIndex index="1" type="array">
+                                    <numIndex index="0">4:3</numIndex>
+                                    <numIndex index="1">4 / 3</numIndex>
+                                </numIndex>
+                                <numIndex index="2" type="array">
+                                    <numIndex index="0">1:1</numIndex>
+                                    <numIndex index="1">1 / 1</numIndex>
+                                </numIndex>
+                            </items>
+                            <default>16 / 9</default>
+                        </config>
+                    </settings.cardImageRatio>
+
+                    <settings.cardImageWidth type="array">
+                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:cards.imageWidth</label>
+                        <displayCond>FIELD:settings.cardImageMode:=:servercrop</displayCond>
+                        <config type="array">
+                            <type>input</type>
+                            <eval>int</eval>
+                            <range type="array">
+                                <lower>1</lower>
+                                <upper>4000</upper>
+                            </range>
+                            <size>5</size>
+                            <default>800</default>
+                            <placeholder>z. B. 800</placeholder>
+                        </config>
+                    </settings.cardImageWidth>
+
+                    <settings.cardImageHeight type="array">
+                        <label>LLL:EXT:rescue_reports/Resources/Private/Language/locallang_db.xlf:cards.imageHeight</label>
+                        <displayCond>FIELD:settings.cardImageMode:=:servercrop</displayCond>
+                        <config type="array">
+                            <type>input</type>
+                            <eval>int</eval>
+                            <range type="array">
+                                <lower>1</lower>
+                                <upper>4000</upper>
+                            </range>
+                            <size>5</size>
+                            <default>500</default>
+                            <placeholder>z. B. 500</placeholder>
+                        </config>
+                    </settings.cardImageHeight>
+
+                    <settings.templateVariant type="array">
+                        <label>Design</label>
+                        <config type="array">
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <items type="array">
+                                <numIndex index="0" type="array">
+                                    <numIndex index="0">Bootstrap</numIndex>
+                                    <numIndex index="1">cards-bootstrap</numIndex>
+                                </numIndex>
+                                <numIndex index="1" type="array">
+                                    <numIndex index="0">Foundation</numIndex>
+                                    <numIndex index="1">cards-foundation</numIndex>
+                                </numIndex>
+                            </items>
+                            <default>cards-bootstrap</default>
+                        </config>
+                    </settings.templateVariant>
+
+                    <settings.yearFilterDefault type="array">
+                        <label>Jahresfilter: Standardauswahl</label>
+                        <config type="array">
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <items type="array">
+                                <numIndex index="0" type="array">
+                                    <numIndex index="0">Alle Jahre</numIndex>
+                                    <numIndex index="1">all</numIndex>
+                                </numIndex>
+                                <numIndex index="1" type="array">
+                                    <numIndex index="0">Aktuelles Jahr</numIndex>
+                                    <numIndex index="1">current</numIndex>
+                                </numIndex>
+                            </items>
+                            <default>all</default>
+                        </config>
+                    </settings.yearFilterDefault>
+
+                    <settings.detailPageUid type="array">
+                        <label>Seite für Einsatz-Detailansicht</label>
+                        <config type="array">
+                            <type>group</type>
+                            <allowed>pages</allowed>
+                            <size>1</size>
+                            <minitems>0</minitems>
+                            <maxitems>1</maxitems>
+                        </config>
+                    </settings.detailPageUid>
+
+                    <settings.listPageUid type="array">
+                        <label>Seite der vollständigen Einsatzliste (für „Alle Einsätze"-Link)</label>
+                        <config type="array">
+                            <type>group</type>
+                            <allowed>pages</allowed>
+                            <size>1</size>
+                            <minitems>0</minitems>
+                            <maxitems>1</maxitems>
+                        </config>
+                    </settings.listPageUid>
+
+                </el>
+            </ROOT>
+        </sheet>
+    </sheets>
+</T3DataStructure>
