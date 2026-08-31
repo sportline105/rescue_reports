@@ -174,8 +174,7 @@
                                              data-lat="{event.latitude}"
                                              data-lon="{event.longitude}"
                                              data-title="{event.title}"
-                                             class="mb-2 rounded overflow-hidden"
-                                             style="height:220px;"></div>
+                                             class="rr-event-map mb-2 rounded overflow-hidden"></div>
                                     </f:if>
 
                                     <p class="mb-2">
@@ -199,15 +198,25 @@
                             <f:if condition="{event.images}">
                                 <h2 class="h4">Bilder</h2>
 
-                                <div id="einsatzCarousel-{event.uid}" class="carousel slide" data-bs-ride="false">
+                                <div id="einsatzCarousel-{event.uid}" class="carousel slide rescue-image-gallery" data-bs-ride="false" tabindex="0" role="region" aria-label="Bildergalerie. Mit den Pfeiltasten zwischen den Bildern wechseln.">
                                     <div class="carousel-inner">
                                         <f:for each="{event.images}" as="image" iteration="it">
                                             <div class="carousel-item {f:if(condition: it.isFirst, then: 'active')}">
-                                                <a href="{f:uri.image(image: image, maxWidth: 1800)}"
-                                                   class="glightbox"
-                                                   data-gallery="einsatz-{event.uid}">
-                                                    <f:image image="{image}" maxWidth="900" alt="{event.title}" class="d-block w-100 h-100 img-fluid rounded" additionalAttributes="{loading:'lazy'}" />
-                                                </a>
+                                                <figure class="rescue-image-figure">
+                                                    <a href="{f:uri.image(image: image, maxWidth: 1800)}"
+                                                       class="glightbox"
+                                                       data-gallery="einsatz-{event.uid}"
+                                                       data-title="{image.description}"
+                                                       aria-label="Bild in Großansicht öffnen">
+                                                        <f:image image="{image}" maxWidth="900" alt="{f:if(condition: image.alternative, then: image.alternative, else: event.title)}" class="d-block w-100 h-100 img-fluid rounded" additionalAttributes="{loading:'lazy'}" />
+                                                    </a>
+                                                    <f:if condition="{image.description} || {image.originalResource.properties.tx_rescuereports_credit}">
+                                                        <figcaption class="rescue-image-caption">
+                                                            <f:if condition="{image.description}"><span>{image.description}</span></f:if>
+                                                            <f:if condition="{image.originalResource.properties.tx_rescuereports_credit}"><span>Foto: {image.originalResource.properties.tx_rescuereports_credit}</span></f:if>
+                                                        </figcaption>
+                                                    </f:if>
+                                                </figure>
                                             </div>
                                         </f:for>
                                     </div>
@@ -364,30 +373,26 @@
                         <div class="large-12 medium-6 small-12 column">
                             <f:if condition="{event.images}">
                                 <h2><b>Einsatzbilder:</b></h2>
-                                <div id="einsatzslider" class="owl-carousel">
+                                <div id="einsatzslider" class="owl-carousel rescue-image-gallery" tabindex="0" role="region" aria-label="Bildergalerie. Mit den Pfeiltasten zwischen den Bildern wechseln.">
                                     <f:for each="{event.images}" as="image">
-                                        <a href="{f:uri.image(image: image, maxWidth: 1600)}"
-                                           class="glightbox"
-                                           data-gallery="einsatz-{event.uid}">
-                                            <f:image image="{image}" maxWidth="400" alt="{event.title}" />
-                                        </a>
+                                        <figure class="rescue-image-figure">
+                                            <a href="{f:uri.image(image: image, maxWidth: 1600)}"
+                                               class="glightbox"
+                                               data-gallery="einsatz-{event.uid}"
+                                               data-title="{image.description}"
+                                               aria-label="Bild in Großansicht öffnen">
+                                                <f:image image="{image}" maxWidth="400" alt="{f:if(condition: image.alternative, then: image.alternative, else: event.title)}" />
+                                            </a>
+                                            <f:if condition="{image.description} || {image.originalResource.properties.tx_rescuereports_credit}">
+                                                <figcaption class="rescue-image-caption">
+                                                    <f:if condition="{image.description}"><span>{image.description}</span></f:if>
+                                                    <f:if condition="{image.originalResource.properties.tx_rescuereports_credit}"><span>Foto: {image.originalResource.properties.tx_rescuereports_credit}</span></f:if>
+                                                </figcaption>
+                                            </f:if>
+                                        </figure>
                                     </f:for>
                                 </div>
 
-                                <script>
-                                $(document).ready(function() {
-                                    $("#einsatzslider").owlCarousel({
-                                        singleItem: true,
-                                        navigation: true,
-                                        navigationText: ["zurück", "weiter"],
-                                        slideSpeed: 400,
-                                        autoHeight: true,
-                                        lazyLoad: true,
-                                        lazyFollow: true,
-                                        addClassActive: true
-                                    });
-                                });
-                                </script>
                             </f:if>
                         </div>
                     </div>
@@ -401,11 +406,4 @@
 
     </f:switch>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        if (typeof GLightbox !== 'undefined') {
-            GLightbox({ selector: '.glightbox' });
-        }
-    });
-    </script>
 </f:section>
