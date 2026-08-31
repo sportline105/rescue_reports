@@ -15,6 +15,10 @@
     border-radius: 50%;
 }
 
+.rr-event-map {
+    height: 220px;
+}
+
 .einsatzfahrzeug-card {
     background: #f6f6f6;
     border-radius: 10px;
@@ -225,4 +229,51 @@ ul.no-bullet li {
         0 10px 0 rgba(92, 145, 211, 0.18);
     z-index: 0;
     pointer-events: none;
+}
+
+.rescue-image-figure {
+    margin: 0;
+}
+
+/* Einheitliche Bildfläche im Einsatzbild-Slider; die Großansicht bleibt unbeschnitten. */
+.rescue-image-gallery.carousel .rescue-image-figure > a,
+.rescue-image-gallery.owl-carousel .rescue-image-figure > a {
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+}
+
+.rescue-image-gallery.carousel .rescue-image-figure > a img,
+.rescue-image-gallery.owl-carousel .rescue-image-figure > a img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.rescue-image-caption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem 1rem;
+    padding: .5rem .75rem;
+    position: relative;
+    z-index: 2;
+    background: #fff;
+    color: #495057;
+    font-size: .875rem;
+}
+
+.rescue-image-caption span:last-child {
+    margin-left: auto;
+}
+
+.rescue-image-gallery:focus-visible {
+    outline: 3px solid rgba(13, 110, 253, .45);
+    outline-offset: 3px;
+}
+
+.rescue-image-gallery.carousel .carousel-control-prev,
+.rescue-image-gallery.carousel .carousel-control-next {
+    bottom: auto;
+    height: var(--rescue-carousel-image-height, 100%);
 }
